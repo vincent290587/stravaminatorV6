@@ -18,8 +18,9 @@ RM := rm -rf
 -include middleware/usb_1.6.3/device/subdir.mk
 -include middleware/sdmmc_2.1.2/src/subdir.mk
 -include middleware/dma_manager_2.1.0/subdir.mk
+-include libraries/utils/subdir.mk
 -include libraries/sysview/subdir.mk
--include libraries/subdir.mk
+-include libraries/rtt/subdir.mk
 -include drivers/subdir.mk
 -include board/subdir.mk
 -include CMSIS/subdir.mk

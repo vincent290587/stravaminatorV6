@@ -6,10 +6,21 @@
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "Segment.h"
+
 #include "SEGGER_SYSVIEW.h"
+#include "SEGGER_RTT.h"
 
 extern "C" void CompositeInit(void);
 extern "C" void CompositeTask(void);
+
+void delay(void)
+{
+    volatile uint32_t i = 0;
+    for (i = 0; i < 800000; ++i)
+    {
+        __asm("NOP"); /* delay */
+    }
+}
 
 /*!
  * @brief Application entry point.
@@ -25,6 +36,9 @@ int main(void) {
   // USB
   CompositeInit();
 
+  // RTT
+  SEGGER_RTT_Init();
+
   // SYSVIEW
   SEGGER_SYSVIEW_Conf();
   SEGGER_SYSVIEW_Start();
@@ -32,11 +46,13 @@ int main(void) {
 
   for(;;) { /* Infinite loop to avoid leaving the main function */
 
-	// SEGGER_SYSVIEW_OnIdle();
+	SEGGER_SYSVIEW_OnIdle();
 
-    __asm("NOP"); /* something to use as a breakpoint stop while looping */
+	delay(); /* something to use as a breakpoint stop while looping */
 
     CompositeTask();
+
+    SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\r\n");
 
   }
 

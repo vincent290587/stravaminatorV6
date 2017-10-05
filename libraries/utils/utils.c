@@ -11,7 +11,9 @@
 #include <string.h>
 #include "utils.h"
 
+
 #define FACTOR 100000.
+
 
 float min(float val1, float val2) {
   if (val1 <= val2) return val1;
@@ -21,6 +23,18 @@ float min(float val1, float val2) {
 float max(float val1, float val2) {
   if (val1 <= val2) return val2;
   else return val1;
+}
+
+double radians(double value) {
+	return value * M_PI / 180.;
+}
+
+double degrees(double value) {
+	return value * 180. / M_PI;
+}
+
+double sq(double value) {
+	return value * value;
 }
 
 float regFen(float val_, float b1_i, float b1_f, float b2_i, float b2_f) {
@@ -117,5 +131,4 @@ long unsigned int toBase10 (char *entree) {
     return strtoul(tab, NULL, 36);
 
 }
-
 

@@ -20,7 +20,13 @@ RM := rm -rf
 -include middleware/dma_manager_2.1.0/subdir.mk
 -include libraries/utils/subdir.mk
 -include libraries/sysview/subdir.mk
+-include libraries/spi/subdir.mk
 -include libraries/rtt/subdir.mk
+-include libraries/TinyGPSPlus/subdir.mk
+-include libraries/TSharpMem/subdir.mk
+-include libraries/IntelliScreen/subdir.mk
+-include libraries/AdafruitGFX/subdir.mk
+-include drivers/lcd/subdir.mk
 -include drivers/subdir.mk
 -include board/subdir.mk
 -include CMSIS/subdir.mk

@@ -31,6 +31,7 @@
 #include <stdlib.h>
 #include "usb_device_config.h"
 #include "usb_device.h"
+#include "SEGGER_SYSVIEW.h"
 
 #include "usb_device_class.h"
 #include "usb_device_msc.h"
@@ -129,6 +130,8 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
     uint16_t *temp16 = (uint16_t *)param;
     uint8_t *temp8 = (uint8_t *)param;
 
+    SEGGER_SYSVIEW_RecordEnterISR();
+
     switch (event)
     {
         case kUSB_DeviceEventBusReset:
@@ -218,6 +221,8 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
             break;
     }
 
+    SEGGER_SYSVIEW_RecordExitISR();
+
     return error;
 }
 
@@ -270,6 +275,7 @@ void USB1_IRQHandler(void)
  */
 void CompositeInit(void)
 {
+
     uint8_t irqNumber;
 #if defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0)
     uint8_t ehciIrq[] = USBHS_IRQS;
@@ -392,6 +398,7 @@ void CompositeInit(void)
  */
 void CompositeTask(void)
 {
+
     USB_DeviceCdcVcomTask();
     if (g_composite.mscDisk.readWriteError)
     {

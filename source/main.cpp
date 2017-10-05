@@ -52,7 +52,7 @@ int main(void) {
 
     CompositeTask();
 
-    SEGGER_RTT_WriteString(0, "Hello World from SEGGER!\r\n");
+    //SEGGER_RTT_WriteString(1, "Hello World from SEGGER!\r\n");
 
   }
 

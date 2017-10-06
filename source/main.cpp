@@ -7,6 +7,7 @@
 #include "clock_config.h"
 #include "Segment.h"
 #include "segger_wrapper.h"
+#include "fsl_uart_edma.h"
 #include "ls027.h"
 #include "millis.h"
 #include "sdcard_fatfs.h"
@@ -21,6 +22,9 @@ int main(void) {
   BOARD_InitBootPins();
   BOARD_InitBootClocks();
   BOARD_InitDebugConsole();
+
+  /* Init DMAMUX */
+  DMAMUX_Init(DMAMUX0);
 
   /* Init code */
   millis_init();

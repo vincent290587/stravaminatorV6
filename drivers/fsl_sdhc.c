@@ -723,7 +723,7 @@ static void SDHC_TransferHandleCommand(SDHC_Type *base, sdhc_handle_t *handle, u
 
 static void SDHC_TransferHandleData(SDHC_Type *base, sdhc_handle_t *handle, uint32_t interruptFlags)
 {
-    assert(handle->data);
+	assert(handle->data);
 
     if ((!(handle->data->enableIgnoreError)) && (interruptFlags & (kSDHC_DataErrorFlag | kSDHC_DmaErrorFlag)) &&
         (handle->callback.TransferComplete))

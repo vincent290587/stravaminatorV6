@@ -42,12 +42,14 @@
 #include "clock_config.h"
 #include "board.h"
 #include "fsl_debug_console.h"
+#include "segger_wrapper.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "composite.h"
 
+#include "fsl_sd_disk.h"
 #include "fsl_card.h"
 /*******************************************************************************
 * Definitions
@@ -81,9 +83,9 @@ uint32_t g_mscReadRequestBuffer[USB_DEVICE_MSC_READ_BUFF_SIZE >> 2];
 uint32_t g_mscWriteRequestBuffer[USB_DEVICE_MSC_WRITE_BUFF_SIZE >> 2];
 
 /* State in Card driver. */
-sd_card_t g_sd;
 
 sd_card_t *usbDeviceMscCard;
+
 #if ((defined(USB_DEVICE_CONFIG_USE_TASK) && (USB_DEVICE_CONFIG_USE_TASK > 0)) && \
      (defined(USB_DEVICE_MSC_USE_WRITE_TASK) && (USB_DEVICE_MSC_USE_WRITE_TASK > 0)))
 usb_msc_buffer_struct_t dataBuffer[USB_DEVICE_MSC_BUFFER_NUMBER];
@@ -102,21 +104,31 @@ usb_msc_buffer_struct_t *currentTrasfer;
 uint8_t USB_DeviceMscCardInit(void)
 {
     usb_status_t error = kStatus_USB_Success;
-    usbDeviceMscCard = &g_sd;
+    usbDeviceMscCard = sd_disk_get_handle();
 
     NVIC_SetPriority(SD_HOST_IRQ, (USB_DEVICE_INTERRUPT_PRIORITY - 1U));
-    usbDeviceMscCard->host.base = SD_HOST_BASEADDR;
-    usbDeviceMscCard->host.sourceClock_Hz = SD_HOST_CLK_FREQ;
 
-    /* Init card. */
-    if (SD_Init(usbDeviceMscCard))
-    {
-        PRINTF("\n SD card init failed \n");
-        error = kStatus_USB_Error;
+    if (usbDeviceMscCard->host.sourceClock_Hz != SD_HOST_CLK_FREQ ||
+    		usbDeviceMscCard->host.base != SD_HOST_BASEADDR) {
+
+    	PRINTF("\n SD card needs to be init: %x \n", (uint32_t)usbDeviceMscCard->host.base);
+
+    	usbDeviceMscCard->host.sourceClock_Hz = SD_HOST_CLK_FREQ;
+    	usbDeviceMscCard->host.base = SD_HOST_BASEADDR;
+
+    	/* Init card. */
+    	if (SD_Init(usbDeviceMscCard))
+    	{
+    		PRINTF("\n SD card init failed \n");
+    		error = kStatus_USB_Error;
+    	}
+
+    	PRINTF("\n SD card init :-) \n");
     }
 
     return error;
 }
+
 #if (defined(USB_DEVICE_CONFIG_USE_TASK) && (USB_DEVICE_CONFIG_USE_TASK > 0)) && \
     (defined(USB_DEVICE_MSC_USE_WRITE_TASK) && (USB_DEVICE_MSC_USE_WRITE_TASK > 0))
 /*!

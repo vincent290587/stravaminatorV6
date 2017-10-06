@@ -82,7 +82,6 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/sysview}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/rtt}&quot;"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/spi}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/AdafruitGFX}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/TSharpMem}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/Intelliscreen}&quot;"/>
@@ -90,6 +89,8 @@
 									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\sdmmc_2.1.2\inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\osa&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\device&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs_0.12b\src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs_0.12b\src\fsl_sd_disk&quot;"/>
 									<listOptionValue builtIn="false" value="../CMSIS"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/sd}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/usb}&quot;"/>
@@ -99,6 +100,7 @@
 									<listOptionValue builtIn="false" value="../startup"/>
 									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/lcd}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/spi}&quot;"/>
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.std.933718024" name="Language standard" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.std" useByScannerDiscovery="true" value="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.std.gnu99" valueType="enumerated"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs.9319680627" name="Defined symbols (-D)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.defs" useByScannerDiscovery="true" valueType="definedSymbols">
@@ -121,6 +123,8 @@
 									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\device&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\osa&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs_0.12b\src&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs_0.12b\src\fsl_sd_disk&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/usb}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/sd}&quot;"/>
 									<listOptionValue builtIn="false" value="../board"/>
@@ -128,6 +132,7 @@
 									<listOptionValue builtIn="false" value="../startup"/>
 									<listOptionValue builtIn="false" value="../utilities"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/lcd}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/drivers/spi}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/utils}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/rtt}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/libraries/sysview}&quot;"/>
@@ -206,6 +211,12 @@
 							</tool>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1792027861.439149176" name="fsl_sdmmc.c" rcbsApplicability="disable" resourcePath="middleware/sdmmc_2.1.2/src/fsl_sdmmc.c" toolsToInvoke="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1397207158.1624326056">
+						<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1397207158.1624326056" name="Cross ARM C Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1397207158"/>
+					</fileInfo>
+					<sourceEntries>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name=""/>
+					</sourceEntries>
 				</configuration>
 			</storageModule>
 			<storageModule moduleId="org.eclipse.cdt.core.externalSettings"/>

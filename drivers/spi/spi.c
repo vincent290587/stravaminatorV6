@@ -6,7 +6,7 @@
  */
 
 #include "spi.h"
-
+#include "segger_wrapper.h"
 
 static dspi_master_handle_t g_m_handle; //global variable
 static dspi_transfer_t      masterXfer;
@@ -29,6 +29,8 @@ void spi_init(dspi_master_config_t* masterConfig) {
 
 void spi_start_transfer(spi_transfer_settings* spi_settings, bool is_last_byte) {
 
+	W_SYSVIEW_OnTaskStartExec(SPI_TASK);
+
     /* Start master transfer */
     masterXfer.txData = spi_settings->masterTxData;
     masterXfer.rxData = spi_settings->masterRxData;
@@ -46,5 +48,7 @@ void spi_start_transfer(spi_transfer_settings* spi_settings, bool is_last_byte) 
     DSPI_MasterTransferBlocking(SPI0, &masterXfer);
 
     spi_settings->spi_tx_data_length = 0;
+
+    W_SYSVIEW_OnTaskStopExec(SPI_TASK);
 }
 

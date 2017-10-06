@@ -8,9 +8,10 @@
 #include "Segment.h"
 #include "segger_wrapper.h"
 #include "ls027.h"
-#include "composite_public.h"
 #include "millis.h"
+#include "sdcard_fatfs.h"
 
+extern "C" int essai(void);
 
 /*!
  * @brief Application entry point.
@@ -24,23 +25,27 @@ int main(void) {
   /* Init code */
   millis_init();
 
+  // Segger
+  segger_init();
+
   // LCD driver
   LS027_Init();
 
   // USB driver
-  CompositeInit();
+  sdcard_init();
+  sdcard_tasks();
 
-  // Segger
-  segger_init();
-
+  essai();
 
   for(;;) { /* Infinite loop to avoid leaving the main function */
 
 	delay_ms(100); /* something to use as a breakpoint stop while looping */
 
-    CompositeTask();
+	sdcard_tasks();
 
     LOG_INFO("Hello World millis= %lu\r\n", millis());
+
+    LS027_UpdateFull();
 
   }
 

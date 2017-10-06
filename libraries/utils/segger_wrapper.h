@@ -22,44 +22,31 @@
 
 /////////    DEFINES
 
+#define EMPTY_MACRO                    do {} while (0)
 
 #if USE_RTT
-#define LOG_INFO(...)               SEGGER_RTT_printf(RTT_LOG_CHANNEL, __VA_ARGS__)
+#define LOG_INFO(...)                  SEGGER_RTT_printf(RTT_LOG_CHANNEL, __VA_ARGS__)
 #else
-#define LOG_INFO(...)               do {} while (0)
+#define LOG_INFO(...)                  EMPTY_MACRO
 #endif
 
 #if USE_SVIEW
-#define W_SYSVIEW_OnIdle(...)       SEGGER_SYSVIEW_OnIdle()
+#define W_SYSVIEW_OnIdle(...)          SEGGER_SYSVIEW_OnIdle()
+#define W_SYSVIEW_OnTaskStartExec(X)   SEGGER_SYSVIEW_OnTaskStartExec(X)
+#define W_SYSVIEW_OnTaskStopExec(X)    SEGGER_SYSVIEW_OnTaskTerminate(X)
 #else
-#define W_SYSVIEW_OnIdle(...)       do {} while (0)
+#define W_SYSVIEW_OnIdle(...)          EMPTY_MACRO
+#define W_SYSVIEW_OnTaskStartExec(X)   EMPTY_MACRO
+#define W_SYSVIEW_OnTaskStopExec(X)    EMPTY_MACRO
 #endif
 
 
-//SEGGER_SYSVIEW_MODULE IPModule = {
-//		"M=embOSIP, " \
-//		"0 SendPacket IFace=%u NumBytes=%u, " \
-//		"1 ReceivePacket Iface=%d NumBytes=%u", // sModule
-//		2, // NumEvents
-//		0,
-//		// EventOffset, Set by SEGGER_SYSVIEW_RegisterModule()
-//		NULL,
-//		// pfSendModuleDesc, NULL: No additional module description
-//		NULL,
-//		// pNext, Set by SEGGER_SYSVIEW_RegisterModule()
-//};
-//SEGGER_SYSVIEW_RegisterModule(&IPModule);
+#define SPI_TASK                       1u
+#define LCD_BUF_TASK                   2u
 
+#define SD_ACCESS_TASK                 3u
 
-//SEGGER_SYSVIEW_RecordU32x2(
-// // Id of SendPacket (0) + Offset for the registered module
-// ID_SENDPACKET + IPModule.EventOffset,
-// // First parameter (displayed as event parameter IFace)
-// pPacket->Interface,
-// // Second parameter (displayed as event parameter NumBytes)
-// pPacket->NumBytes
-// );
-
+#define SEG_PERF_TASK                  4u
 
 /////////    FUNCTIONS
 

@@ -22,6 +22,7 @@ C_SRCS += \
 ../drivers/fsl_flexbus.c \
 ../drivers/fsl_flexcan.c \
 ../drivers/fsl_ftm.c \
+../drivers/fsl_fxos.c \
 ../drivers/fsl_gpio.c \
 ../drivers/fsl_i2c.c \
 ../drivers/fsl_i2c_cmsis.c \
@@ -65,6 +66,7 @@ OBJS += \
 ./drivers/fsl_flexbus.o \
 ./drivers/fsl_flexcan.o \
 ./drivers/fsl_ftm.o \
+./drivers/fsl_fxos.o \
 ./drivers/fsl_gpio.o \
 ./drivers/fsl_i2c.o \
 ./drivers/fsl_i2c_cmsis.o \
@@ -108,6 +110,7 @@ C_DEPS += \
 ./drivers/fsl_flexbus.d \
 ./drivers/fsl_flexcan.d \
 ./drivers/fsl_ftm.d \
+./drivers/fsl_fxos.d \
 ./drivers/fsl_gpio.d \
 ./drivers/fsl_i2c.d \
 ./drivers/fsl_i2c_cmsis.d \
@@ -137,7 +140,7 @@ C_DEPS += \
 drivers/%.o: ../drivers/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross ARM C Compiler'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -ffreestanding -fno-builtin -Wall  -g -DDEBUG -DCPU_MK64FN1M0VLL12_cm4 -DCPU_MK64FN1M0VLL12 -DFSL_RTOS_BM -DSDK_CORE_ID_CORE0 -DSDK_OS_BAREMETAL -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\include" -I"E:\Freescale\myStrava\libraries\utils" -I"E:\Freescale\myStrava\libraries\sysview" -I"E:\Freescale\myStrava\libraries\rtt" -I"E:\Freescale\myStrava\libraries\spi" -I"E:\Freescale\myStrava\libraries\AdafruitGFX" -I"E:\Freescale\myStrava\libraries\TSharpMem" -I"E:\Freescale\myStrava\libraries\TinyGPSPlus" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\sdmmc_2.1.2\inc" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\osa" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\device" -I../CMSIS -I"E:\Freescale\myStrava\source\sd" -I"E:\Freescale\myStrava\source\usb" -I"E:\Freescale\myStrava\source\routes" -I../board -I../drivers -I../startup -I../utilities -I"E:\Freescale\myStrava\drivers\lcd" -std=gnu99 -mapcs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -ffreestanding -fno-builtin -Wall  -g -DDEBUG -DCPU_MK64FN1M0VLL12_cm4 -DCPU_MK64FN1M0VLL12 -DFSL_RTOS_BM -DSDK_CORE_ID_CORE0 -DSDK_OS_BAREMETAL -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\include" -I"E:\Freescale\myStrava\libraries\utils" -I"E:\Freescale\myStrava\libraries\sysview" -I"E:\Freescale\myStrava\libraries\rtt" -I"E:\Freescale\myStrava\libraries\AdafruitGFX" -I"E:\Freescale\myStrava\libraries\TSharpMem" -I"E:\Freescale\myStrava\libraries\TinyGPSPlus" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\sdmmc_2.1.2\inc" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\osa" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\device" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs_0.12b\src" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs_0.12b\src\fsl_sd_disk" -I../CMSIS -I"E:\Freescale\myStrava\source\sd" -I"E:\Freescale\myStrava\source\usb" -I"E:\Freescale\myStrava\source\routes" -I../board -I../drivers -I../startup -I../utilities -I"E:\Freescale\myStrava\drivers\lcd" -I"E:\Freescale\myStrava\drivers\spi" -std=gnu99 -mapcs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

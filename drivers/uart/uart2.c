@@ -5,6 +5,7 @@
  *      Author: Vincent
  */
 
+#include "segger_wrapper.h"
 #include "uart2.h"
 
 /*******************************************************************************
@@ -86,21 +87,6 @@ void uart2_init(uart_config_t* uartConfig)
 {
     edma_config_t config;
 
-    /* Initialize the UART. */
-    /*
-     * uartConfig.baudRate_Bps = 115200U;
-     * uartConfig.parityMode = kUART_ParityDisabled;
-     * uartConfig.stopBitCount = kUART_OneStopBit;
-     * uartConfig.txFifoWatermark = 0;
-     * uartConfig.rxFifoWatermark = 1;
-     * uartConfig.enableTx = false;
-     * uartConfig.enableRx = false;
-     */
-    UART_GetDefaultConfig(uartConfig);
-
-    uartConfig->enableTx = true;
-    uartConfig->enableRx = true;
-
     UART_Init(UART2, uartConfig, UART2_CLK_FREQ);
 
     /* Set channel for UART */
@@ -119,6 +105,7 @@ void uart2_init(uart_config_t* uartConfig)
     UART_TransferCreateHandleEDMA(UART2, &g_uartEdmaHandle, uart2_callback, NULL,
     		&g_uartTxEdmaHandle, &g_uartRxEdmaHandle);
 
+    LOG_INFO("UART2 initialized\n");
 }
 
 void uart2_send(uint8_t* data, size_t length) {

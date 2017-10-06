@@ -11,6 +11,8 @@
 #include "ls027.h"
 #include "millis.h"
 #include "sdcard_fatfs.h"
+#include "uart0.h"
+#include "uart2.h"
 
 extern "C" int essai(void);
 
@@ -34,6 +36,18 @@ int main(void) {
 
   // LCD driver
   LS027_Init();
+
+  // Initialize the UART.
+  uart_config_t uartConfig;
+  UART_GetDefaultConfig(&uartConfig);
+  uartConfig.enableTx = true;
+  uartConfig.enableRx = true;
+
+  uartConfig.baudRate_Bps = 9600U;
+  uart0_init(&uartConfig);
+
+  uartConfig.baudRate_Bps = 115200U;
+  uart2_init(&uartConfig);
 
   // USB driver
   sdcard_init();

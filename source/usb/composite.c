@@ -56,9 +56,7 @@
 /*******************************************************************************
 * Definitions
 ******************************************************************************/
-/* USB clock source and frequency*/
-#define USB_FS_CLK_SRC kCLOCK_UsbSrcIrc48M
-#define USB_FS_CLK_FREQ 48000000U
+
 
 /*******************************************************************************
 * Prototypes
@@ -109,6 +107,8 @@ usb_device_class_config_struct_t g_compositeDevice[2] = {
 usb_device_class_config_list_struct_t g_compositeDeviceConfigList = {
     g_compositeDevice, USB_DeviceCallback, 2,
 };
+
+static uint8_t irqNumber;
 
 /*******************************************************************************
 * Code
@@ -276,7 +276,6 @@ void USB1_IRQHandler(void)
 void CompositeInit(void)
 {
 
-    uint8_t irqNumber;
 #if defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0)
     uint8_t ehciIrq[] = USBHS_IRQS;
     irqNumber = ehciIrq[CONTROLLER_ID - kUSB_ControllerEhci0];
@@ -387,6 +386,16 @@ void CompositeInit(void)
     EnableIRQ((IRQn_Type)irqNumber);
 
     USB_DeviceRun(g_composite.deviceHandle);
+}
+
+void CompositeStop(void) {
+	DisableIRQ((IRQn_Type)irqNumber);
+	USB_DeviceStop(g_composite.deviceHandle);
+}
+
+void CompositeRestart(void) {
+	EnableIRQ((IRQn_Type)irqNumber);
+	USB_DeviceRun(g_composite.deviceHandle);
 }
 
 /*!

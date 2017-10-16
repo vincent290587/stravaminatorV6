@@ -63,10 +63,6 @@ int main(void) {
 	// LCD driver
 	LS027_Init();
 
-	//  essai();
-
-	delay_ms(500);
-
 	power_manager_init();
 
 //	power_manager_run(kAPP_PowerModeVlpr);
@@ -78,12 +74,13 @@ int main(void) {
 		delay_ms(1000); /* something to use as a breakpoint stop while looping */
 		GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
 
-		CompositeTask();
-
 		LOG_INFO("Hello World millis= %lu\r\n", millis());
 
 		power_manager_run(kAPP_PowerModeRun);
+		CompositeRestart();
 		LS027_UpdateFull();
+		CompositeTask();
+		CompositeStop();
 		power_manager_run(kAPP_PowerModeVlpr);
 
 	}

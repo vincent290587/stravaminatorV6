@@ -90,8 +90,6 @@ void usb_comp_init() {
 
     CompositeInit();
 
-    // TODO
-    BOARD_InitDebugConsole();
 }
 
 /*!

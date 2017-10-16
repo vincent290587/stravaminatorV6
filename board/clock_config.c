@@ -278,7 +278,7 @@ const osc_config_t oscConfig_ClocksConfig_VLPR =
  ******************************************************************************/
 void ClocksConfig_VLPR(void)
 {
-#if (USE_SVIEW==0)
+//#if (USE_SVIEW==0)
     /* Set the system clock dividers in SIM to safe value. */
     CLOCK_SetSimSafeDivs();
     /* Set MCG to BLPI mode. CLOCK_BootToBlpiMode CLOCK_SetInternalRefClkConfig */
@@ -314,6 +314,8 @@ void ClocksConfig_VLPR(void)
     segger_update_clocks();
     /* Set SDHC clock source. */
     CLOCK_SetSdhc0Clock(SIM_SDHC_CLK_SEL_CORE_SYSTEM_CLK);
-#endif
+
+    CLOCK_DisableClock(kCLOCK_Usbfs0);
+//#endif
 }
 

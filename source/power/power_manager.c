@@ -16,6 +16,7 @@
 #include "segger_wrapper.h"
 #include "power_manager.h"
 #include "clock_config.h"
+#include "composite.h"
 
 #include "pin_mux.h"
 #include "fsl_pmc.h"
@@ -84,9 +85,9 @@ static smc_power_state_t curPowerState;
 void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode)
 {
 	/* Wait for debug console output finished. */
-	while (!(kUART_TransmissionCompleteFlag & UART_GetStatusFlags((UART_Type *)BOARD_DEBUG_UART_BASEADDR)))
-	{
-	}
+//	while (!(kUART_TransmissionCompleteFlag & UART_GetStatusFlags((UART_Type *)BOARD_DEBUG_UART_BASEADDR)))
+//	{
+//	}
 //	DbgConsole_Deinit();
 
 }
@@ -102,16 +103,11 @@ void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_
 //		PORT_SetPinMux(DEBUG_CONSOLE_RX_PORT, DEBUG_CONSOLE_RX_PIN, DEBUG_CONSOLE_RX_PINMUX);
 	}
 
-	/*
-	 * For some other platforms, if enter LLS mode from VLPR mode, when wakeup, the
-	 * power mode is VLPR. But for some platforms, if enter LLS mode from VLPR mode,
-	 * when wakeup, the power mode is RUN. In this case, the clock setting is still
-	 * VLPR mode setting, so change to RUN mode setting here.
-	 */
-//	if ((kSMC_PowerStateVlpr == originPowerState) && (kSMC_PowerStateRun == SMC_GetPowerModeState(SMC)))
-//	{
-//		APP_SetClockRunFromVlpr();
-//	}
+
+	if ((kSMC_PowerStateVlpr == originPowerState) && (kSMC_PowerStateRun == SMC_GetPowerModeState(SMC)))
+	{
+		CLOCK_EnableUsbfs0Clock(USB_FS_CLK_SRC, USB_FS_CLK_FREQ);
+	}
 
 	/*
 	 * If enter stop modes when MCG in PEE mode, then after wakeup, the MCG is in PBE mode,
@@ -222,7 +218,6 @@ void APP_PowerModeSwitch(app_power_mode_t targetPowerMode)
 	switch (targetPowerMode)
 	{
 	case kAPP_PowerModeVlpr:
-		LOG_INFO("Switching to VLPR !\r\n");
 		ClocksConfig_VLPR();
 //		APP_SetClockVlpr();
 //		SMC_SetPowerModeVlpr(SMC, false);

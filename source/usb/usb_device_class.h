@@ -33,6 +33,7 @@
 
 #include <stdint.h>
 #include "usb.h"
+#include "usb_device.h"
 
 /*!
  * @addtogroup usb_device_class_driver

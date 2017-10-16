@@ -8,9 +8,12 @@
 #ifndef LIBRARIES_UTILS_SEGGER_WRAPPER_H_
 #define LIBRARIES_UTILS_SEGGER_WRAPPER_H_
 
+
+#include "MK64F12.h"
+#include <stddef.h>
+#include "fsl_common.h"
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_RTT.h"
-
 
 /////////    PARAMETERS
 
@@ -55,6 +58,12 @@ extern "C" {
 #endif /* _cplusplus */
 
 void segger_init(void);
+
+void segger_update_clocks(void);
+
+void segger_send(UART_Type *base, const uint8_t *buffer, size_t length);
+
+status_t segger_recv(UART_Type *base, uint8_t *buffer, size_t length);
 
 #if defined(__cplusplus)
 }

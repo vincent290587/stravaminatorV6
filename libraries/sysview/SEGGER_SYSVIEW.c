@@ -1266,6 +1266,17 @@ void SEGGER_SYSVIEW_Init(U32 SysFreq, U32 CPUFreq, const SEGGER_SYSVIEW_OS_API *
 #endif  // (SEGGER_SYSVIEW_POST_MORTEM_MODE == 1)
 }
 
+void SEGGER_SYSVIEW_UpdateClocks(U32 SysFreq, U32 CPUFreq) {
+#if (SEGGER_SYSVIEW_POST_MORTEM_MODE == 1)
+
+#else   // (SEGGER_SYSVIEW_POST_MORTEM_MODE == 1)
+	SEGGER_SYSVIEW_LOCK();
+	_SYSVIEW_Globals.SysFreq          = SysFreq;
+	_SYSVIEW_Globals.CPUFreq          = CPUFreq;
+	SEGGER_SYSVIEW_UNLOCK();
+#endif  // (SEGGER_SYSVIEW_POST_MORTEM_MODE == 1)
+}
+
 /*********************************************************************
 *
 *       SEGGER_SYSVIEW_SetRAMBase()

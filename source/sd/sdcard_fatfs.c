@@ -37,6 +37,7 @@
 #include "fsl_debug_console.h"
 #include "composite_public.h"
 #include "sdcard_fatfs.h"
+#include "board.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -65,10 +66,6 @@ const TCHAR driverNumberBuffer[3U] = {SDDISK + '0', ':', '/'};
 /**
  * MSC Init
  */
-static void sdcard_init_switch(void) {
-	// TODO
-	CompositeInit();
-}
 
 /**
  * MSC tasks
@@ -80,7 +77,7 @@ void sdcard_tasks(void) {
 /**
  * @brief Inits the SD card and mounts the FAT system
  */
-void sdcard_init() {
+void usb_comp_init() {
 
     SYSMPU_Enable(SYSMPU, false);
 
@@ -88,11 +85,13 @@ void sdcard_init() {
     {
         LOG_INFO("Mount volume failed.\r\n");
     } else {
-    	PRINTF("Mount volume success.\r\n");
+    	LOG_INFO("Mount volume success.\r\n");
     }
 
-    sdcard_init_switch();
+    CompositeInit();
 
+    // TODO
+    BOARD_InitDebugConsole();
 }
 
 /*!

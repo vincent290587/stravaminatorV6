@@ -46,33 +46,6 @@ typedef struct _usb_device_composite_struct
         currentInterfaceAlternateSetting[USB_INTERFACE_COUNT]; /* Current alternate setting value for each interface. */
 } usb_device_composite_struct_t;
 
-
-/*******************************************************************************
-* API
-******************************************************************************/
-/*!
- * @brief CDC class specific callback function.
- *
- * This function handles the CDC class specific requests.
- *
- * @param handle          The CDC ACM class handle.
- * @param event           The CDC ACM class event type.
- * @param param           The parameter of the class specific request.
- *
- * @return A USB error code or kStatus_USB_Success.
- */
-extern usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
-/*!
- * @brief Virtual COM device set configuration function.
- *
- * This function sets configuration for CDC class.
- *
- * @param handle The CDC ACM class handle.
- * @param configure The CDC ACM class configure index.
- *
- * @return A USB error code or kStatus_USB_Success.
- */
-extern usb_status_t USB_DeviceCdcVcomSetConfigure(class_handle_t handle, uint8_t configure);
 /*!
  * @brief Virtual COM device initialization function.
  *
@@ -82,15 +55,7 @@ extern usb_status_t USB_DeviceCdcVcomSetConfigure(class_handle_t handle, uint8_t
  *
  * @return A USB error code or kStatus_USB_Success.
  */
-extern usb_status_t USB_DeviceCdcVcomInit(usb_device_composite_struct_t *deviceComposite);
-/*!
- * @brief Application task function.
- *
- * This function runs the task for application.
- *
- * @return None.
- */
-extern void USB_DeviceCdcVcomTask(void);
+usb_status_t USB_DeviceCdcVcomInit(usb_device_composite_struct_t *deviceComposite);
 
 /*!
  * @brief MSC class specific callback function.
@@ -125,7 +90,5 @@ extern usb_status_t USB_DeviceMscDiskSetConfigure(class_handle_t handle, uint8_t
  * @return A USB error code or kStatus_USB_Success.
  */
 extern usb_status_t USB_DeviceMscDiskInit(usb_device_composite_struct_t *deviceComposite);
-
-
 
 #endif /* SOURCE_USB_COMPOSITE_H_ */

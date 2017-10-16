@@ -16,7 +16,7 @@
 //#define LS027_CE_PIN          kDSPI_MasterPcs4
 //#define LS027_CE_PIN_INIT     kDSPI_Pcs4
 
-#define SPI_BAUDRATE          4000000
+#define SPI_BAUDRATE          5000000
 
 #define TRANSFER_SIZE         64U        /*! Transfer dataSize */
 
@@ -81,7 +81,7 @@ static inline void WriteData(uint8_t data)
 }
 
 
-static void ls027_init() {
+static void ls027_spi_init() {
 
 	dspi_master_config_t  masterConfig;
 
@@ -191,7 +191,7 @@ void LS027_Init(void)
 
 	memcpy(LS027_DisplayBuf, SPLASH_BMP, LS027_BUFFER_SIZE);
 
-	ls027_init();
+	ls027_spi_init();
 }
 
 /*

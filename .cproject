@@ -95,6 +95,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/sd}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/usb}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/routes}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/power}&quot;"/>
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
 									<listOptionValue builtIn="false" value="../startup"/>
@@ -114,12 +115,12 @@
 								</option>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.nostdinc.9718872252" name="Do not search system directories (-nostdinc)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.nostdinc" useByScannerDiscovery="true" value="false" valueType="boolean"/>
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.other.9656342149" name="Other compiler flags" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.other" useByScannerDiscovery="true" value=" -mapcs " valueType="string"/>
+								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.warning.badfunctioncast.1368996592" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.c.compiler.warning.badfunctioncast" value="true" valueType="boolean"/>
 								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1895544709" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
 							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.435207489" name="Cross ARM C++ Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler">
 								<option id="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths.8284596290" name="Include paths (-I)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.cpp.compiler.include.paths" useByScannerDiscovery="true" valueType="includePath">
 									<listOptionValue builtIn="false" value="../CMSIS"/>
-									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/routes}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\sdmmc_2.1.2\inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\include&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\device&quot;"/>
@@ -128,6 +129,8 @@
 									<listOptionValue builtIn="false" value="&quot;E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs_0.12b\src\fsl_sd_disk&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/usb}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/sd}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/routes}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/power}&quot;"/>
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
 									<listOptionValue builtIn="false" value="../startup"/>
@@ -391,15 +394,6 @@
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 		<project id="k64f.ilg.gnuarmeclipse.managedbuild.cross.target.elf.1537007018" name="Executable" projectType="ilg.gnuarmeclipse.managedbuild.cross.target.elf"/>
 	</storageModule>
-	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1792027861;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1792027861.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1397207158;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1895544709">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.1939339834;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.1939339834.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.955273220;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1711058916">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		</scannerConfigBuildInfo>
-	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 	<storageModule moduleId="refreshScope" versionNumber="2">
 		<configuration configurationName="Multiple configurations">
@@ -413,4 +407,17 @@
 		</configuration>
 	</storageModule>
 	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
+	<storageModule moduleId="scannerConfiguration">
+		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1792027861;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1792027861.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1397207158;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1895544709">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.1939339834;ilg.gnuarmeclipse.managedbuild.cross.config.elf.release.1939339834.;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.955273220;ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1711058916">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+		<scannerConfigBuildInfo instanceId="ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1792027861;ilg.gnuarmeclipse.managedbuild.cross.config.elf.debug.1792027861.;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.435207489;ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.1752336968">
+			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
+		</scannerConfigBuildInfo>
+	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.internal.ui.text.commentOwnerProjectMappings"/>
 </cproject>

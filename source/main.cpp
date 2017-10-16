@@ -8,11 +8,15 @@
 #include "Segment.h"
 #include "segger_wrapper.h"
 #include "fsl_uart_edma.h"
+#include "fsl_gpio.h"
 #include "ls027.h"
 #include "millis.h"
 #include "sdcard_fatfs.h"
 #include "uart0.h"
 #include "uart2.h"
+#include "composite.h"
+#include "power_manager.h"
+
 
 extern "C" int essai(void);
 
@@ -20,54 +24,71 @@ extern "C" int essai(void);
  * @brief Application entry point.
  */
 int main(void) {
-  /* Init board hardware. */
-  BOARD_InitBootPins();
-  BOARD_InitBootClocks();
-  BOARD_InitDebugConsole();
+	/* Init board hardware. */
+	BOARD_InitBootPins();
+	BOARD_InitBootClocks();
 
-  /* Init DMAMUX */
-  DMAMUX_Init(DMAMUX0);
+	/* Define the init structure for the output LED pin*/
+	gpio_pin_config_t led_config = {
+			kGPIO_DigitalOutput, 0,
+	};/* Init output LED GPIO. */
+	GPIO_PinInit(BOARD_LED_GREEN_GPIO, BOARD_LED_GREEN_GPIO_PIN, &led_config);
 
-  /* Init code */
-  millis_init();
+	/* Init DMAMUX */
+	DMAMUX_Init(DMAMUX0);
 
-  // Segger
-  segger_init();
+	/* Init code */
+	millis_init();
 
-  // LCD driver
-  LS027_Init();
+	// Segger
+	segger_init();
+	BOARD_InitDebugConsole();
 
-  // Initialize the UART.
-  uart_config_t uartConfig;
-  UART_GetDefaultConfig(&uartConfig);
-  uartConfig.enableTx = true;
-  uartConfig.enableRx = true;
+	// USB driver
+	usb_comp_init();
+	CompositeTask();
 
-  uartConfig.baudRate_Bps = 9600U;
-  uart0_init(&uartConfig);
+	// Initialize the UART.
+	uart_config_t uartConfig;
+	UART_GetDefaultConfig(&uartConfig);
+	uartConfig.enableTx = true;
+	uartConfig.enableRx = true;
 
-  uartConfig.baudRate_Bps = 115200U;
-  uart2_init(&uartConfig);
+	uartConfig.baudRate_Bps = 9600U;
+	uart0_init(&uartConfig);
 
-  // USB driver
-  sdcard_init();
-  sdcard_tasks();
+	uartConfig.baudRate_Bps = 115200U;
+	uart2_init(&uartConfig);
 
-  essai();
+	// LCD driver
+	LS027_Init();
 
-  for(;;) { /* Infinite loop to avoid leaving the main function */
+	//  essai();
 
-	delay_ms(100); /* something to use as a breakpoint stop while looping */
+	delay_ms(500);
 
-	sdcard_tasks();
+	power_manager_init();
 
-    LOG_INFO("Hello World millis= %lu\r\n", millis());
+//	power_manager_run(kAPP_PowerModeVlpr);
 
-    LS027_UpdateFull();
+	GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
 
-  }
+	for(;;) { /* Infinite loop to avoid leaving the main function */
 
-  return 0;
+		delay_ms(1000); /* something to use as a breakpoint stop while looping */
+		GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
+
+		CompositeTask();
+
+		LOG_INFO("Hello World millis= %lu\r\n", millis());
+
+		power_manager_run(kAPP_PowerModeRun);
+		LS027_UpdateFull();
+		power_manager_run(kAPP_PowerModeVlpr);
+
+	}
+
+	return 0;
 }
 
 

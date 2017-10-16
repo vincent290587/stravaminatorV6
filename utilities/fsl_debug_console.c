@@ -65,6 +65,7 @@
 #endif
 #include <math.h>
 #include "fsl_debug_console.h"
+#include "segger_wrapper.h"
 
 #if (defined(FSL_FEATURE_SOC_UART_COUNT) && (FSL_FEATURE_SOC_UART_COUNT > 0)) || \
     (defined(FSL_FEATURE_SOC_IUART_COUNT) && (FSL_FEATURE_SOC_IUART_COUNT > 0))
@@ -240,92 +241,98 @@ status_t DbgConsole_Init(uint32_t baseAddr, uint32_t baudRate, uint8_t device, u
     s_debugConsole.type = device;
 
     /* Switch between different device. */
-    switch (device)
-    {
-#if (defined(FSL_FEATURE_SOC_UART_COUNT) && (FSL_FEATURE_SOC_UART_COUNT > 0)) || \
-    (defined(FSL_FEATURE_SOC_IUART_COUNT) && (FSL_FEATURE_SOC_IUART_COUNT > 0))
-        case DEBUG_CONSOLE_DEVICE_TYPE_UART:
-        case DEBUG_CONSOLE_DEVICE_TYPE_IUART:
-        {
-            uart_config_t uart_config;
-            s_debugConsole.base = (UART_Type *)baseAddr;
-            UART_GetDefaultConfig(&uart_config);
-            uart_config.baudRate_Bps = baudRate;
-            /* Enable clock and initial UART module follow user configure structure. */
-            UART_Init(s_debugConsole.base, &uart_config, clkSrcFreq);
-            UART_EnableTx(s_debugConsole.base, true);
-            UART_EnableRx(s_debugConsole.base, true);
-            /* Set the function pointer for send and receive for this kind of device. */
-            s_debugConsole.ops.tx_union.UART_PutChar = UART_WriteBlocking;
-            s_debugConsole.ops.rx_union.UART_GetChar = UART_ReadBlocking;
-        }
-        break;
-#endif /* FSL_FEATURE_SOC_UART_COUNT */
-#if defined(FSL_FEATURE_SOC_LPSCI_COUNT) && (FSL_FEATURE_SOC_LPSCI_COUNT > 0)
-        case DEBUG_CONSOLE_DEVICE_TYPE_LPSCI:
-        {
-            lpsci_config_t lpsci_config;
-            s_debugConsole.base = (UART0_Type *)baseAddr;
-            LPSCI_GetDefaultConfig(&lpsci_config);
-            lpsci_config.baudRate_Bps = baudRate;
-            /* Enable clock and initial UART module follow user configure structure. */
-            LPSCI_Init(s_debugConsole.base, &lpsci_config, clkSrcFreq);
-            LPSCI_EnableTx(s_debugConsole.base, true);
-            LPSCI_EnableRx(s_debugConsole.base, true);
-            /* Set the function pointer for send and receive for this kind of device. */
-            s_debugConsole.ops.tx_union.LPSCI_PutChar = LPSCI_WriteBlocking;
-            s_debugConsole.ops.rx_union.LPSCI_GetChar = LPSCI_ReadBlocking;
-        }
-        break;
-#endif /* FSL_FEATURE_SOC_LPSCI_COUNT */
-#if defined(FSL_FEATURE_SOC_LPUART_COUNT) && (FSL_FEATURE_SOC_LPUART_COUNT > 0)
-        case DEBUG_CONSOLE_DEVICE_TYPE_LPUART:
-        {
-            lpuart_config_t lpuart_config;
-            s_debugConsole.base = (LPUART_Type *)baseAddr;
-            LPUART_GetDefaultConfig(&lpuart_config);
-            lpuart_config.baudRate_Bps = baudRate;
-            /* Enable clock and initial UART module follow user configure structure. */
-            LPUART_Init(s_debugConsole.base, &lpuart_config, clkSrcFreq);
-            LPUART_EnableTx(s_debugConsole.base, true);
-            LPUART_EnableRx(s_debugConsole.base, true);
-            /* Set the function pointer for send and receive for this kind of device. */
-            s_debugConsole.ops.tx_union.LPUART_PutChar = LPUART_WriteBlocking;
-            s_debugConsole.ops.rx_union.LPUART_GetChar = LPUART_ReadBlocking;
-        }
-        break;
-#endif /* FSL_FEATURE_SOC_LPUART_COUNT */
-#if defined(FSL_FEATURE_SOC_USB_COUNT) && (FSL_FEATURE_SOC_USB_COUNT > 0) && defined(BOARD_USE_VIRTUALCOM)
-        case DEBUG_CONSOLE_DEVICE_TYPE_USBCDC:
-        {
-            s_debugConsole.base = USB_VcomInit();
-            s_debugConsole.ops.tx_union.USB_PutChar = USB_VcomWriteBlocking;
-            s_debugConsole.ops.rx_union.USB_GetChar = USB_VcomReadBlocking;
-        }
-        break;
-#endif /* FSL_FEATURE_SOC_USB_COUNT && BOARD_USE_VIRTUALCOM*/
-#if defined(FSL_FEATURE_SOC_FLEXCOMM_COUNT) && (FSL_FEATURE_SOC_FLEXCOMM_COUNT > 0)
-        case DEBUG_CONSOLE_DEVICE_TYPE_FLEXCOMM:
-        {
-            usart_config_t usart_config;
-            s_debugConsole.base = (USART_Type *)baseAddr;
-            USART_GetDefaultConfig(&usart_config);
-            usart_config.baudRate_Bps = baudRate;
-            /* Enable clock and initial UART module follow user configure structure. */
-            USART_Init(s_debugConsole.base, &usart_config, clkSrcFreq);
-            /* Set the function pointer for send and receive for this kind of device. */
-            s_debugConsole.ops.tx_union.USART_PutChar = USART_WriteBlocking;
-            s_debugConsole.ops.rx_union.USART_GetChar = USART_ReadBlocking;
-        }
-        break;
-#endif  /* FSL_FEATURE_SOC_FLEXCOMM_COUNT*/
-        /* If new device is required as the low level device for debug console,
-         * Add the case branch and add the preprocessor macro to judge whether
-         * this kind of device exist in this SOC. */
-        default:
-            /* Device identified is invalid, return invalid device error code. */
-            return kStatus_InvalidArgument;
-    }
+//    switch (device)
+//    {
+//#if (defined(FSL_FEATURE_SOC_UART_COUNT) && (FSL_FEATURE_SOC_UART_COUNT > 0)) || \
+//    (defined(FSL_FEATURE_SOC_IUART_COUNT) && (FSL_FEATURE_SOC_IUART_COUNT > 0))
+//        case DEBUG_CONSOLE_DEVICE_TYPE_UART:
+//        case DEBUG_CONSOLE_DEVICE_TYPE_IUART:
+//        {
+//            uart_config_t uart_config;
+//            s_debugConsole.base = (UART_Type *)baseAddr;
+//            UART_GetDefaultConfig(&uart_config);
+//            uart_config.baudRate_Bps = baudRate;
+//            /* Enable clock and initial UART module follow user configure structure. */
+//            UART_Init(s_debugConsole.base, &uart_config, clkSrcFreq);
+//            UART_EnableTx(s_debugConsole.base, true);
+//            UART_EnableRx(s_debugConsole.base, true);
+//            /* Set the function pointer for send and receive for this kind of device. */
+//            s_debugConsole.ops.tx_union.UART_PutChar = UART_WriteBlocking;
+//            s_debugConsole.ops.rx_union.UART_GetChar = UART_ReadBlocking;
+//        }
+//        break;
+//#endif /* FSL_FEATURE_SOC_UART_COUNT */
+//#if defined(FSL_FEATURE_SOC_LPSCI_COUNT) && (FSL_FEATURE_SOC_LPSCI_COUNT > 0)
+//        case DEBUG_CONSOLE_DEVICE_TYPE_LPSCI:
+//        {
+//            lpsci_config_t lpsci_config;
+//            s_debugConsole.base = (UART0_Type *)baseAddr;
+//            LPSCI_GetDefaultConfig(&lpsci_config);
+//            lpsci_config.baudRate_Bps = baudRate;
+//            /* Enable clock and initial UART module follow user configure structure. */
+//            LPSCI_Init(s_debugConsole.base, &lpsci_config, clkSrcFreq);
+//            LPSCI_EnableTx(s_debugConsole.base, true);
+//            LPSCI_EnableRx(s_debugConsole.base, true);
+//            /* Set the function pointer for send and receive for this kind of device. */
+//            s_debugConsole.ops.tx_union.LPSCI_PutChar = LPSCI_WriteBlocking;
+//            s_debugConsole.ops.rx_union.LPSCI_GetChar = LPSCI_ReadBlocking;
+//        }
+//        break;
+//#endif /* FSL_FEATURE_SOC_LPSCI_COUNT */
+//#if defined(FSL_FEATURE_SOC_LPUART_COUNT) && (FSL_FEATURE_SOC_LPUART_COUNT > 0)
+//        case DEBUG_CONSOLE_DEVICE_TYPE_LPUART:
+//        {
+//            lpuart_config_t lpuart_config;
+//            s_debugConsole.base = (LPUART_Type *)baseAddr;
+//            LPUART_GetDefaultConfig(&lpuart_config);
+//            lpuart_config.baudRate_Bps = baudRate;
+//            /* Enable clock and initial UART module follow user configure structure. */
+//            LPUART_Init(s_debugConsole.base, &lpuart_config, clkSrcFreq);
+//            LPUART_EnableTx(s_debugConsole.base, true);
+//            LPUART_EnableRx(s_debugConsole.base, true);
+//            /* Set the function pointer for send and receive for this kind of device. */
+//            s_debugConsole.ops.tx_union.LPUART_PutChar = LPUART_WriteBlocking;
+//            s_debugConsole.ops.rx_union.LPUART_GetChar = LPUART_ReadBlocking;
+//        }
+//        break;
+//#endif /* FSL_FEATURE_SOC_LPUART_COUNT */
+//#if defined(FSL_FEATURE_SOC_USB_COUNT) && (FSL_FEATURE_SOC_USB_COUNT > 0) && defined(BOARD_USE_VIRTUALCOM)
+//        case DEBUG_CONSOLE_DEVICE_TYPE_USBCDC:
+//        {
+//            s_debugConsole.base = 0;//(void*)USB_DeviceCdcVcomGetHandle();
+////            s_debugConsole.ops.tx_union.USB_PutChar = USB_DeviceCdcVcomSend;
+////            s_debugConsole.ops.rx_union.USB_GetChar = USB_DeviceCdcVcomRecv;
+//            s_debugConsole.ops.tx_union.USB_PutChar = USB_VcomWriteBlocking;
+//            s_debugConsole.ops.rx_union.USB_GetChar = USB_VcomReadBlocking;
+//        }
+//        break;
+//#endif /* FSL_FEATURE_SOC_USB_COUNT && BOARD_USE_VIRTUALCOM*/
+//#if defined(FSL_FEATURE_SOC_FLEXCOMM_COUNT) && (FSL_FEATURE_SOC_FLEXCOMM_COUNT > 0)
+//        case DEBUG_CONSOLE_DEVICE_TYPE_FLEXCOMM:
+//        {
+//            usart_config_t usart_config;
+//            s_debugConsole.base = (USART_Type *)baseAddr;
+//            USART_GetDefaultConfig(&usart_config);
+//            usart_config.baudRate_Bps = baudRate;
+//            /* Enable clock and initial UART module follow user configure structure. */
+//            USART_Init(s_debugConsole.base, &usart_config, clkSrcFreq);
+//            /* Set the function pointer for send and receive for this kind of device. */
+//            s_debugConsole.ops.tx_union.USART_PutChar = USART_WriteBlocking;
+//            s_debugConsole.ops.rx_union.USART_GetChar = USART_ReadBlocking;
+//        }
+//        break;
+//#endif  /* FSL_FEATURE_SOC_FLEXCOMM_COUNT*/
+//        /* If new device is required as the low level device for debug console,
+//         * Add the case branch and add the preprocessor macro to judge whether
+//         * this kind of device exist in this SOC. */
+//        default:
+//            /* Device identified is invalid, return invalid device error code. */
+//            return kStatus_InvalidArgument;
+//    }
+
+    s_debugConsole.base = 0;
+    s_debugConsole.ops.tx_union.UART_PutChar = segger_send;
+    s_debugConsole.ops.rx_union.UART_GetChar = segger_recv;
 
     return kStatus_Success;
 }
@@ -345,7 +352,7 @@ status_t DbgConsole_Deinit(void)
         case DEBUG_CONSOLE_DEVICE_TYPE_UART:
         case DEBUG_CONSOLE_DEVICE_TYPE_IUART:
             /* Disable UART module. */
-            UART_Deinit(s_debugConsole.base);
+//            UART_Deinit(s_debugConsole.base);
             break;
 #endif /* FSL_FEATURE_SOC_UART_COUNT */
 #if defined(FSL_FEATURE_SOC_LPSCI_COUNT) && (FSL_FEATURE_SOC_LPSCI_COUNT > 0)

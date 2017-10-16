@@ -13,6 +13,7 @@ RM := rm -rf
 -include source/usb/subdir.mk
 -include source/sd/subdir.mk
 -include source/routes/subdir.mk
+-include source/power/subdir.mk
 -include source/subdir.mk
 -include middleware/usb_1.6.3/osa/subdir.mk
 -include middleware/usb_1.6.3/device/subdir.mk

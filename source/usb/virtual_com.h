@@ -31,6 +31,9 @@
 #define _USB_CDC_VCOM_H_ 1
 
 #include "usb.h"
+#include "usb_device_class.h"
+#include "usb_device_descriptor.h"
+
 
 /*******************************************************************************
 * Definitions
@@ -98,5 +101,58 @@ typedef struct _usb_cdc_acm_info
     uint8_t currentInterface; /* Current interface index.                           */
     uint16_t uartState;       /* UART state of the CDC device.                      */
 } usb_cdc_acm_info_t;
+
+
+
+
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus*/
+
+
+/*******************************************************************************
+* API
+******************************************************************************/
+/*!
+ * @brief CDC class specific callback function.
+ *
+ * This function handles the CDC class specific requests.
+ *
+ * @param handle          The CDC ACM class handle.
+ * @param event           The CDC ACM class event type.
+ * @param param           The parameter of the class specific request.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
+/*!
+ * @brief Virtual COM device set configuration function.
+ *
+ * This function sets configuration for CDC class.
+ *
+ * @param handle The CDC ACM class handle.
+ * @param configure The CDC ACM class configure index.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+usb_status_t USB_DeviceCdcVcomSetConfigure(class_handle_t handle, uint8_t configure);
+
+/*!
+ * @brief Application task function.
+ *
+ * This function runs the task for application.
+ *
+ * @return None.
+ */
+void USB_DeviceCdcVcomTask(void);
+
+void CompositeTask(void);
+
+
+#if defined(__cplusplus)
+}
+#endif /* __cplusplus*/
+
+
 
 #endif /* _USB_CDC_VCOM_H_ */

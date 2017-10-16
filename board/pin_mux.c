@@ -35,6 +35,9 @@ void BOARD_InitBootPins(void) {
 #define PIN17_IDX                       17u   /*!< Pin number for pin 17 in a port */
 #define PIN18_IDX                       18u   /*!< Pin number for pin 18 in a port */
 #define PIN19_IDX                       19u   /*!< Pin number for pin 19 in a port */
+#define PIN21_IDX                       21u   /*!< Pin number for pin 21 in a port */
+#define PIN22_IDX                       22u   /*!< Pin number for pin 22 in a port */
+#define PIN26_IDX                       26u   /*!< Pin number for pin 26 in a port */
 #define SOPT5_UART0TXSRC_UART_TX      0x00u   /*!< UART 0 transmit data source select: UART0_TX pin */
 
 /*
@@ -85,6 +88,9 @@ BOARD_InitPins:
   - {pin_num: '63', peripheral: UART0, signal: TX, pin_signal: PTB17/SPI1_SIN/UART0_TX/FTM_CLKIN1/FB_AD16/EWM_OUT_b}
   - {pin_num: '96', peripheral: UART2, signal: TX, pin_signal: PTD3/SPI0_SIN/UART2_TX/FTM3_CH3/FB_AD3/I2C0_SDA}
   - {pin_num: '95', peripheral: UART2, signal: RX, pin_signal: PTD2/LLWU_P13/SPI0_SOUT/UART2_RX/FTM3_CH2/FB_AD4/I2C0_SCL}
+  - {pin_num: '33', peripheral: GPIOE, signal: 'GPIO, 26', pin_signal: PTE26/ENET_1588_CLKIN/UART4_CTS_b/RTC_CLKOUT/USB_CLKIN}
+  - {pin_num: '67', peripheral: GPIOB, signal: 'GPIO, 21', pin_signal: PTB21/SPI2_SCK/FB_AD30/CMP1_OUT}
+  - {pin_num: '68', peripheral: GPIOB, signal: 'GPIO, 22', pin_signal: PTB22/SPI2_SOUT/FB_AD29/CMP2_OUT}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS ***********
  */
 
@@ -112,6 +118,8 @@ void BOARD_InitPins(void) {
 	PORT_SetPinMux(PORTB, PIN17_IDX, kPORT_MuxAlt3);           /* PORTB17 (pin 63) is configured as UART0_TX */
 	PORT_SetPinMux(PORTB, PIN2_IDX, kPORT_MuxAlt2);            /* PORTB2 (pin 55) is configured as I2C0_SCL */
 	PORT_SetPinMux(PORTB, PIN3_IDX, kPORT_MuxAlt2);            /* PORTB3 (pin 56) is configured as I2C0_SDA */
+	PORT_SetPinMux(PORTB, PIN21_IDX, kPORT_MuxAsGpio);         /* PORTB21 (pin 67) is configured as PTB21 */
+	PORT_SetPinMux(PORTB, PIN22_IDX, kPORT_MuxAsGpio);         /* PORTB22 (pin 68) is configured as PTB22 */
 	PORT_SetPinMux(PORTC, PIN0_IDX, kPORT_MuxAlt2);            /* PORTC0 (pin 70) is configured as SPI0_PCS4 */
 	PORT_SetPinMux(PORTC, PIN2_IDX, kPORT_MuxAlt2);            /* PORTC2 (pin 72) is configured as SPI0_PCS2 */
 	PORT_SetPinMux(PORTC, PIN4_IDX, kPORT_MuxAlt2);            /* PORTC4 (pin 76) is configured as SPI0_PCS0 */
@@ -120,6 +128,7 @@ void BOARD_InitPins(void) {
 	PORT_SetPinMux(PORTC, PIN7_IDX, kPORT_MuxAlt2);            /* PORTC7 (pin 79) is configured as SPI0_SIN */
 	PORT_SetPinMux(PORTD, PIN2_IDX, kPORT_MuxAlt3);            /* PORTD2 (pin 95) is configured as UART2_RX */
 	PORT_SetPinMux(PORTD, PIN3_IDX, kPORT_MuxAlt3);            /* PORTD3 (pin 96) is configured as UART2_TX */
+	PORT_SetPinMux(PORTE, PIN26_IDX, kPORT_MuxAsGpio);         /* PORTE26 (pin 33) is configured as PTE26 */
 	PORT_SetPinMux(PORTE, PIN0_IDX, kPORT_MuxAlt4);            /* PORTE0 (pin 1) is configured as SDHC0_D1 */
 	const port_pin_config_t porte0_pin1_config = {
 			kPORT_PullUp,                                            /* Internal pull-up resistor is enabled */

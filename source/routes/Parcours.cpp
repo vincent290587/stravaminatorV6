@@ -27,17 +27,17 @@ Parcours *ListeParcours::getParcoursAt(int i) {
  * @param nom
  * @return
  */
-static int _nomCorrect(String nom) {
+static bool _nomCorrect(String nom) {
 
 	if (nom.length() == 0) {
-		return 0;
+		return false;
 	}
 
 	if (!nom.endsWith(".PAR")) {
-		return 0;
+		return false;
 	}
 
-	return 1;
+	return true;
 }
 
 /**
@@ -179,11 +179,12 @@ float Parcours::getDistanceP1(float lat_, float lon_) {
 
 /**
  *
+ * @param name_
  * @return
  */
-int Parcours::nomCorrect() {
-	return _nomCorrect(_nomFichier);
+bool Parcours::nomCorrect(const char *name_) {
+
+	String name = name_;
+	return _nomCorrect(name);
 }
-
-
 

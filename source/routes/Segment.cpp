@@ -4,48 +4,43 @@
 
 
 
-static int _nomCorrect(String nom) {
+static bool _nomCorrect(String nom) {
 
 	int i;
 
 	if (nom.length() == 0)
-		return 0;
-
-	if (nom.endsWith(".CRS")) {
-		return 1;
-	}
+		return false;
 
 	if (!strstr(nom.c_str(), "#") || !strstr(nom.c_str(), ".")) {
-		return 0;
+		return false;
 	}
 
 	if (strlen(nom.c_str()) != 12) {
-		return 0;
+		return false;
 	}
 
 	for (i = 0; i < 12; i++) {
 
 		if (i == 5) {
 			if (nom.c_str()[i] != '#')
-				return 0;
+				return false;
 		} else if (i == 8) {
 			if (nom.c_str()[i] != '.')
-				return 0;
+				return false;
 		} else {
 			if (nom.c_str()[i] < '0' || nom.c_str()[i] > 'Z' || (nom.c_str()[i] > '9' && nom.c_str()[i] < 'A')) {
-				return 0;
+				return false;
 			}
 		}
 	}
 
-	return 1;
+	return true;
 }
 
 
-static int _nomCorrect(const char *chaine) {
+bool Segment::nomCorrect(const char *chaine) {
 
 	String nom = chaine;
-
 	return _nomCorrect(nom);
 }
 
@@ -317,11 +312,5 @@ void Segment::majPerformance(ListePoints *mes_points) {
 		_actif += 1;
 	}
 }
-
-
-int Segment::nomCorrect() {
-	return _nomCorrect(_nomFichier.c_str());
-}
-
 
 

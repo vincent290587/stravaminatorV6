@@ -50,7 +50,7 @@ class Segment {
     void desallouerPoints(void);
     int  longueur() {return _lpts.size();}
     int isValid();
-    int nomCorrect();
+    static bool nomCorrect(const char *name);
 
     int8_t getStatus() {return _actif;}
     void setStatus(int8_t act) {_actif = act; return;}

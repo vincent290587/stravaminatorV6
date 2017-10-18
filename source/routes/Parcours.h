@@ -27,7 +27,7 @@ public:
 	const char* getName();
 	void emptyName();
 
-	int nomCorrect();
+	static bool nomCorrect(const char *name_);
 
 	void desallouerPoints(void);
 	int  longueur() {

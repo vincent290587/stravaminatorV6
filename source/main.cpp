@@ -16,6 +16,7 @@
 #include "uart2.h"
 #include "composite.h"
 #include "power_manager.h"
+#include "sd_functions.h"
 
 
 extern "C" int essai(void);
@@ -65,6 +66,8 @@ int main(void) {
 
 	power_manager_init();
 
+	init_liste_segments();
+
 //	power_manager_run(kAPP_PowerModeVlpr);
 
 	GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
@@ -74,15 +77,14 @@ int main(void) {
 		delay_ms(1000); /* something to use as a breakpoint stop while looping */
 		GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
 
-		LOG_INFO("Hello World millis= %lu\r\n", millis());
-
-		power_manager_run(kAPP_PowerModeRun);
-		CompositeRestart();
+//		power_manager_run(kAPP_PowerModeRun);
+//		CompositeRestart();
 		LS027_UpdateFull();
 		CompositeTask();
-		CompositeStop();
-		power_manager_run(kAPP_PowerModeVlpr);
+//		CompositeStop();
+//		power_manager_run(kAPP_PowerModeVlpr);
 
+		LOG_INFO("Loop (%u ms)\r\n", millis());
 	}
 
 	return 0;

@@ -217,26 +217,30 @@ SECTIONS
     __END_BSS = .;
   } > m_data
 
+  .stack :
+  {
+    . = ALIGN(8);
+    . += STACK_SIZE;
+  } > m_data_2
+  
+    /* Initializes stack on the end of block */
+  __StackTop   = ORIGIN(m_data_2) + LENGTH(m_data_2);
+  __StackLimit = __StackTop - STACK_SIZE;
+  
+    /* Max out heap :-) */
+  __HeapSize   = LENGTH(m_data_2) - STACK_SIZE - STACK_SIZE;
+  
   .heap :
   {
     . = ALIGN(8);
     __end__ = .;
     PROVIDE(end = .);
     __HeapBase = .;
-    . += HEAP_SIZE;
+    . += __HeapSize;
     __HeapLimit = .;
     __heap_limit = .; /* Add for _sbrk */
   } > m_data_2
 
-  .stack :
-  {
-    . = ALIGN(8);
-    . += STACK_SIZE;
-  } > m_data_2
-
-  /* Initializes stack on the end of block */
-  __StackTop   = ORIGIN(m_data_2) + LENGTH(m_data_2);
-  __StackLimit = __StackTop - STACK_SIZE;
   PROVIDE(__stack = __StackTop);
 
   .ARM.attributes 0 : { *(.ARM.attributes) }

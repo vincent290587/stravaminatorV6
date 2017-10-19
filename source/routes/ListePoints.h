@@ -60,6 +60,7 @@ protected:
     std::list<Point> m_lpoints;
     Vecteur m_pos_r;
     Vecteur m_delta_l;
+    float m_dist;
     Point m_P1, m_P2;
 };
 

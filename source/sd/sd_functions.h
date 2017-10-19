@@ -14,6 +14,10 @@
 
 int init_liste_segments(void);
 
+int load_segment(Segment& seg);
+
+float segment_allocator(Segment& mon_seg, float lat1, float long1);
+
 //#if defined(__cplusplus)
 //}
 //#endif /* _cplusplus */

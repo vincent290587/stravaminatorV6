@@ -106,7 +106,7 @@ void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_
 
 	if ((kSMC_PowerStateVlpr == originPowerState) && (kSMC_PowerStateRun == SMC_GetPowerModeState(SMC)))
 	{
-		CLOCK_EnableUsbfs0Clock(USB_FS_CLK_SRC, USB_FS_CLK_FREQ);
+//		CLOCK_EnableUsbfs0Clock(USB_FS_CLK_SRC, USB_FS_CLK_FREQ);
 	}
 
 	/*

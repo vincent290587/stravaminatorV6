@@ -144,8 +144,18 @@ usb_status_t USB_DeviceCdcVcomSetConfigure(class_handle_t handle, uint8_t config
  *
  * @return None.
  */
-void USB_DeviceCdcVcomTask(void);
+void USB_DeviceCdcVcomOnRecv(void);
 
+/**
+ * Sends a buffer through USB VCOM
+ * @param buffer Buffer
+ * @param size length
+ */
+void USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size);
+
+/**
+ * Low level USB tasks (KHCI..)
+ */
 void CompositeTask(void);
 
 

@@ -1,6 +1,7 @@
 
 #include "math.h"
 #include "Segment.h"
+#include "segger_wrapper.h"
 
 
 
@@ -126,20 +127,20 @@ Vecteur Segment::posAuSegment(Point point) {
 	return _lpts.computePosRelative(point);
 }
 
-int Segment::testActivation(ListePoints *liste) {
+int Segment::testActivation(ListePoints& liste) {
 
 	float distP1P2, distP1, distP2, p_scal, distQuad;
 	Point P1, P2, PPc, PPp;
 	Vecteur PC, PS;
 
-	if (_lpts.size() <= 3 || liste->size() <= 2) {
+	if (_lpts.size() <= 3 || liste.size() <= 2) {
 		return 0;
 	}
 
 	// position courante
-	Point *test = liste->getFirstPoint();
+	Point *test = liste.getFirstPoint();
 	PPc = test;
-	PPp = liste->getPointAt(1);
+	PPp = liste.getPointAt(1);
 
 	P1 = _lpts.getFirstPoint();
 	// premier point
@@ -174,17 +175,17 @@ int Segment::testActivation(ListePoints *liste) {
 
 }
 
-int Segment::testDesactivation(ListePoints *liste) {
+int Segment::testDesactivation(ListePoints& liste) {
 
 	float distP1P2, distP1, distP2;
 	Point *P1, *P2, *PPc;
 
-	if (_lpts.size() <= 3 || liste->size() <= 2) {
+	if (_lpts.size() <= 3 || liste.size() <= 2) {
 		return 0;
 	}
 
 	// position courante
-	PPc = liste->getFirstPoint();
+	PPc = liste.getFirstPoint();
 
 	P1 = _lpts.getPointAt(-2);
 	distP1 = P1->dist(PPc);
@@ -205,20 +206,23 @@ int Segment::testDesactivation(ListePoints *liste) {
 
 }
 
-
-void Segment::majPerformance(ListePoints *mes_points) {
+/**
+ *
+ * @param mes_points List of the last user's GPS positions
+ */
+void Segment::majPerformance(ListePoints& mes_points) {
 
 	int activable, desactivable;
 	Point pc;
 	Vecteur vect;
 	Vecteur delta;
 
-	if (mes_points->size() < 2) {
+	if (mes_points.size() < 2) {
 		//    loggerMsg("Historique insuffisant");
 		return;
 	}
 
-	pc = *mes_points->getFirstPoint();
+	pc = mes_points.getFirstPoint();
 
 	if (!pc.isValid()) {
 		//    loggerMsg("Premier point invalide");
@@ -236,7 +240,7 @@ void Segment::majPerformance(ListePoints *mes_points) {
 		if (activable > 0) {
 			// premiere interpolation avec notre historique de points
 			pc = this->getFirstPoint();
-			vect = mes_points->computePosRelative(pc);
+			vect = mes_points.computePosRelative(pc);
 
 			_monStart = vect._t;
 			_monCur = vect._t;
@@ -299,7 +303,7 @@ void Segment::majPerformance(ListePoints *mes_points) {
 			}
 
 			// position relative du dernier point segment / mes points
-			vect = mes_points->computePosRelative(lp);
+			vect = mes_points.computePosRelative(lp);
 
 			_monCur = vect._t - _monStart;
 			_monAvance = delta._t - _monCur;

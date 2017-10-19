@@ -16,15 +16,17 @@
 #include "uart2.h"
 #include "composite.h"
 #include "power_manager.h"
-#include "sd_functions.h"
+#include "Model.h"
 
 
-extern "C" int essai(void);
 
 /*!
  * @brief Application entry point.
  */
 int main(void) {
+
+	UData<bool> led_state;
+
 	/* Init board hardware. */
 	BOARD_InitBootPins();
 	BOARD_InitBootClocks();
@@ -64,27 +66,31 @@ int main(void) {
 	// LCD driver
 	LS027_Init();
 
-	power_manager_init();
+	pwManager.init();
 
-	init_liste_segments();
-
-//	power_manager_run(kAPP_PowerModeVlpr);
+	boucle_crs.init();
 
 	GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
 
 	for(;;) { /* Infinite loop to avoid leaving the main function */
 
-		delay_ms(1000); /* something to use as a breakpoint stop while looping */
-		GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
+		// USB tasks
+		if (pwManager.isUsbConnected()) CompositeTask();
 
-//		power_manager_run(kAPP_PowerModeRun);
-//		CompositeRestart();
-		LS027_UpdateFull();
-		CompositeTask();
-//		CompositeStop();
-//		power_manager_run(kAPP_PowerModeVlpr);
+		// segments tasks
+		boucle_crs.tasks();
 
-		LOG_INFO("Loop (%u ms)\r\n", millis());
+		// debug LED
+		if (led_state.getAge() > 500) {
+
+			led_state = !led_state.getData();
+
+			GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
+
+//			LOG_INFO("Loop (%u ms)\r\n", millis());
+		}
+
+
 	}
 
 	return 0;

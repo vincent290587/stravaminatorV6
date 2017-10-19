@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "usb_parser.h"
 #include "usb_device_config.h"
 #include "usb.h"
 #include "usb_device.h"
@@ -139,12 +140,17 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
             {
                 s_recvSize = epCbParam->length;
 
-                if (!s_recvSize)
-                {
-                    /* Schedule buffer for next receive event */
-                    error = USB_DeviceCdcAcmRecv(handle, USB_CDC_VCOM_DIC_BULK_OUT_ENDPOINT, s_currRecvBuf,
-                                                 g_cdcVcomDicEndpoints[0].maxPacketSize);
-                }
+                // the if makes VCOM crash...
+//                if (!s_recvSize) {
+                /* Schedule buffer for next receive event */
+                error = USB_DeviceCdcAcmRecv(handle, USB_CDC_VCOM_DIC_BULK_OUT_ENDPOINT, s_currRecvBuf,
+                		g_cdcVcomDicEndpoints[0].maxPacketSize);
+
+
+                USB_DeviceCdcVcomOnRecv();
+//                }
+
+
             }
         }
         break;
@@ -315,38 +321,49 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
  *
  * @return None.
  */
-void USB_DeviceCdcVcomTask(void)
+void USB_DeviceCdcVcomOnRecv(void)
 {
-    usb_status_t error = kStatus_USB_Error;
     if ((1 == g_deviceComposite->cdcVcom.attach) && (1 == g_deviceComposite->cdcVcom.startTransactions))
     {
-        /* User Code */
+        /* Check received data */
         if ((0 != s_recvSize) && (0xFFFFFFFFU != s_recvSize))
         {
             int32_t i;
 
-            /* Copy Buffer to Send Buff */
+            /* parse Buffer */
             for (i = 0; i < s_recvSize; i++)
             {
-                s_currSendBuf[s_sendSize++] = s_currRecvBuf[i];
+            	usb_parser_decode(s_currRecvBuf[i]);
             }
             s_recvSize = 0;
         }
-
-        if (s_sendSize)
-        {
-            uint32_t size = s_sendSize;
-            s_sendSize = 0;
-
-            error = USB_DeviceCdcAcmSend(g_deviceComposite->cdcVcom.cdcAcmHandle, USB_CDC_VCOM_DIC_BULK_IN_ENDPOINT,
-                                         s_currSendBuf, size);
-
-            if (error != kStatus_USB_Success)
-            {
-                /* Failure to send Data Handling code here */
-            }
-        }
     }
+}
+
+void USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size) {
+
+	usb_status_t error = kStatus_USB_Error;
+	    if ((1 == g_deviceComposite->cdcVcom.attach) && (1 == g_deviceComposite->cdcVcom.startTransactions))
+	    {
+	        if (!s_sendSize)
+	        {
+	            memcpy(s_currSendBuf, buffer, size);
+
+	            s_sendSize = size;
+
+	            error = USB_DeviceCdcAcmSend(g_deviceComposite->cdcVcom.cdcAcmHandle, USB_CDC_VCOM_DIC_BULK_IN_ENDPOINT,
+	                                         s_currSendBuf, size);
+
+	            s_sendSize = 0;
+
+	            if (error != kStatus_USB_Success)
+	            {
+	                /* TODO Failure to send Data Handling code here */
+	            }
+	        } else {
+	        	/* TODO Failure to send Data Handling code here */
+	        }
+	    }
 }
 
 /*!

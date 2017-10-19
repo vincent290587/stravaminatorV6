@@ -31,10 +31,10 @@ using namespace std;
 
 #define FACTOR 100000.
 
-#define SEG_FIN -5
-#define SEG_OFF 0
-#define SEG_START 1
-#define SEG_ON 2
+#define SEG_FIN    -5
+#define SEG_OFF     0
+#define SEG_START   1
+#define SEG_ON      2
 
 
 
@@ -65,12 +65,12 @@ class Segment {
     void toString();
 
     Vecteur posAuSegment(Point point);
-    int testActivation(ListePoints *liste);
-    int testDesactivation(ListePoints *liste);
+    int testActivation(ListePoints& liste);
+    int testDesactivation(ListePoints& liste);
 
     ListePoints *getListePoints() {return &_lpts;}
 
-    void majPerformance(ListePoints *mes_points);
+    void majPerformance(ListePoints& mes_points);
 
     Point *getFirstPoint();
     float dist(Point *p) {return _lpts.dist(p);}

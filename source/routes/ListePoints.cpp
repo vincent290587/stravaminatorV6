@@ -13,6 +13,7 @@
  *
  */
 ListePoints::ListePoints() {
+	m_dist = 0;
 }
 
 /** @brief Adds a point at the beginning
@@ -110,14 +111,13 @@ void ListePoints::removeLast() {
 }
 
 void ListePoints::toString() {
-	std::list<Point>::iterator _iter;
 
 	if (this->size() > 0) {
-		for (_iter = m_lpoints.begin(); _iter != m_lpoints.end(); _iter++) {
 
-			_iter.operator->()->toString();
-
+		for (auto& point : m_lpoints) {
+			point.toString();
 		}
+
 	} else {
 		//printf("Aucun point\n");
 	}
@@ -132,19 +132,14 @@ void ListePoints::toString() {
 float ListePoints::dist(Point *p_) {
 
 	float maDist = 100000.;
-	Point pCourant;
-	std::list<Point>::iterator _iter;
 
 	// on cherche la distance min
-	for (_iter = m_lpoints.begin(); _iter != m_lpoints.end(); _iter++) {
-
-		pCourant = *_iter.operator->();
-
-		if (maDist > pCourant.dist(p_)) {
-			maDist = pCourant.dist(p_);
+	for (auto& point : m_lpoints) {
+		if (maDist > point.dist(p_)) {
+			maDist = point.dist(p_);
 		}
-
 	}
+
 	return maDist;
 }
 
@@ -179,39 +174,46 @@ float ListePoints::distP1(float lat_, float lon_) {
  */
 void ListePoints::updateDelta() {
 
-	std::list<Point>::iterator _iter;
-	Point *tmpPT1, *tmpPT2;
+	int indice = 0;
+	Point tmpPT1;
 	float tmp_dist = 0.;
-	float min_lon = m_lpoints.front()._lon;
-	float max_lon = m_lpoints.front()._lon;
-	float min_lat = m_lpoints.front()._lat;
-	float max_lat = m_lpoints.front()._lat;
+	float min_lon;
+	float max_lon;
+	float min_lat;
+	float max_lat;
 
+	for (auto& tmpPT2 : m_lpoints) {
 
-	for (_iter = m_lpoints.begin(); _iter != m_lpoints.end();) {
+		if (indice != 0) {
 
-		tmpPT1 = _iter.operator->();
-		_iter++;
-		if (_iter == m_lpoints.end()) break;
-		tmpPT2 = _iter.operator->();
+			// distance
+			tmp_dist += tmpPT1.dist(tmpPT2);
 
-		// distance
-		tmp_dist += tmpPT1->dist(tmpPT2);
+			// minimaux
+			if (tmpPT2._lon < min_lon) min_lon = tmpPT2._lon;
+			if (tmpPT2._lat < min_lat) min_lat = tmpPT2._lat;
 
-		// minimaux
-		if (tmpPT2->_lon < min_lon) min_lon = tmpPT2->_lon;
-		if (tmpPT2->_lat < min_lat) min_lat = tmpPT2->_lat;
+			// maximaux
+			if (max_lon < tmpPT2._lon) max_lon = tmpPT2._lon;
+			if (max_lat < tmpPT2._lat) max_lon = tmpPT2._lat;
 
-		// maximaux
-		if (max_lon < tmpPT2->_lon) max_lon = tmpPT2->_lon;
-		if (max_lat < tmpPT2->_lat) max_lon = tmpPT2->_lat;
+		} else {
+			min_lat = tmpPT2._lat;
+			max_lat = tmpPT2._lat;
+			min_lon = tmpPT2._lon;
+			max_lon = tmpPT2._lon;
+		}
 
+		tmpPT1 = tmpPT2;
+		indice++;
 	}
 
 	m_delta_l._x = max_lon - min_lon;
 	m_delta_l._y = max_lat - min_lat;
 	m_delta_l._z = getElevTot();
 	m_delta_l._t = getTempsTot();
+
+	m_dist = tmp_dist;
 
 }
 
@@ -221,8 +223,7 @@ void ListePoints::updateDelta() {
  */
 void ListePoints::updateRelativePosition(Point point) {
 
-	std::list<Point>::iterator _iter;
-	Point P1, P2, tmpPT;
+	Point P1, P2;
 	float tmp_dist, distP1, distP2;
 	int init = 0;
 	Vecteur PP1, P1P2;
@@ -232,9 +233,8 @@ void ListePoints::updateRelativePosition(Point point) {
 	}
 
 	// on cherche les deux plus proches points
-	for (_iter = m_lpoints.begin(); _iter != m_lpoints.end(); _iter++) {
+	for (auto& tmpPT : m_lpoints) {
 
-		tmpPT = _iter.operator->();
 		tmp_dist = tmpPT.dist(&point);
 
 		if (init == 0) {
@@ -293,8 +293,7 @@ void ListePoints::updateRelativePosition(Point point) {
  */
 Vecteur ListePoints::computePosRelative(Point point) {
 
-	std::list<Point>::iterator _iter;
-	Point P1, P2, tmpPT;
+	Point P1, P2;
 	float tmp_dist, distP1, distP2;
 	int init = 0;
 	Vecteur res, PP1, P1P2;
@@ -304,9 +303,8 @@ Vecteur ListePoints::computePosRelative(Point point) {
 	}
 
 	// on cherche les deux plus proches points
-	for (_iter = m_lpoints.begin(); _iter != m_lpoints.end(); _iter++) {
+	for (auto& tmpPT : m_lpoints) {
 
-		tmpPT = _iter.operator->();
 		tmp_dist = tmpPT.dist(&point);
 
 		if (init == 0) {

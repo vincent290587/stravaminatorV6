@@ -7,6 +7,7 @@
 
 #include "ls027.h"
 #include "spi.h"
+#include "segger_wrapper.h"
 
 // release
 #define LS027_CE_PIN          kDSPI_MasterPcs2
@@ -77,7 +78,6 @@ static uint8_t LS027_RevertBits(uint8_t data) {
 static inline void WriteData(uint8_t data)
 {
 	masterTxData[spi_settings.spi_tx_data_length++] = data;
-
 }
 
 
@@ -122,6 +122,7 @@ static void start_transfer(bool is_last_byte) {
 	spi_start_transfer(&spi_settings, is_last_byte);
 
     spi_settings.spi_tx_data_length = 0;
+
 }
 
 static void CE_ClrVal () {
@@ -240,8 +241,9 @@ void LS027_UpdateLine(uint8_t line, uint8_t *dataP)
  */
 void LS027_UpdateFull(void)
 {
-//	uint16_t numBytes = LS027_BUFFER_SIZE;
-//	int i, currentline, oldline;
+
+	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
+
 	uint8_t *data = LS027_DisplayBuf;
 
 	for (int i=0; i < LS027_HW_HEIGHT; i++) {
@@ -250,6 +252,7 @@ void LS027_UpdateFull(void)
 
 	}
 
+	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 }
 
 /*

@@ -7,10 +7,19 @@
 
 #include "Model.h"
 
-ListeSegments mes_segments;
 
-ListePoints   mes_points;
+SAtt att;
+
+ListeSegments mes_segments;
 
 ListeParcours mes_parcours;
 
+ListePoints   mes_points;
 
+Nordic        nordic;
+
+Locator       locator;
+
+BoucleCRS     boucle_crs;
+
+PowerManager  pwManager;

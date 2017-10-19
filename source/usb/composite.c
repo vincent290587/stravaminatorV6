@@ -407,8 +407,7 @@ void CompositeRestart(void) {
  */
 void CompositeTask(void)
 {
-
-    USB_DeviceCdcVcomTask();
+	USB_DeviceCdcVcomOnRecv();
     if (g_composite.mscDisk.readWriteError)
     {
         return;

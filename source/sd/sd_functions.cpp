@@ -283,11 +283,16 @@ float segment_allocator(Segment& mon_seg, float lat1, float long1) {
 
 	} else if (mon_seg.longueur() > 0 && mon_seg.isValid()) {
 
-		Point tmp_pt(lat1, long1, 0., 0.);
-
-		tmp_dist = mon_seg.dist(&tmp_pt);
+		// on teste l'eloignement au premier point
+		Point pp = *mon_seg.getFirstPoint();
+		tmp_dist = distance_between(lat1, long1, pp._lat, pp._lon);
 		ret_val = tmp_dist;
 
+		// distance au segment
+		Point tmp_pt(lat1, long1, 0., 0.);
+		tmp_dist = mon_seg.dist(&tmp_pt);
+
+		// test desallocation
 		if (tmp_dist > MARGE_DESACT * DIST_ALLOC) {
 			// on desalloue
 			LOG_INFO("Desallocation non nominale !\r\n");
@@ -297,6 +302,8 @@ float segment_allocator(Segment& mon_seg, float lat1, float long1) {
 
 //			display.notifyANCS(1, "WTCH", "Seg trop loin");
 		}
+
+
 	}
 
 	return ret_val;

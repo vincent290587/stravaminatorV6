@@ -92,6 +92,8 @@ void usb_comp_init() {
 
 }
 
+
+
 /*!
  * @brief Main function
  */

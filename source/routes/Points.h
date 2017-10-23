@@ -13,6 +13,7 @@
 class Point2D {
 public:
     Point2D();
+    Point2D(const Point2D&) = default;
     Point2D(float lat, float lon);
     Point2D & operator=(const Point2D &point);
     Point2D & operator=(const Point2D *point);
@@ -29,6 +30,7 @@ public:
 class Point : public Point2D {
 public:
     Point();
+	Point(const Point&) = default;
     Point(float lat, float lon, float alt, float rtime);
     Point & operator=(const Point &point);
     Point & operator=(const Point *point);

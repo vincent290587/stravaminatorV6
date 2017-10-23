@@ -74,7 +74,7 @@ void ListePoints::removeAll() {
 }
 
 Point *ListePoints::getFirstPoint() {
-	return &m_lpoints.front();
+    return &m_lpoints.front();
 }
 
 Point *ListePoints::getLastPoint() {

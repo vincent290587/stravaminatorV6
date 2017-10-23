@@ -70,6 +70,8 @@ int main(void) {
 
 	boucle_crs.init();
 
+	sdisplay.print("Hello");
+
 	GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
 
 	for(;;) { /* Infinite loop to avoid leaving the main function */
@@ -81,13 +83,17 @@ int main(void) {
 		boucle_crs.tasks();
 
 		// debug LED
-		if (led_state.getAge() > 500) {
+		if (led_state.getAge() > 1500) {
 
 			led_state = !led_state.getData();
 
 			GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
 
 //			LOG_INFO("Loop (%u ms)\r\n", millis());
+
+			// update the screen
+			LS027_UpdateFull();
+
 		}
 
 

@@ -106,3 +106,9 @@ void delay_ms(uint32_t delay_) {
 	}
 }
 
+/**
+ *
+ */
+void sleep(void) {
+	__asm("WFI"); /* sleep */
+}

@@ -18,6 +18,8 @@ uint32_t millis(void);
 
 void delay_ms(uint32_t delay_);
 
+void sleep(void);
+
 #ifdef	__cplusplus
 }
 #endif

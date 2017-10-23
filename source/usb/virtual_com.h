@@ -151,7 +151,7 @@ void USB_DeviceCdcVcomOnRecv(void);
  * @param buffer Buffer
  * @param size length
  */
-void USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size);
+usb_status_t USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size);
 
 /**
  * Low level USB tasks (KHCI..)

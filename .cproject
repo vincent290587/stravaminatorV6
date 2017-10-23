@@ -100,6 +100,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/power}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/parsers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/model}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/display}&quot;"/>
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
 									<listOptionValue builtIn="false" value="../startup"/>
@@ -138,6 +139,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/power}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/parsers}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/model}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/display}&quot;"/>
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
 									<listOptionValue builtIn="false" value="../startup"/>
@@ -270,9 +272,16 @@
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.warnings.missingdeclaration.8587428419.1834921249" name="Warn on undeclared global function (-Wmissing-declaration)" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.warnings.missingdeclaration.8587428419"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.warnings.badfunctioncast.5152099896.306851218" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.warnings.badfunctioncast.5152099896"/>
 							<option id="ilg.gnuarmeclipse.managedbuild.cross.option.addtools.createlisting.3963251306.556761765" name="Create extended listing" superClass="ilg.gnuarmeclipse.managedbuild.cross.option.addtools.createlisting.3963251306"/>
-							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.2125186869" name="Cross ARM GNU Assembler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.2007968129"/>
-							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.637827800" name="Cross ARM C Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1397207158"/>
-							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.1922026278" name="Cross ARM C++ Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.435207489"/>
+							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="ilg.gnuarmeclipse.managedbuild.cross.targetPlatform" isAbstract="false" osList="all" superClass="ilg.gnuarmeclipse.managedbuild.cross.targetPlatform"/>
+							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.2125186869" name="Cross ARM GNU Assembler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.2007968129">
+								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input.893843052" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.assembler.input"/>
+							</tool>
+							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.637827800" name="Cross ARM C Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.1397207158">
+								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input.1977928109" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.compiler.input"/>
+							</tool>
+							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.1922026278" name="Cross ARM C++ Compiler" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.435207489">
+								<inputType id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input.2004032545" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.compiler.input"/>
+							</tool>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.c.linker.389791034" name="Cross ARM C Linker" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.c.linker.1681324840"/>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.linker.1880466496" name="Cross ARM C++ Linker" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.cpp.linker.1475612095"/>
 							<tool id="ilg.gnuarmeclipse.managedbuild.cross.tool.archiver.680227789" name="Cross ARM GNU Archiver" superClass="ilg.gnuarmeclipse.managedbuild.cross.tool.archiver.717958418"/>

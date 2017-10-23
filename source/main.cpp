@@ -43,13 +43,13 @@ int main(void) {
 	/* Init code */
 	millis_init();
 
-	// Segger
-	segger_init();
-	BOARD_InitDebugConsole();
-
 	// USB driver
 	usb_comp_init();
 	CompositeTask();
+
+	// Segger
+	segger_init();
+	BOARD_InitDebugConsole();
 
 	// Initialize the UART.
 	uart_config_t uartConfig;

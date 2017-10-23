@@ -25,18 +25,24 @@
 
 #include "segger_wrapper.h"
 #include "new.h"
+#include "stdlib.h"
 
-//extern unsigned int __HeapLimit;
-//extern unsigned int __HeapBase;
-//
 //static uint32_t total_alloc = 0;
+//static uint32_t first_p = 0;
+//static uint32_t last_p;
 //
 //void * operator new(size_t size)
 //{
 //	void *p = calloc(size, 1);
 //	if (p) {
 //		total_alloc += size;
-//		LOG_INFO("Alloc %u - %u / %u\r\n", size, total_alloc, __HeapLimit - __HeapBase);
+//		last_p = (uint32_t)p;
+////		if (size==24 && total_alloc > 22000) {
+////			for (;;)
+////				__BKPT(0);
+////		}
+//		if (!first_p) first_p = last_p;
+//		LOG_INFO("Alloc %u - %u / %u\r\n", size, total_alloc, last_p - first_p);
 //	} else {
 //		LOG_INFO("MEM ERROR\r\n");
 //	}
@@ -48,7 +54,9 @@
 //	void *p = calloc(size, 1);
 //	if (p) {
 //		total_alloc += size;
-//		LOG_INFO("Alloc %u - %u / %u\r\n", size, total_alloc, __HeapLimit - __HeapBase);
+//		last_p = (uint32_t)p;
+//		if (!first_p) first_p = last_p;
+//		LOG_INFO("Alloc %u - %u / %u\r\n", size, total_alloc, last_p - first_p);
 //	} else {
 //		LOG_INFO("MEM ERROR\r\n");
 //	}
@@ -57,23 +65,31 @@
 //
 //void operator delete(void * ptr)
 //{
+//	LOG_INFO("Free\r\n");
+//	// 24 is sizeof of point
+//	total_alloc -= 24;
 //	free(ptr);
 //}
 //
 //void operator delete[](void * ptr)
 //{
+//	LOG_INFO("Free\r\n");
+//	// 24 is sizeof of point
+//	total_alloc -= 24;
 //	free(ptr);
 //}
 //
 //void operator delete(void * ptr, size_t size)
 //{
-//	total_alloc -= size;
+//	// 24 is sizeof of point
+//	total_alloc -= 24;
 //	free(ptr);
 //}
 //
 //void operator delete[](void * ptr, size_t size)
 //{
-//	total_alloc -= size;
+//	// 24 is sizeof of point
+//	total_alloc -= 24;
 //	free(ptr);
 //}
 

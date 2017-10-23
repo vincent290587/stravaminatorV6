@@ -155,6 +155,7 @@ int          SEGGER_RTT_SetFlagsDownBuffer      (unsigned BufferIndex, unsigned 
 int          SEGGER_RTT_SetFlagsUpBuffer        (unsigned BufferIndex, unsigned Flags);
 int          SEGGER_RTT_WaitKey                 (void);
 unsigned     SEGGER_RTT_Write                   (unsigned BufferIndex, const void* pBuffer, unsigned NumBytes);
+unsigned     SEGGER_RTT_WriteBlock              (unsigned BufferIndex, const void* pBuffer, unsigned NumBytes);
 unsigned     SEGGER_RTT_WriteNoLock             (unsigned BufferIndex, const void* pBuffer, unsigned NumBytes);
 unsigned     SEGGER_RTT_WriteSkipNoLock         (unsigned BufferIndex, const void* pBuffer, unsigned NumBytes);
 unsigned     SEGGER_RTT_WriteString             (unsigned BufferIndex, const char* s);

@@ -16,6 +16,7 @@ RM := rm -rf
 -include source/power/subdir.mk
 -include source/parsers/subdir.mk
 -include source/model/subdir.mk
+-include source/display/subdir.mk
 -include source/subdir.mk
 -include middleware/usb_1.6.3/osa/subdir.mk
 -include middleware/usb_1.6.3/device/subdir.mk

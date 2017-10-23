@@ -54,15 +54,25 @@ void BoucleCRS::run() {
 	W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
 
 	// update position
+	att.alt = 0;
 	locator.getPosition(att.lat, att.lon);
 	locator.clearIsUpdated();
+
+	sdisplay.clear();
+	sdisplay.setCursor(5,5);
+	sdisplay.setTextSize(1);
+	sdisplay.print("No Seg");
+//	sdisplay.drawRect(40, 15, 20, 10, BLACK);
+
 	mes_points.ajouteFinIso(att.lat, att.lon, 0., millis(), 8);
 
 	for (auto& seg : mes_segments._segs) {
 
 		if (seg.isValid() && mes_points.size() > 2) {
 
+			W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
 			tmp_dist = segment_allocator(seg, att.lat, att.lon);
+			W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
 
 			// calculate distance to closes segment
 			if (tmp_dist < min_dist_seg) min_dist_seg = tmp_dist;
@@ -70,40 +80,56 @@ void BoucleCRS::run() {
 			seg.majPerformance(mes_points);
 
 			if (seg.getStatus() != SEG_OFF) {
-//				att.nbact += 1;
+				//				att.nbact += 1;
 				if (seg.getStatus() == SEG_START) {
+
 					LOG_INFO("Segment START %s\r\n", seg.getName());
+
 				} else if (seg.getStatus() == SEG_FIN) {
 
 					LOG_INFO("Segment FIN %s\r\n", seg.getName());
 
+
 					if (seg.getAvance() > 0.) {
-//						att.nbpr++;
-//						att.nbkom++;
-//						victoryTone ();
+						//						att.nbpr++;
+						//						att.nbkom++;
+						//						victoryTone ();
 					}
+
 				} else if (seg.getStatus() == SEG_ON) {
-//					Serial3.println(Nordic::encodeOrder(seg.getAvance(), seg.getCur()));
-//					order_glasses = 1;
-					LOG_INFO("Avance: %d\r\n", (int)seg.getAvance());
+					//					Serial3.println(Nordic::encodeOrder(seg.getAvance(), seg.getCur()));
+					//					order_glasses = 1;
+					LOG_INFO("Avance: %d\r\n", (int)(seg.getAvance() / 1000));
+
 				}
-//				display.registerSegment(seg);
+
+				//				display.registerSegment(seg);
+
+				sdisplay.clear();
+				sdisplay.printSeg(0, seg, 0);
+				break;
+
 			}
-//			else if (tmp_dist < SEG_DISPLAY_DIST) {
-//				// just display the segment
-//				display.registerSegment(seg);
-//			}
+			else if (tmp_dist < 250) {
+				// TODO just display the segment
+				LOG_INFO("Segment preview\r\n");
+				sdisplay.clear();
+				sdisplay.printSeg(0, seg, 0);
+				break;
+			}
 
 		} // fin isValid
 
 	} // fin for
 
+	W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
+
 	LOG_INFO("Next segment: %d\r\n", (int)min_dist_seg);
 
 	// update the screen
-	LS027_UpdateFull();
+//	LS027_UpdateFull();
 
-	W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
+//	sdisplay.displayRTT();
 
 	// go back to low power
 	pwManager.switchToVlpr();

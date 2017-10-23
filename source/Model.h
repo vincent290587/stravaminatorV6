@@ -16,10 +16,12 @@
 #include "Locator.h"
 #include "BoucleCRS.h"
 #include "PowerManager.h"
+#include "DebugDisplay.h"
 
 typedef struct {
 	float lat;
 	float lon;
+	float alt;
 } SAtt;
 
 extern SAtt att;
@@ -39,5 +41,7 @@ extern Locator       locator;
 extern BoucleCRS     boucle_crs;
 
 extern PowerManager  pwManager;
+
+extern DebugDisplay  sdisplay;
 
 #endif /* SOURCE_MODEL_H_ */

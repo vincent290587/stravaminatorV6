@@ -40,10 +40,11 @@
 #if USE_SVIEW
 #define W_SYSVIEW_OnIdle(...)          SEGGER_SYSVIEW_OnIdle()
 #define W_SYSVIEW_OnTaskStartExec(X)   SEGGER_SYSVIEW_OnTaskStartExec(X)
-#define W_SYSVIEW_OnTaskStopExec(X)    {                                        \
-										SEGGER_SYSVIEW_OnTaskStopReady(X,0);    \
-										SEGGER_SYSVIEW_OnIdle();                \
-										}
+#define W_SYSVIEW_OnTaskStopExec(X)    SEGGER_SYSVIEW_OnTaskTerminate(X)
+//#define W_SYSVIEW_OnTaskStopExec(X)    {                                        \
+//										SEGGER_SYSVIEW_OnTaskStopReady(X,0);    \
+//										SEGGER_SYSVIEW_OnIdle();                \
+//										}
 #define W_SYSVIEW_OnTaskCreate(X)      SEGGER_SYSVIEW_OnTaskCreate(X)
 #else
 #define W_SYSVIEW_OnIdle(...)          EMPTY_MACRO

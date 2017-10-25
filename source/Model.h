@@ -17,6 +17,7 @@
 #include "BoucleCRS.h"
 #include "PowerManager.h"
 #include "DebugDisplay.h"
+#include "TSharpMem.h"
 
 typedef struct {
 	float lat;
@@ -43,5 +44,7 @@ extern BoucleCRS     boucle_crs;
 extern PowerManager  pwManager;
 
 extern DebugDisplay  sdisplay;
+
+extern TSharpMem     lcd;
 
 #endif /* SOURCE_MODEL_H_ */

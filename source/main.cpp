@@ -9,7 +9,6 @@
 #include "segger_wrapper.h"
 #include "fsl_uart_edma.h"
 #include "fsl_gpio.h"
-#include "ls027.h"
 #include "millis.h"
 #include "sdcard_fatfs.h"
 #include "uart0.h"
@@ -64,7 +63,7 @@ int main(void) {
 	uart2_init(&uartConfig);
 
 	// LCD driver
-	LS027_Init();
+	lcd.begin();
 
 	pwManager.init();
 
@@ -83,16 +82,15 @@ int main(void) {
 		boucle_crs.tasks();
 
 		// debug LED
-		if (led_state.getAge() > 1500) {
+		if (led_state.getAge() > 750) {
 
-			led_state = !led_state.getData();
+			if (led_state.getData()) {
+				led_state = false;
+			} else {
+				led_state = true;
+			}
 
 			GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
-
-//			LOG_INFO("Loop (%u ms)\r\n", millis());
-
-			// update the screen
-			LS027_UpdateFull();
 
 		}
 

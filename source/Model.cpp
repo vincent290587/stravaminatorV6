@@ -25,3 +25,5 @@ BoucleCRS     boucle_crs;
 PowerManager  pwManager;
 
 DebugDisplay  sdisplay;
+
+TSharpMem     lcd;

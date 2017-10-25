@@ -10,7 +10,6 @@
 #include "Segment.h"
 #include "Model.h"
 #include "sd_functions.h"
-#include "ls027.h"
 #include "segger_wrapper.h"
 
 /**
@@ -127,7 +126,10 @@ void BoucleCRS::run() {
 	LOG_INFO("Next segment: %d\r\n", (int)min_dist_seg);
 
 	// update the screen
-//	LS027_UpdateFull();
+	lcd.setCursor(10,10);
+	lcd.setTextSize(3);
+	lcd.print(min_dist_seg);
+	lcd.writeWhole();
 
 //	sdisplay.displayRTT();
 

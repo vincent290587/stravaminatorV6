@@ -137,22 +137,21 @@ int Segment::testActivation(ListePoints& liste) {
 		return 0;
 	}
 
-	// position courante
+	// position courante / premier point
 	Point *test = liste.getFirstPoint();
 	PPc = test;
-	PPp = liste.getPointAt(1);
-
 	P1 = _lpts.getFirstPoint();
-	// premier point
+
+	distQuad = P1.dist(&PPc);
+	if (distQuad > DIST_ACT) return 0;
+
+	// second point
+	PPp = liste.getPointAt(1);
 	P2 = _lpts.getPointAt(1);
 
 	distP1 = P1.dist(&PPc);
 	distP2 = P2.dist(&PPc);
 	distP1P2 = P1.dist(&P2);
-
-	distQuad = P1.dist(&PPc);
-
-	if (distQuad > DIST_ACT) return 0;
 
 	PC = Vecteur(PPp, PPc);
 	PS = Vecteur(P1, P2);
@@ -170,7 +169,6 @@ int Segment::testActivation(ListePoints& liste) {
 		return 1;
 	} else {
 		return 0;
-		//Serial.println(F("Segment toujours inactif"));
 	}
 
 }

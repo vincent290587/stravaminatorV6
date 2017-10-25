@@ -70,15 +70,18 @@ void BoucleCRS::run() {
 		if (seg.isValid() && mes_points.size() > 2) {
 
 			W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
+
 			tmp_dist = segment_allocator(seg, att.lat, att.lon);
+
 			W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
 
 			// calculate distance to closes segment
 			if (tmp_dist < min_dist_seg) min_dist_seg = tmp_dist;
 
-			seg.majPerformance(mes_points);
-
 			if (seg.getStatus() != SEG_OFF) {
+
+				seg.majPerformance(mes_points);
+
 				//				att.nbact += 1;
 				if (seg.getStatus() == SEG_START) {
 
@@ -110,6 +113,9 @@ void BoucleCRS::run() {
 
 			}
 			else if (tmp_dist < 250) {
+
+				seg.majPerformance(mes_points);
+
 				// TODO just display the segment
 				LOG_INFO("Segment preview\r\n");
 				sdisplay.clear();

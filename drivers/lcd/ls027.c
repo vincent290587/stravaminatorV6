@@ -5,6 +5,7 @@
  *      Author: Vincent
  */
 
+#include <stdbool.h>
 #include "ls027.h"
 #include "spi.h"
 #include "segger_wrapper.h"
@@ -21,7 +22,11 @@
 
 #define TRANSFER_SIZE         64U        /*! Transfer dataSize */
 
-static uint8_t LS027_DisplayBuf[LS027_BUFFER_SIZE]; /* buffer for the display */
+static uint8_t LS027_DisplayBuf1[LS027_BUFFER_SIZE]; /* buffer for the display */
+static uint8_t LS027_DisplayBuf2[LS027_BUFFER_SIZE]; /* buffer for the display */
+
+static uint8_t* m_buffer_in_use;
+static uint8_t* m_buffer_prev;
 
 /* some aspects of the protocol are pretty timing sensitive... */
 #define LS027_BIT_WRITECMD   (0x01)
@@ -44,6 +49,8 @@ static uint8_t LS027_sharpmem_vcom;
 static spi_transfer_settings spi_settings;
 
 static uint8_t m_orientation = 0;
+
+static uint8_t m_is_color_inverted = 0;
 
 /* Internal method prototypes */
 static void WriteData(uint8_t data);
@@ -116,6 +123,10 @@ static void ls027_spi_init() {
 
 }
 
+/**
+ * Starts a SPI transfer
+ * @param is_last_byte
+ */
 static void start_transfer(bool is_last_byte) {
 
     /* Start master transfer */
@@ -132,6 +143,42 @@ static void CE_ClrVal () {
 static void CE_SetVal () {
 	// CS pin is toggled by HW SPI automatically
 	spi_settings.spi_tx_data_length = 0;
+}
+
+/**
+ *
+ * @param i Line number: 0..240
+ */
+static bool wasLineChanged(uint16_t i) {
+
+	if (memcmp(m_buffer_in_use + (i*LS027_HW_WIDTH/8),
+			m_buffer_prev + (i*LS027_HW_WIDTH/8),
+			LS027_HW_WIDTH/8)) {
+		return true;
+	} else {
+		return false;
+	}
+
+}
+
+/**
+ *
+ * @param x Col number:  0..400
+ * @param y Line number: 0..240
+ * @param color Color to be printed
+ */
+static void setBufferPixel(uint16_t x, uint16_t y, uint16_t color) {
+
+	// clip
+	if((x < 0) || (x >= LS027_HW_WIDTH) || (y < 0) || (y >= LS027_HW_HEIGHT)) return;
+
+	// fill buffer
+	if (color && !m_is_color_inverted) {
+		m_buffer_in_use[(y*LS027_HW_WIDTH + x) / 8] |= set[x & 7];
+	} else {
+		m_buffer_in_use[(y*LS027_HW_WIDTH + x) / 8] &= clr[x & 7];
+	}
+
 }
 
 /*
@@ -186,11 +233,18 @@ void LS027_Init(void)
 {
 
 	m_orientation = 1;
+	m_is_color_inverted = 0;
+
+	// reset buffers
+	memset(LS027_DisplayBuf1, 0, sizeof(LS027_DisplayBuf1));
+	memset(LS027_DisplayBuf2, 0, sizeof(LS027_DisplayBuf2));
+
+	// init double buffer
+	m_buffer_in_use = LS027_DisplayBuf1;
+	m_buffer_prev   = LS027_DisplayBuf2;
 
 	/* Set the vcom bit to a defined state */
 	LS027_sharpmem_vcom = LS027_BIT_VCOM;
-
-	memcpy(LS027_DisplayBuf, SPLASH_BMP, LS027_BUFFER_SIZE);
 
 	ls027_spi_init();
 }
@@ -244,13 +298,28 @@ void LS027_UpdateFull(void)
 
 	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
 
-	uint8_t *data = LS027_DisplayBuf;
+	uint16_t nb_lines_updated = 0;
 
 	for (int i=0; i < LS027_HW_HEIGHT; i++) {
 
-		LS027_UpdateLine(i, data + (i*LS027_HW_WIDTH/8));
+		if (wasLineChanged(i)) {
+
+			LS027_UpdateLine(i, m_buffer_in_use + (i*LS027_HW_WIDTH/8));
+
+			nb_lines_updated++;
+		}
 
 	}
+
+	// switching buffers
+	uint8_t *temp_pt = m_buffer_in_use;
+	m_buffer_in_use = m_buffer_prev;
+	m_buffer_prev   = temp_pt;
+
+	// reset buffer in use
+	memset(m_buffer_in_use, 0, sizeof(LS027_DisplayBuf1));
+
+	LOG_INFO("LCD: %u lines updated\r\n", nb_lines_updated);
 
 	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 }
@@ -282,9 +351,7 @@ void LS027_SetDisplayOrientation(LS027_DisplayOrientation newOrientation)
                 The y position (0 based)
  */
 /**************************************************************************/
-void LS027_drawPixel(int16_t x, int16_t y, uint16_t color) {
-	// TODO clip
-//	if((x < 0) || (x >= _width) || (y < 0) || (y >= _height)) return;
+void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color) {
 
 	switch(m_orientation) {
 	case 1:
@@ -301,9 +368,5 @@ void LS027_drawPixel(int16_t x, int16_t y, uint16_t color) {
 		break;
 	}
 
-	if(color) {
-		LS027_DisplayBuf[(y*LS027_HW_WIDTH + x) / 8] |= set[x & 7];
-	} else {
-		LS027_DisplayBuf[(y*LS027_HW_WIDTH + x) / 8] &= clr[x & 7];
-	}
+	setBufferPixel(x, y, color);
 }

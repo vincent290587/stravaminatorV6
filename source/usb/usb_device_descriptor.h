@@ -31,7 +31,7 @@
 #ifndef _USB_DEVICE_DESCRIPTOR_H_
 #define _USB_DEVICE_DESCRIPTOR_H_ 1
 
-#include "usb.h"
+#include "usb_device_class.h"
 
 /*******************************************************************************
 * Definitions

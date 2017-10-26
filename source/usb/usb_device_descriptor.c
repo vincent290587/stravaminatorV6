@@ -51,17 +51,18 @@ usb_device_endpoint_struct_t g_mscDiskEndpoints[USB_MSC_DISK_ENDPOINT_COUNT] = {
     }};
 
 /* Define interface for MSC class */
-usb_device_interface_struct_t g_mscDiskInterface[] = {{0,
+usb_device_interface_struct_t g_mscDiskInterface[] = {{
+    0,
                                                        {
                                                            USB_MSC_DISK_ENDPOINT_COUNT, g_mscDiskEndpoints,
                                                        },
-                                                       NULL}};
+}};
 
 /* Define interfaces for MSC disk */
-usb_device_interfaces_struct_t g_mscDiskInterfaces[USB_MSC_DISK_INTERFACE_COUNT] = {{
-    USB_MSC_DISK_CLASS, USB_MSC_DISK_SUBCLASS, USB_MSC_DISK_PROTOCOL, USB_MSC_DISK_INTERFACE_INDEX, g_mscDiskInterface,
-    sizeof(g_mscDiskInterface) / sizeof(usb_device_interfaces_struct_t),
-}};
+usb_device_interfaces_struct_t g_mscDiskInterfaces[USB_MSC_DISK_INTERFACE_COUNT] = {
+    {USB_MSC_DISK_CLASS, USB_MSC_DISK_SUBCLASS, USB_MSC_DISK_PROTOCOL, USB_MSC_DISK_INTERFACE_INDEX, g_mscDiskInterface,
+     sizeof(g_mscDiskInterface) / sizeof(usb_device_interfaces_struct_t)},
+};
 
 /* Define configurations for MSC disk */
 usb_device_interface_list_t g_mscDiskInterfaceList[USB_DEVICE_CONFIGURATION_COUNT] = {
@@ -95,18 +96,20 @@ usb_device_endpoint_struct_t g_cdcVcomDicEndpoints[USB_CDC_VCOM_DIC_ENDPOINT_COU
 };
 
 /* Define interface for communication class */
-usb_device_interface_struct_t g_cdcVcomCicInterface[] = {{0,
+usb_device_interface_struct_t g_cdcVcomCicInterface[] = {{
+    0,
                                                           {
                                                               USB_CDC_VCOM_CIC_ENDPOINT_COUNT, g_cdcVcomCicEndpoints,
                                                           },
-                                                          NULL}};
+}};
 
 /* Define interface for data class */
-usb_device_interface_struct_t g_cdcVcomDicInterface[] = {{0,
+usb_device_interface_struct_t g_cdcVcomDicInterface[] = {{
+    0,
                                                           {
                                                               USB_CDC_VCOM_DIC_ENDPOINT_COUNT, g_cdcVcomDicEndpoints,
                                                           },
-                                                          NULL}};
+}};
 
 /* Define interfaces for virtual com */
 usb_device_interfaces_struct_t g_cdcVcomInterfaces[USB_CDC_VCOM_INTERFACE_COUNT] = {
@@ -147,7 +150,7 @@ uint8_t g_UsbDeviceDescriptor[USB_DESCRIPTOR_LENGTH_DEVICE] = {
     /* Vendor ID (assigned by the USB-IF) */
     0xC9U, 0x1FU,
     /* Product ID (assigned by the manufacturer) */
-    0x9F, 0x00,
+    0x9E, 0x00,
     /* Device release number in binary-coded decimal */
     USB_SHORT_GET_LOW(USB_DEVICE_DEMO_BCD_VERSION), USB_SHORT_GET_HIGH(USB_DEVICE_DEMO_BCD_VERSION),
     /* Index of string descriptor describing manufacturer */

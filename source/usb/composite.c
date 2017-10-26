@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "usb_device_config.h"
+#include "usb.h"
 #include "usb_device.h"
 
 #include "usb_device_class.h"
@@ -90,6 +91,7 @@ extern void USB_DeviceMscWriteTask(void);
 static usb_device_composite_struct_t g_composite;
 extern usb_device_class_struct_t g_UsbDeviceCdcVcomConfig;
 extern usb_device_class_struct_t g_mscDiskClass;
+
 
 #if (defined(USB_DEVICE_CONFIG_USE_TASK) && (USB_DEVICE_CONFIG_USE_TASK > 0)) && \
     (defined(USB_DEVICE_MSC_USE_WRITE_TASK) && (USB_DEVICE_MSC_USE_WRITE_TASK > 0))
@@ -268,7 +270,7 @@ void USB1_IRQHandler(void)
  *
  * @return None.
  */
-void CompositeInit(void)
+void USB_DeviceApplicationInit(void)
 {
     uint8_t irqNumber;
 #if defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0)
@@ -384,41 +386,65 @@ void CompositeInit(void)
 }
 
 /*!
+ * @brief USB task function.
+ *
+ * This function runs the task for USB device.
+ *
+ * @return None.
+ */
+#if USB_DEVICE_CONFIG_USE_TASK
+void USB_DeviceTask(void *handle)
+{
+    while (1U)
+    {
+#if defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0)
+        USB_DeviceEhciTaskFunction(handle);
+#endif
+#if defined(USB_DEVICE_CONFIG_KHCI) && (USB_DEVICE_CONFIG_KHCI > 0)
+        USB_DeviceKhciTaskFunction(handle);
+#endif
+#if defined(USB_DEVICE_CONFIG_LPCIP3511FS) && (USB_DEVICE_CONFIG_LPCIP3511FS > 0U)
+        USB_DeviceLpcIp3511TaskFunction(handle);
+#endif
+#if defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U)
+        USB_DeviceLpcIp3511TaskFunction(handle);
+#endif
+    }
+}
+#endif
+
+/*!
  * @brief Application task function.
  *
  * This function runs the task for application.
  *
  * @return None.
  */
-void CompositeTask(void)
+void APPTask(void *handle)
 {
-    USB_DeviceCdcVcomTask();
-    if (g_composite.mscDisk.readWriteError)
-    {
-        return;
-    }
+    USB_DeviceApplicationInit();
 
 #if USB_DEVICE_CONFIG_USE_TASK
-#if defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0U)
-        USB_DeviceEhciTaskFunction(g_composite.deviceHandle);
-#endif
-#if defined(USB_DEVICE_CONFIG_KHCI) && (USB_DEVICE_CONFIG_KHCI > 0U)
-        USB_DeviceKhciTaskFunction(g_composite.deviceHandle);
-#endif
-#if defined(USB_DEVICE_CONFIG_LPCIP3511FS) && (USB_DEVICE_CONFIG_LPCIP3511FS > 0U)
-        USB_DeviceLpcIp3511TaskFunction(g_composite.deviceHandle);
-#endif
-#if defined(USB_DEVICE_CONFIG_LPCIP3511HS) && (USB_DEVICE_CONFIG_LPCIP3511HS > 0U)
-        USB_DeviceLpcIp3511TaskFunction(g_composite.deviceHandle);
-#endif
-
-#endif
-
-#if (defined(USB_DEVICE_CONFIG_USE_TASK) && (USB_DEVICE_CONFIG_USE_TASK > 0)) && \
-    (defined(USB_DEVICE_MSC_USE_WRITE_TASK) && (USB_DEVICE_MSC_USE_WRITE_TASK > 0))
-        USB_DeviceMscWriteTask();
+    if (g_composite.deviceHandle)
+    {
+        if (xTaskCreate(USB_DeviceTask,                  /* pointer to the task */
+                        (char const *)"usb device task", /* task name for kernel awareness debugging */
+                        5000L / sizeof(portSTACK_TYPE),  /* task stack size */
+                        g_composite.deviceHandle,        /* optional task startup argument */
+                        5,                               /* initial priority */
+                        &g_composite.deviceTaskHandle    /* optional task handle to create */
+                        ) != pdPASS)
+        {
+            usb_echo("usb device task create failed!\r\n");
+            return;
+        }
+    }
 #endif
 
+    while (1)
+    {
+        USB_DeviceCdcVcomTask();
+    }
 }
 
 

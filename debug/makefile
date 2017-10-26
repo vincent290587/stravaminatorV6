@@ -9,7 +9,6 @@ RM := rm -rf
 # All of the sources participating in the build are defined here
 -include sources.mk
 -include utilities/subdir.mk
--include startup/subdir.mk
 -include source/usb/subdir.mk
 -include source/sd/subdir.mk
 -include source/routes/subdir.mk
@@ -17,10 +16,17 @@ RM := rm -rf
 -include middleware/usb_1.6.3/osa/subdir.mk
 -include middleware/usb_1.6.3/device/subdir.mk
 -include middleware/sdmmc_2.1.2/src/subdir.mk
+-include middleware/fatfs_0.12b/src/fsl_sd_disk/subdir.mk
+-include middleware/fatfs_0.12b/src/subdir.mk
 -include middleware/dma_manager_2.1.0/subdir.mk
--include drivers/subdir.mk
+-include libraries/TSharpMem/subdir.mk
+-include freertos/Source/portable/GCC/ARM_CM4F/subdir.mk
+-include freertos/Source/subdir.mk
+-include devices/MK64F12/utilities/subdir.mk
+-include devices/MK64F12/gcc/subdir.mk
+-include devices/MK64F12/drivers/subdir.mk
+-include devices/MK64F12/subdir.mk
 -include board/subdir.mk
--include CMSIS/subdir.mk
 -include subdir.mk
 -include objects.mk
 

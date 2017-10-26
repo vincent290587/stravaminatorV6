@@ -30,11 +30,16 @@
 
 #ifndef _USB_DEVICE_COMPOSITE_H_
 #define _USB_DEVICE_COMPOSITE_H_ 1
+#include "FreeRTOS.h"
+#include "semphr.h"
+#include "event_groups.h"
 
 #include "virtual_com.h"
 #include "disk_sdcard.h"
 
-#include "usb.h"
+#include "usb_device_descriptor.h"
+#include "usb_device_class.h"
+
 
 /*******************************************************************************
 * Definitions
@@ -59,6 +64,8 @@ typedef struct _usb_device_composite_struct
     usb_device_handle deviceHandle; /* USB device handle. */
     usb_cdc_vcom_struct_t cdcVcom;  /* CDC virtual com device structure. */
     usb_msc_struct_t mscDisk; /* MSC disk device structure.                                                        */
+    xTaskHandle applicationTaskHandle; /* Application task handle. */
+    xTaskHandle deviceTaskHandle;      /* USB device task handle. */
     uint8_t speed;            /* Speed of USB device. USB_SPEED_FULL/USB_SPEED_LOW/USB_SPEED_HIGH.                 */
     uint8_t attach;           /* A flag to indicate whether a usb device is attached. 1: attached, 0: not attached */
     uint8_t currentConfiguration; /* Current configuration value. */
@@ -145,6 +152,6 @@ extern usb_status_t USB_DeviceMscDiskSetConfigure(class_handle_t handle, uint8_t
  */
 extern usb_status_t USB_DeviceMscDiskInit(usb_device_composite_struct_t *deviceComposite);
 
-
+extern void APPTask(void *handle);
 
 #endif /* _USB_DEVICE_COMPOSITE_H_ */

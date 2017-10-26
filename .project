@@ -42,6 +42,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>middleware/fatfs_0.12b</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>middleware/sdmmc_2.1.2</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -60,6 +65,26 @@
 			<name>middleware/dma_manager_2.1.0/fsl_dma_manager.h</name>
 			<type>1</type>
 			<locationURI>SDK_LOC/middleware/dma_manager_2.1.0/fsl_dma_manager.h</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/ChangeLogKSDK.txt</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/fatfs_0.12b/ChangeLogKSDK.txt</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/FatFs_for_Kinetis_SDK_v2.0_readme.txt</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/fatfs_0.12b/FatFs_for_Kinetis_SDK_v2.0_readme.txt</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/src</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/template_application</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
 			<name>middleware/sdmmc_2.1.2/inc</name>
@@ -85,6 +110,41 @@
 			<name>middleware/usb_1.6.3/osa</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/src/diskio.c</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/diskio.c</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/src/diskio.h</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/diskio.h</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/src/ff.c</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/ff.c</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/src/ff.h</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/ff.h</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/src/fsl_sd_disk</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/src/integer.h</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/integer.h</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/template_application/ffconf.h</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/fatfs_0.12b/template_application/ffconf.h</locationURI>
 		</link>
 		<link>
 			<name>middleware/sdmmc_2.1.2/inc/fsl_card.h</name>
@@ -167,14 +227,24 @@
 			<locationURI>SDK_LOC/middleware/usb_1.6.3/osa/usb_osa.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/osa/usb_osa_bm.c</name>
+			<name>middleware/usb_1.6.3/osa/usb_osa_freertos.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/osa/usb_osa_bm.c</locationURI>
+			<locationURI>SDK_LOC/middleware/usb_1.6.3/osa/usb_osa_freertos.c</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/osa/usb_osa_bm.h</name>
+			<name>middleware/usb_1.6.3/osa/usb_osa_freertos.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/osa/usb_osa_bm.h</locationURI>
+			<locationURI>SDK_LOC/middleware/usb_1.6.3/osa/usb_osa_freertos.h</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/src/fsl_sd_disk/fsl_sd_disk.c</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/fsl_sd_disk/fsl_sd_disk.c</locationURI>
+		</link>
+		<link>
+			<name>middleware/fatfs_0.12b/src/fsl_sd_disk/fsl_sd_disk.h</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/fsl_sd_disk/fsl_sd_disk.h</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>

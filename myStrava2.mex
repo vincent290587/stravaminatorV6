@@ -79,6 +79,9 @@
                   <pin peripheral="UART0" signal="TX" pin_num="63" pin_signal="PTB17/SPI1_SIN/UART0_TX/FTM_CLKIN1/FB_AD16/EWM_OUT_b"/>
                   <pin peripheral="UART2" signal="TX" pin_num="96" pin_signal="PTD3/SPI0_SIN/UART2_TX/FTM3_CH3/FB_AD3/I2C0_SDA"/>
                   <pin peripheral="UART2" signal="RX" pin_num="95" pin_signal="PTD2/LLWU_P13/SPI0_SOUT/UART2_RX/FTM3_CH2/FB_AD4/I2C0_SCL"/>
+                  <pin peripheral="GPIOE" signal="GPIO, 26" pin_num="33" pin_signal="PTE26/ENET_1588_CLKIN/UART4_CTS_b/RTC_CLKOUT/USB_CLKIN"/>
+                  <pin peripheral="GPIOB" signal="GPIO, 21" pin_num="67" pin_signal="PTB21/SPI2_SCK/FB_AD30/CMP1_OUT"/>
+                  <pin peripheral="GPIOB" signal="GPIO, 22" pin_num="68" pin_signal="PTB22/SPI2_SOUT/FB_AD29/CMP2_OUT"/>
                </pins>
             </function>
          </functions_list>
@@ -163,6 +166,7 @@
                   <clock_output id="Flash_clock.outFreq" value="800 kHz" locked="false" accuracy=""/>
                   <clock_output id="FlexBus_clock.outFreq" value="2 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="1 kHz" locked="false" accuracy=""/>
+                  <clock_output id="SDHCCLK.outFreq" value="4 MHz" locked="false" accuracy=""/>
                   <clock_output id="System_clock.outFreq" value="4 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
@@ -171,6 +175,7 @@
                   <setting id="MCG.CLKS.sel" value="MCG.IRCS" locked="false"/>
                   <setting id="MCG.FCRDIV.scale" value="1" locked="true"/>
                   <setting id="MCG.IRCS.sel" value="MCG.FCRDIV" locked="false"/>
+                  <setting id="SDHCClkConfig" value="yes" locked="false"/>
                   <setting id="SIM.OUTDIV4.scale" value="5" locked="false"/>
                </clock_settings>
                <called_from_default_init>false</called_from_default_init>

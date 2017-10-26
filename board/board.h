@@ -56,6 +56,51 @@
 /* Board accelerometer driver */
 #define BOARD_ACCEL_FXOS
 
+/* Board led color mapping */
+#define LOGIC_LED_ON 0U
+#define LOGIC_LED_OFF 1U
+#define BOARD_LED_RED_GPIO GPIOB
+#define BOARD_LED_RED_GPIO_PORT PORTB
+#define BOARD_LED_RED_GPIO_PIN 22U
+#define BOARD_LED_GREEN_GPIO GPIOE
+#define BOARD_LED_GREEN_GPIO_PORT PORTE
+#define BOARD_LED_GREEN_GPIO_PIN 26U
+#define BOARD_LED_BLUE_GPIO GPIOB
+#define BOARD_LED_BLUE_GPIO_PORT PORTB
+#define BOARD_LED_BLUE_GPIO_PIN 21U
+
+
+#define LED_RED_INIT(output)                                                 \
+    GPIO_WritePinOutput(BOARD_LED_RED_GPIO, BOARD_LED_RED_GPIO_PIN, output); \
+    BOARD_LED_RED_GPIO->PDDR |= (1U << BOARD_LED_RED_GPIO_PIN) /*!< Enable target LED_RED */
+#define LED_RED_ON() \
+    GPIO_ClearPinsOutput(BOARD_LED_RED_GPIO, 1U << BOARD_LED_RED_GPIO_PIN) /*!< Turn on target LED_RED */
+#define LED_RED_OFF() \
+    GPIO_SetPinsOutput(BOARD_LED_RED_GPIO, 1U << BOARD_LED_RED_GPIO_PIN) /*!< Turn off target LED_RED */
+#define LED_RED_TOGGLE() \
+    GPIO_TogglePinsOutput(BOARD_LED_RED_GPIO, 1U << BOARD_LED_RED_GPIO_PIN) /*!< Toggle on target LED_RED */
+
+#define LED_GREEN_INIT(output)                                                   \
+    GPIO_WritePinOutput(BOARD_LED_GREEN_GPIO, BOARD_LED_GREEN_GPIO_PIN, output); \
+    BOARD_LED_GREEN_GPIO->PDDR |= (1U << BOARD_LED_GREEN_GPIO_PIN) /*!< Enable target LED_GREEN */
+#define LED_GREEN_ON() \
+    GPIO_ClearPinsOutput(BOARD_LED_GREEN_GPIO, 1U << BOARD_LED_GREEN_GPIO_PIN) /*!< Turn on target LED_GREEN */
+#define LED_GREEN_OFF() \
+    GPIO_SetPinsOutput(BOARD_LED_GREEN_GPIO, 1U << BOARD_LED_GREEN_GPIO_PIN) /*!< Turn off target LED_GREEN */
+#define LED_GREEN_TOGGLE() \
+    GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1U << BOARD_LED_GREEN_GPIO_PIN) /*!< Toggle on target LED_GREEN */
+
+#define LED_BLUE_INIT(output)                                                  \
+    GPIO_WritePinOutput(BOARD_LED_BLUE_GPIO, BOARD_LED_BLUE_GPIO_PIN, output); \
+    BOARD_LED_BLUE_GPIO->PDDR |= (1U << BOARD_LED_BLUE_GPIO_PIN) /*!< Enable target LED_BLUE */
+#define LED_BLUE_ON() \
+    GPIO_ClearPinsOutput(BOARD_LED_BLUE_GPIO, 1U << BOARD_LED_BLUE_GPIO_PIN) /*!< Turn on target LED_BLUE */
+#define LED_BLUE_OFF() \
+    GPIO_SetPinsOutput(BOARD_LED_BLUE_GPIO, 1U << BOARD_LED_BLUE_GPIO_PIN) /*!< Turn off target LED_BLUE */
+#define LED_BLUE_TOGGLE() \
+    GPIO_TogglePinsOutput(BOARD_LED_BLUE_GPIO, 1U << BOARD_LED_BLUE_GPIO_PIN) /*!< Toggle on target LED_BLUE */
+
+
 /*******************************************************************************
  * API
  ******************************************************************************/

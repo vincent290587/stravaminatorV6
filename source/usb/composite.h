@@ -17,10 +17,13 @@
 #include "usb_device_descriptor.h"
 #include "usb_device_class.h"
 
-
 /*******************************************************************************
 * Definitions
 ******************************************************************************/
+/* USB clock source and frequency*/
+#define USB_FS_CLK_SRC kCLOCK_UsbSrcIrc48M
+#define USB_FS_CLK_FREQ 48000000U
+
 #if defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0)
 #define CONTROLLER_ID kUSB_ControllerEhci0
 #endif
@@ -50,6 +53,9 @@ typedef struct _usb_device_composite_struct
         currentInterfaceAlternateSetting[USB_INTERFACE_COUNT]; /* Current alternate setting value for each interface. */
 } usb_device_composite_struct_t;
 
+#if defined(__cplusplus)
+extern "C" {
+#endif /* __cplusplus*/
 
 /*******************************************************************************
 * API
@@ -86,7 +92,8 @@ extern usb_status_t USB_DeviceCdcVcomSetConfigure(class_handle_t handle, uint8_t
  *
  * @return A USB error code or kStatus_USB_Success.
  */
-extern usb_status_t USB_DeviceCdcVcomInit(usb_device_composite_struct_t *deviceComposite);
+usb_status_t USB_DeviceCdcVcomInit(usb_device_composite_struct_t *deviceComposite);
+
 /*!
  * @brief Application task function.
  *
@@ -130,5 +137,13 @@ extern usb_status_t USB_DeviceMscDiskSetConfigure(class_handle_t handle, uint8_t
  */
 extern usb_status_t USB_DeviceMscDiskInit(usb_device_composite_struct_t *deviceComposite);
 
+extern void CompositeStop(void);
 
-#endif /* _USB_DEVICE_COMPOSITE_H_ */
+extern void CompositeRestart(void);
+
+extern void CompositeInit(void);
+
+#if defined(__cplusplus)
+}#endif
+
+#endif

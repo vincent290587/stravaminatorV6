@@ -13,74 +13,55 @@
 
 #include <list>
 #include "utils.h"
+#include "Points.h"
 #include "Vecteur.h"
 
 using namespace std;
-
-class Vecteur;
-
-class Point2D {
-public:
-    Point2D();
-    Point2D(float lat, float lon);
-    Point2D & operator=(const Point2D &point);
-    Point2D & operator=(const Point2D *point);
-    //void toString();
-    //int isValid();
-    float dist(Point2D *autre_p)  {
-        return distance_between(_lat, _lon, autre_p->_lat, autre_p->_lon);
-    }
-public:
-    float _lat;
-    float _lon;
-};
-
-class Point : public Point2D {
-public:
-    Point();
-    Point(float lat, float lon, float alt, float rtime);
-    Point & operator=(const Point &point);
-    Point & operator=(const Point *point);
-    void toString();
-    int isValid();
-    float dist(Point *autre_p)  {
-        return distance_between(_lat, _lon, autre_p->_lat, autre_p->_lon);
-    }
-    float dist(Point autre_p)  {
-        return distance_between(_lat, _lon, autre_p._lat, autre_p._lon);
-    }
-    
-public:
-    float _alt;
-    float _rtime;
-};
-
 
 
 class ListePoints {
 public:
     ListePoints();
+
     void ajouteDebut(float lat, float lon, float alt, float msec);
     void ajouteFin(float lat, float lon, float alt, float msec);
+    void ajouteFinIso(float lat, float lon, float alt, float msec, uint16_t s_max);
+
     void enregistrePos(float lat, float lon, float alt, float msec);
-    int  longueur();
-    void vider();
-    void supprLast();
+
+    int  size();
+
+    void removeAll();
+    void removeLast();
+
     Point *getFirstPoint();
     Point *getLastPoint();
     Point *getPointAt(int i);
+
     void toString();
-    Vecteur posRelative(Point point);
-    Vecteur deltaListe();
+
+    Vecteur computePosRelative(Point point);
+
+    void updateDelta();
+    void updateRelativePosition(Point point);
+    Vecteur getDeltaListe();
+    Vecteur getPosRelative();
+
     float dist(Point *p_);
 	float dist(float lat_, float lon_);
+	float distP1(float lat_, float lon_);
+
     float getTempsTot();
     float getElevTot();
-    std::list<Point> *getLPTS() {return &_lpoints;}
+
+    std::list<Point> *getLPTS() {return &m_lpoints;}
     
-private:
-    std::list<Point> _lpoints;
-    
+protected:
+    std::list<Point> m_lpoints;
+    Vecteur m_pos_r;
+    Vecteur m_delta_l;
+    float m_dist;
+    Point m_P1, m_P2;
 };
 
 #endif	/* LISTEPOINTS_H */

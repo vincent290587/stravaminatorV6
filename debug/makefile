@@ -12,6 +12,10 @@ RM := rm -rf
 -include source/usb/subdir.mk
 -include source/sd/subdir.mk
 -include source/routes/subdir.mk
+-include source/power/subdir.mk
+-include source/parsers/subdir.mk
+-include source/model/subdir.mk
+-include source/display/subdir.mk
 -include source/subdir.mk
 -include middleware/usb_1.6.3/osa/subdir.mk
 -include middleware/usb_1.6.3/device/subdir.mk
@@ -24,6 +28,7 @@ RM := rm -rf
 -include libraries/rtt/subdir.mk
 -include libraries/TinyGPSPlus/subdir.mk
 -include libraries/TSharpMem/subdir.mk
+-include libraries/Nordic/subdir.mk
 -include libraries/IntelliScreen/subdir.mk
 -include libraries/AdafruitGFX/subdir.mk
 -include freertos/Source/portable/GCC/ARM_CM4F/subdir.mk

@@ -50,8 +50,8 @@
 /* Entry Point */
 ENTRY(Reset_Handler)
 
-HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x0400;
-STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x0400;
+HEAP_SIZE  = DEFINED(__heap_size__)  ? __heap_size__  : 0x0100;
+STACK_SIZE = DEFINED(__stack_size__) ? __stack_size__ : 0x2000;
 M_VECTOR_RAM_SIZE = DEFINED(__ram_vector_table__) ? 0x0400 : 0x0;
 
 /* Specify the memory areas */
@@ -60,8 +60,8 @@ MEMORY
   m_interrupts          (RX)  : ORIGIN = 0x00000000, LENGTH = 0x00000400
   m_flash_config        (RX)  : ORIGIN = 0x00000400, LENGTH = 0x00000010
   m_text                (RX)  : ORIGIN = 0x00000410, LENGTH = 0x000FFBF0
-  m_data                (RW)  : ORIGIN = 0x1FFF0000, LENGTH = 0x00010000
-  m_data_2              (RW)  : ORIGIN = 0x20000000, LENGTH = 0x00030000
+  m_data                (RW)  : ORIGIN = 0x1FFF0000, LENGTH = 0x00010800
+  m_data_2              (RW)  : ORIGIN = 0x20000800, LENGTH = 0x0002F800
 }
 
 /* Define output sections */
@@ -217,26 +217,30 @@ SECTIONS
     __END_BSS = .;
   } > m_data
 
+  .stack :
+  {
+    . = ALIGN(8);
+    . += STACK_SIZE;
+  } > m_data_2
+  
+    /* Initializes stack on the end of block */
+  __StackTop   = ORIGIN(m_data_2) + LENGTH(m_data_2);
+  __StackLimit = __StackTop - STACK_SIZE;
+  
+    /* Max out heap :-) */
+  __HeapSize   = LENGTH(m_data_2) - STACK_SIZE - STACK_SIZE;
+  
   .heap :
   {
     . = ALIGN(8);
     __end__ = .;
     PROVIDE(end = .);
     __HeapBase = .;
-    . += HEAP_SIZE;
+    . += __HeapSize;
     __HeapLimit = .;
     __heap_limit = .; /* Add for _sbrk */
   } > m_data_2
 
-  .stack :
-  {
-    . = ALIGN(8);
-    . += STACK_SIZE;
-  } > m_data_2
-
-  /* Initializes stack on the end of block */
-  __StackTop   = ORIGIN(m_data_2) + LENGTH(m_data_2);
-  __StackLimit = __StackTop - STACK_SIZE;
   PROVIDE(__stack = __StackTop);
 
   .ARM.attributes 0 : { *(.ARM.attributes) }

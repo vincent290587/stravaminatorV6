@@ -54,7 +54,7 @@ extern "C" {
  * @brief This function executes configuration of clocks.
  *
  */
-void BOARD_BootClockRUN(void);
+void ClocksConfig_RUN(void);
 
 #if defined(__cplusplus)
 }

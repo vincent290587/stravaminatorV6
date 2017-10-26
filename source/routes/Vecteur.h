@@ -11,9 +11,8 @@
 
 #include <list>
 #include "utils.h"
-#include "ListePoints.h"
+#include "Points.h"
 
-class Point;
 
 class Vecteur {
 public:

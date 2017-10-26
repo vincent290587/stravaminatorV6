@@ -35,8 +35,10 @@ mcu_data: ksdk2_0
 processor_version: 2.0.0
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
+#include "system_MK64F12.h"
 #include "fsl_smc.h"
 #include "clock_config.h"
+#include "segger_wrapper.h"
 
 /*******************************************************************************
  * Definitions
@@ -48,6 +50,7 @@ processor_version: 2.0.0
 #define SIM_OSC32KSEL_OSC32KCLK_CLK                       0U  /*!< OSC32KSEL select: OSC32KCLK clock */
 #define SIM_PLLFLLSEL_IRC48MCLK_CLK                       3U  /*!< PLLFLL select: IRC48MCLK clock */
 #define SIM_PLLFLLSEL_MCGFLLCLK_CLK                       0U  /*!< PLLFLL select: MCGFLLCLK clock */
+#define SIM_SDHC_CLK_SEL_CORE_SYSTEM_CLK                  0U  /*!< SDHC clock select: Core/system clock */
 #define SIM_SDHC_CLK_SEL_PLLFLLSEL_CLK                    1U  /*!< SDHC clock select: PLLFLLSEL output clock */
 #define SIM_USB_CLK_48000000HZ                     48000000U  /*!< Input SIM frequency for USB: 48000000Hz */
 
@@ -94,7 +97,7 @@ static void CLOCK_CONFIG_SetFllExtRefDiv(uint8_t frdiv)
  ******************************************************************************/
 void BOARD_InitBootClocks(void)
 {
-    BOARD_BootClockRUN();
+	ClocksConfig_RUN();
 }
 
 /*******************************************************************************
@@ -184,7 +187,7 @@ const osc_config_t oscConfig_BOARD_BootClockRUN =
 /*******************************************************************************
  * Code for BOARD_BootClockRUN configuration
  ******************************************************************************/
-void BOARD_BootClockRUN(void)
+void ClocksConfig_RUN(void)
 {
     /* Set the system clock dividers in SIM to safe value. */
     CLOCK_SetSimSafeDivs();
@@ -200,10 +203,13 @@ void BOARD_BootClockRUN(void)
     CLOCK_SetSimConfig(&simConfig_BOARD_BootClockRUN);
     /* Set SystemCoreClock variable. */
     SystemCoreClock = BOARD_BOOTCLOCKRUN_CORE_CLOCK;
+    // update segger
+    segger_update_clocks();
     /* Enable USB FS clock. */
     CLOCK_EnableUsbfs0Clock(kCLOCK_UsbSrcIrc48M, SIM_USB_CLK_48000000HZ);
     /* Set SDHC clock source. */
     CLOCK_SetSdhc0Clock(SIM_SDHC_CLK_SEL_PLLFLLSEL_CLK);
+
 }
 
 /*******************************************************************************
@@ -218,6 +224,7 @@ outputs:
 - {id: Flash_clock.outFreq, value: 800 kHz}
 - {id: FlexBus_clock.outFreq, value: 2 MHz}
 - {id: LPO_clock.outFreq, value: 1 kHz}
+- {id: SDHCCLK.outFreq, value: 4 MHz}
 - {id: System_clock.outFreq, value: 4 MHz}
 settings:
 - {id: MCGMode, value: BLPI}
@@ -225,6 +232,7 @@ settings:
 - {id: MCG.CLKS.sel, value: MCG.IRCS}
 - {id: MCG.FCRDIV.scale, value: '1', locked: true}
 - {id: MCG.IRCS.sel, value: MCG.FCRDIV}
+- {id: SDHCClkConfig, value: 'yes'}
 - {id: SIM.OUTDIV4.scale, value: '5'}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
@@ -270,14 +278,26 @@ const osc_config_t oscConfig_ClocksConfig_VLPR =
  ******************************************************************************/
 void ClocksConfig_VLPR(void)
 {
+//#if (USE_SVIEW==0)
     /* Set the system clock dividers in SIM to safe value. */
     CLOCK_SetSimSafeDivs();
-    /* Set MCG to BLPI mode. */
-    CLOCK_BootToBlpiMode(mcgConfig_ClocksConfig_VLPR.fcrdiv,
-                         mcgConfig_ClocksConfig_VLPR.ircs,
-                         mcgConfig_ClocksConfig_VLPR.irclkEnableMode);
+    /* Set MCG to BLPI mode. CLOCK_BootToBlpiMode CLOCK_SetInternalRefClkConfig */
+    CLOCK_SetInternalRefClkConfig(mcgConfig_ClocksConfig_VLPR.fcrdiv,
+    		mcgConfig_ClocksConfig_VLPR.ircs,
+			mcgConfig_ClocksConfig_VLPR.irclkEnableMode);
+
+    /* Enter FBE. */
+    CLOCK_ExternalModeToFbeModeQuick();
+    /* Enter FBI. */
+    CLOCK_SetFbiMode(mcgConfig_ClocksConfig_VLPR.dmx32,
+    		mcgConfig_ClocksConfig_VLPR.drs,
+			NULL);
+    /* Enter BLPI. */
+    CLOCK_SetLowPowerEnable(true);
+
     /* Set the clock configuration in SIM module. */
     CLOCK_SetSimConfig(&simConfig_ClocksConfig_VLPR);
+
     /* Set VLPR power mode. */
     SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
 #if (defined(FSL_FEATURE_SMC_HAS_LPWUI) && FSL_FEATURE_SMC_HAS_LPWUI)
@@ -290,5 +310,12 @@ void ClocksConfig_VLPR(void)
     }
     /* Set SystemCoreClock variable. */
     SystemCoreClock = CLOCKSCONFIG_VLPR_CORE_CLOCK;
+    // update segger
+    segger_update_clocks();
+    /* Set SDHC clock source. */
+    CLOCK_SetSdhc0Clock(SIM_SDHC_CLK_SEL_CORE_SYSTEM_CLK);
+
+    CLOCK_DisableClock(kCLOCK_Usbfs0);
+//#endif
 }
 

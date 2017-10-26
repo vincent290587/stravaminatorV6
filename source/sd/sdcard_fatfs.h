@@ -12,7 +12,7 @@
 extern "C" {
 #endif /* _cplusplus */
 
-void sdcard_init(void);
+void usb_comp_init(void);
 
 void sdcard_tasks(void);
 

@@ -944,6 +944,26 @@ unsigned SEGGER_RTT_WriteNoLock(unsigned BufferIndex, const void* pBuffer, unsig
   return Status;
 }
 
+unsigned SEGGER_RTT_WriteBlock(unsigned BufferIndex, const void* pBuffer, unsigned NumBytes) {
+  unsigned              Status;
+  const char*           pData;
+  SEGGER_RTT_BUFFER_UP* pRing;
+
+  pData = (const char *)pBuffer;
+  //
+  // Get "to-host" ring buffer.
+  //
+  pRing = &_SEGGER_RTT.aUp[BufferIndex];
+  //
+  // How we output depends upon the mode...
+  //
+  Status = _WriteBlocking(pRing, pData, NumBytes);
+  //
+  // Finish up.
+  //
+  return Status;
+}
+
 /*********************************************************************
 *
 *       SEGGER_RTT_Write

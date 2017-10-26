@@ -82,11 +82,6 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/template_application</name>
-			<type>2</type>
-			<locationURI>virtual:/virtual</locationURI>
-		</link>
-		<link>
 			<name>middleware/sdmmc_2.1.2/inc</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

@@ -8,9 +8,12 @@
 #ifndef UTILS_H
 #define	UTILS_H
 
+#include <stdint.h>
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
+
 
 float regFen(float val_, float b1_i, float b1_f, float b2_i, float b2_f);
 
@@ -23,6 +26,12 @@ void calculePos (const char *nom, float *lat, float *lon);
 long unsigned int toBase10 (char *entree);
 
 extern void loggerMsg(const char *msg_);
+
+double radians(double value);
+
+double degrees(double value);
+
+double sq(double value);
 
 #ifdef	__cplusplus
 }

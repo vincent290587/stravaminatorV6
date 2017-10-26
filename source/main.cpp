@@ -6,32 +6,51 @@
 #include "pin_mux.h"
 #include "clock_config.h"
 #include "composite.h"
+#include "Segment.h"
+#include "segger_wrapper.h"
+#include "ls027.h"
+#include "millis.h"
+#include "sdcard_fatfs.h"
 
-extern "C" void CompositeInit(void);
-extern "C" void CompositeTask(void);
+extern "C" void APPTask(void *handle);
 
 /*!
  * @brief Application entry point.
  */
 int main(void)
 {
-    BOARD_InitPins();
-    BOARD_BootClockRUN();
-    BOARD_InitDebugConsole();
+	BOARD_InitPins();
+	BOARD_BootClockRUN();
+	BOARD_InitDebugConsole();
 
-    if (xTaskCreate(APPTask,                           /* pointer to the task */
-    		        (char const *)"usb device task",                         /* task name for kernel awareness debugging */
-                    5000L / sizeof(portSTACK_TYPE),    /* task stack size */
-                    0,                                 /* optional task startup argument */
-                    4,                                 /* initial priority */
-                    0                                  /* optional task handle to create */
-                    ) != pdPASS)
-    {
-        usb_echo("app task create failed!\r\n");
-        return 1;
-    }
+	/* Init code */
+	millis_init();
 
-    vTaskStartScheduler();
+	// Segger
+	segger_init();
 
-    return 0;
+	// LCD driver
+	LS027_Init();
+
+	// USB driver
+//	sdcard_init();
+//	sdcard_tasks();
+
+	//essai();
+
+	if (xTaskCreate(APPTask,                           /* pointer to the task */
+			(char const *)"usb device task",                         /* task name for kernel awareness debugging */
+			5000L / sizeof(portSTACK_TYPE),    /* task stack size */
+			0,                                 /* optional task startup argument */
+			4,                                 /* initial priority */
+			0                                  /* optional task handle to create */
+	) != pdPASS)
+	{
+		usb_echo("app task create failed!\r\n");
+		return 1;
+	}
+	/* Add your code here */
+	vTaskStartScheduler();
+
+	return 0;
 }

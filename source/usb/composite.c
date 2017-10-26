@@ -30,7 +30,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "usb_device_config.h"
-#include "usb.h"
 #include "usb_device.h"
 
 #include "usb_device_class.h"
@@ -91,7 +90,6 @@ extern void USB_DeviceMscWriteTask(void);
 static usb_device_composite_struct_t g_composite;
 extern usb_device_class_struct_t g_UsbDeviceCdcVcomConfig;
 extern usb_device_class_struct_t g_mscDiskClass;
-
 
 #if (defined(USB_DEVICE_CONFIG_USE_TASK) && (USB_DEVICE_CONFIG_USE_TASK > 0)) && \
     (defined(USB_DEVICE_MSC_USE_WRITE_TASK) && (USB_DEVICE_MSC_USE_WRITE_TASK > 0))
@@ -270,7 +268,7 @@ void USB1_IRQHandler(void)
  *
  * @return None.
  */
-void USB_DeviceApplicationInit(void)
+void CompositeInit(void)
 {
     uint8_t irqNumber;
 #if defined(USB_DEVICE_CONFIG_EHCI) && (USB_DEVICE_CONFIG_EHCI > 0)
@@ -422,7 +420,7 @@ void USB_DeviceTask(void *handle)
  */
 void APPTask(void *handle)
 {
-    USB_DeviceApplicationInit();
+	CompositeInit();
 
 #if USB_DEVICE_CONFIG_USE_TASK
     if (g_composite.deviceHandle)

@@ -51,6 +51,7 @@ static volatile bool g_sdhcTransferSuccessFlag = true;
 /*! @brief Card detect flag. */
 static volatile uint32_t g_sdInsertedFlag;
 extern volatile uint32_t g_timeMilliseconds;
+
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -161,6 +162,10 @@ static status_t SDHC_TransferFunction(SDHC_Type *base, sdhc_transfer_t *content)
 
     do
     {
+    	// TODO check
+//    	error = SDHC_TransferBlocking(base, g_sdhcAdmaTable, SDHC_ADMA_TABLE_WORDS, content);
+//    	g_sdhcTransferSuccessFlag = true;
+
         error = SDHC_TransferNonBlocking(base, &g_sdhcHandle, g_sdhcAdmaTable, SDHC_ADMA_TABLE_WORDS, content);
     } while (error == kStatus_SDHC_BusyTransferring);
 
@@ -177,39 +182,39 @@ static status_t SDHC_TransferFunction(SDHC_Type *base, sdhc_transfer_t *content)
 
 status_t HOST_Init(void *host)
 {
-    sdhc_transfer_callback_t sdhcCallback = {0};
-    sdhc_host_t *sdhcHost = (sdhc_host_t *)host;
+	sdhc_transfer_callback_t sdhcCallback = {0};
+	sdhc_host_t *sdhcHost = (sdhc_host_t *)host;
 
-    EVENT_InitTimer();
+	EVENT_InitTimer();
 
-    /* Initializes SDHC. */
-    sdhcHost->config.cardDetectDat3 = false;
-    sdhcHost->config.endianMode = SDHC_ENDIAN_MODE;
-    sdhcHost->config.dmaMode = SDHC_DMA_MODE;
-    sdhcHost->config.readWatermarkLevel = SDHC_READ_WATERMARK_LEVEL;
-    sdhcHost->config.writeWatermarkLevel = SDHC_WRITE_WATERMARK_LEVEL;
-    SDHC_Init(sdhcHost->base, &(sdhcHost->config));
+	/* Initializes SDHC. */
+	sdhcHost->config.cardDetectDat3 = false;
+	sdhcHost->config.endianMode = SDHC_ENDIAN_MODE;
+	sdhcHost->config.dmaMode = SDHC_DMA_MODE;
+	sdhcHost->config.readWatermarkLevel = SDHC_READ_WATERMARK_LEVEL;
+	sdhcHost->config.writeWatermarkLevel = SDHC_WRITE_WATERMARK_LEVEL;
+	SDHC_Init(sdhcHost->base, &(sdhcHost->config));
 
-    /* Create handle for SDHC driver */
-    sdhcCallback.TransferComplete = SDHC_TransferCompleteCallback;
-    SDHC_TransferCreateHandle(sdhcHost->base, &g_sdhcHandle, &sdhcCallback, NULL);
+	/* Create handle for SDHC driver */
+	sdhcCallback.TransferComplete = SDHC_TransferCompleteCallback;
+	SDHC_TransferCreateHandle(sdhcHost->base, &g_sdhcHandle, &sdhcCallback, NULL);
 
-    /* Create transfer complete event. */
-    if (false == EVENT_Create(kEVENT_TransferComplete))
-    {
-        return kStatus_Fail;
-    }
+	/* Create transfer complete event. */
+	if (false == EVENT_Create(kEVENT_TransferComplete))
+	{
+		return kStatus_Fail;
+	}
 
-    /* Define transfer function. */
-    sdhcHost->transfer = SDHC_TransferFunction;
+	/* Define transfer function. */
+	sdhcHost->transfer = SDHC_TransferFunction;
 
     return kStatus_Success;
 }
 
 void HOST_Deinit(void *host)
 {
-    sdhc_host_t *sdhcHost = (sdhc_host_t *)host;
-    SDHC_Deinit(sdhcHost->base);
-    EVENT_Delete(kEVENT_CardDetect);
-    EVENT_Delete(kEVENT_TransferComplete);
+		sdhc_host_t *sdhcHost = (sdhc_host_t *)host;
+		SDHC_Deinit(sdhcHost->base);
+		EVENT_Delete(kEVENT_CardDetect);
+		EVENT_Delete(kEVENT_TransferComplete);
 }

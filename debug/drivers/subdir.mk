@@ -4,140 +4,20 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../drivers/fsl_adc16.c \
-../drivers/fsl_clock.c \
-../drivers/fsl_cmp.c \
-../drivers/fsl_cmt.c \
-../drivers/fsl_common.c \
-../drivers/fsl_crc.c \
-../drivers/fsl_dac.c \
-../drivers/fsl_dmamux.c \
-../drivers/fsl_dspi.c \
-../drivers/fsl_dspi_cmsis.c \
-../drivers/fsl_dspi_edma.c \
-../drivers/fsl_edma.c \
-../drivers/fsl_enet.c \
-../drivers/fsl_ewm.c \
-../drivers/fsl_flash.c \
-../drivers/fsl_flexbus.c \
-../drivers/fsl_flexcan.c \
-../drivers/fsl_ftm.c \
-../drivers/fsl_gpio.c \
-../drivers/fsl_i2c.c \
-../drivers/fsl_i2c_cmsis.c \
-../drivers/fsl_i2c_edma.c \
-../drivers/fsl_llwu.c \
-../drivers/fsl_lptmr.c \
-../drivers/fsl_pdb.c \
-../drivers/fsl_pit.c \
-../drivers/fsl_pmc.c \
-../drivers/fsl_rcm.c \
-../drivers/fsl_rnga.c \
-../drivers/fsl_rtc.c \
-../drivers/fsl_sai.c \
-../drivers/fsl_sai_edma.c \
-../drivers/fsl_sdhc.c \
-../drivers/fsl_sim.c \
-../drivers/fsl_smc.c \
-../drivers/fsl_sysmpu.c \
-../drivers/fsl_uart.c \
-../drivers/fsl_uart_cmsis.c \
-../drivers/fsl_uart_edma.c \
-../drivers/fsl_vref.c \
-../drivers/fsl_wdog.c 
+../drivers/fsl_fxos.c 
 
 OBJS += \
-./drivers/fsl_adc16.o \
-./drivers/fsl_clock.o \
-./drivers/fsl_cmp.o \
-./drivers/fsl_cmt.o \
-./drivers/fsl_common.o \
-./drivers/fsl_crc.o \
-./drivers/fsl_dac.o \
-./drivers/fsl_dmamux.o \
-./drivers/fsl_dspi.o \
-./drivers/fsl_dspi_cmsis.o \
-./drivers/fsl_dspi_edma.o \
-./drivers/fsl_edma.o \
-./drivers/fsl_enet.o \
-./drivers/fsl_ewm.o \
-./drivers/fsl_flash.o \
-./drivers/fsl_flexbus.o \
-./drivers/fsl_flexcan.o \
-./drivers/fsl_ftm.o \
-./drivers/fsl_gpio.o \
-./drivers/fsl_i2c.o \
-./drivers/fsl_i2c_cmsis.o \
-./drivers/fsl_i2c_edma.o \
-./drivers/fsl_llwu.o \
-./drivers/fsl_lptmr.o \
-./drivers/fsl_pdb.o \
-./drivers/fsl_pit.o \
-./drivers/fsl_pmc.o \
-./drivers/fsl_rcm.o \
-./drivers/fsl_rnga.o \
-./drivers/fsl_rtc.o \
-./drivers/fsl_sai.o \
-./drivers/fsl_sai_edma.o \
-./drivers/fsl_sdhc.o \
-./drivers/fsl_sim.o \
-./drivers/fsl_smc.o \
-./drivers/fsl_sysmpu.o \
-./drivers/fsl_uart.o \
-./drivers/fsl_uart_cmsis.o \
-./drivers/fsl_uart_edma.o \
-./drivers/fsl_vref.o \
-./drivers/fsl_wdog.o 
+./drivers/fsl_fxos.o 
 
 C_DEPS += \
-./drivers/fsl_adc16.d \
-./drivers/fsl_clock.d \
-./drivers/fsl_cmp.d \
-./drivers/fsl_cmt.d \
-./drivers/fsl_common.d \
-./drivers/fsl_crc.d \
-./drivers/fsl_dac.d \
-./drivers/fsl_dmamux.d \
-./drivers/fsl_dspi.d \
-./drivers/fsl_dspi_cmsis.d \
-./drivers/fsl_dspi_edma.d \
-./drivers/fsl_edma.d \
-./drivers/fsl_enet.d \
-./drivers/fsl_ewm.d \
-./drivers/fsl_flash.d \
-./drivers/fsl_flexbus.d \
-./drivers/fsl_flexcan.d \
-./drivers/fsl_ftm.d \
-./drivers/fsl_gpio.d \
-./drivers/fsl_i2c.d \
-./drivers/fsl_i2c_cmsis.d \
-./drivers/fsl_i2c_edma.d \
-./drivers/fsl_llwu.d \
-./drivers/fsl_lptmr.d \
-./drivers/fsl_pdb.d \
-./drivers/fsl_pit.d \
-./drivers/fsl_pmc.d \
-./drivers/fsl_rcm.d \
-./drivers/fsl_rnga.d \
-./drivers/fsl_rtc.d \
-./drivers/fsl_sai.d \
-./drivers/fsl_sai_edma.d \
-./drivers/fsl_sdhc.d \
-./drivers/fsl_sim.d \
-./drivers/fsl_smc.d \
-./drivers/fsl_sysmpu.d \
-./drivers/fsl_uart.d \
-./drivers/fsl_uart_cmsis.d \
-./drivers/fsl_uart_edma.d \
-./drivers/fsl_vref.d \
-./drivers/fsl_wdog.d 
+./drivers/fsl_fxos.d 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 drivers/%.o: ../drivers/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross ARM C Compiler'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -ffreestanding -fno-builtin -Wall  -g -DDEBUG -DCPU_MK64FN1M0VLL12_cm4 -DCPU_MK64FN1M0VLL12 -DFSL_RTOS_BM -DSDK_CORE_ID_CORE0 -DSDK_OS_BAREMETAL -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\include" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\sdmmc_2.1.2\inc" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\osa" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\device" -I../CMSIS/Include -I../freertos/Source/include -I"E:\Freescale\myStrava\source\sd" -I"E:\Freescale\myStrava\source\usb" -I"E:\Freescale\myStrava\source\routes" -I"E:\Freescale\myStrava\source" -I../board -I../drivers -I../startup -I../utilities -I../devices -std=gnu99 -mapcs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -O0 -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -ffreestanding -fno-builtin -Wall  -g -D_DEBUG=1 -DCPU_MK64FN1M0VLL12_cm4 -DCPU_MK64FN1M0VLL12 -DFSL_RTOS_FREE_RTOS -DFRDM_K64F -DFREEDOM -DUSB_STACK_FREERTOS -DUSB_STACK_FREERTOS_HEAP_SIZE=32768 -I"E:\Freescale\myStrava\libraries\utils" -I"E:\Freescale\myStrava\libraries\sysview" -I"E:\Freescale\myStrava\libraries\rtt" -I"E:\Freescale\myStrava\libraries\AdafruitGFX" -I"E:\Freescale\myStrava\libraries\TSharpMem" -I"E:\Freescale\myStrava\libraries\TinyGPSPlus" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\sdmmc_2.1.2\inc" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\osa" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\device" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb_1.6.3\include" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs_0.12b\src" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs_0.12b\src\fsl_sd_disk" -I../CMSIS/Include -I../freertos/Source/include -I../freertos/Source/portable/GCC/ARM_CM4F -I../devices/MK64F12 -I../devices/MK64F12/drivers -I../devices/MK64F12/utilities -I"E:\Freescale\myStrava\source\sd" -I"E:\Freescale\myStrava\source\usb" -I"E:\Freescale\myStrava\source\routes" -I"E:\Freescale\myStrava\source" -I../board -I../drivers -I../startup -I../utilities -I../devices -I"E:\Freescale\myStrava\drivers\lcd" -I"E:\Freescale\myStrava\drivers\spi" -std=gnu99 -mapcs -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

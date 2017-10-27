@@ -13,12 +13,8 @@
  ******************************************************************************/
 /* UART instance and clock */
 #define UART0_CLK_FREQ       CLOCK_GetFreq(UART0_CLK_SRC)
-#define UART0_TX_DMA_CHANNEL 0U
-#define UART0_RX_DMA_CHANNEL 1U
 #define UART0_TX_DMA_REQUEST kDmaRequestMux0UART0Tx
 #define UART0_RX_DMA_REQUEST kDmaRequestMux0UART0Rx
-
-#define UART0_BUFFER_LENGTH  32
 
 /*******************************************************************************
  * Prototypes

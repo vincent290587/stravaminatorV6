@@ -55,6 +55,12 @@ void segger_init(void) {
 
 	  nb_tasks = 0;
 
+	  pInfo[nb_tasks].TaskID = I2C_TASK;
+	  pInfo[nb_tasks++].sName  = "I2C_TASK";
+
+	  pInfo[nb_tasks].TaskID = UART_TASK;
+	  pInfo[nb_tasks++].sName  = "UART_TASK";
+
 	  pInfo[nb_tasks].TaskID = SPI_TASK;
 	  pInfo[nb_tasks++].sName  = "SPI_TASK";
 

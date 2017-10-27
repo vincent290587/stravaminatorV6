@@ -35,6 +35,7 @@ RM := rm -rf
 -include drivers/uart/subdir.mk
 -include drivers/spi/subdir.mk
 -include drivers/lcd/subdir.mk
+-include drivers/i2c/subdir.mk
 -include drivers/subdir.mk
 -include board/subdir.mk
 -include CMSIS/subdir.mk

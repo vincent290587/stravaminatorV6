@@ -114,6 +114,8 @@ extern "C" {
  */
 void BOARD_InitDebugConsole(void);
 
+void BOARD_InitHardware(void);
+
 #if defined(__cplusplus)
 }
 #endif /* __cplusplus */

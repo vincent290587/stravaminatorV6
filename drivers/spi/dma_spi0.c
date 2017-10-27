@@ -9,15 +9,11 @@
 #include "fsl_device_registers.h"
 #include "segger_wrapper.h"
 #include "fsl_dspi.h"
-#include "board.h"
 #include "fsl_dspi_edma.h"
 #include "fsl_edma.h"
 #include "fsl_dmamux.h"
 #include "dma_spi0.h"
 #include "millis.h"
-
-#include "pin_mux.h"
-#include "clock_config.h"
 
 /*******************************************************************************
  * Definitions
@@ -44,7 +40,7 @@ edma_handle_t dspiEdmaMasterIntermediaryToTxRegHandle;
 
 dspi_transfer_t masterXfer;
 
-volatile bool isTransferCompleted = false;
+volatile bool isTransferCompleted = true;
 
 static sXferTask m_tasks[5];
 static uint8_t m_tasks_nb;
@@ -60,7 +56,7 @@ void DSPI_MasterUserCallback(SPI_Type *base, dspi_master_edma_handle_t *handle, 
 	SEGGER_SYSVIEW_RecordEnterISR();
 	if (status != kStatus_Success)
 	{
-		LOG_ERROR("This is DSPI master edma transfer completed callback. \r\n\r\n");
+		LOG_ERROR("DMA SPI0 master callback error\r\n");
 	}
 	isTransferCompleted = true;
 //	LOG_INFO("Xfer completed %d\r\n\r\n", status);

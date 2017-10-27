@@ -13,8 +13,7 @@
  ******************************************************************************/
 /* UART instance and clock */
 #define UART2_CLK_FREQ       CLOCK_GetFreq(UART2_CLK_SRC)
-#define UART2_TX_DMA_CHANNEL 2U
-#define UART2_RX_DMA_CHANNEL 3U
+
 #define UART2_TX_DMA_REQUEST kDmaRequestMux0UART2Tx
 #define UART2_RX_DMA_REQUEST kDmaRequestMux0UART2Rx
 

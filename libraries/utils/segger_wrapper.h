@@ -59,17 +59,17 @@
 #define W_SYSVIEW_OnTaskCreate(X)      EMPTY_MACRO
 #endif
 
-#define SYSVIEW_MAX_NOF_TASKS          5
+#define SYSVIEW_MAX_NOF_TASKS          30
 
 #define TASK_BASE                      (36u)
 
+#define I2C_TASK                       (TASK_BASE + 0u)
 #define SPI_TASK                       (TASK_BASE + 1u)
-#define LCD_TASK                       (TASK_BASE + 2u)
+#define UART_TASK                      (TASK_BASE + 2u)
 
-#define SD_ACCESS_TASK                 (TASK_BASE + 3u)
-
-#define SEG_PERF_TASK                  (TASK_BASE + 4u)
-#define UART_TASK                      (TASK_BASE + 5u)
+#define LCD_TASK                       (TASK_BASE + 7u)
+#define SD_ACCESS_TASK                 (TASK_BASE + 8u)
+#define SEG_PERF_TASK                  (TASK_BASE + 9u)
 
 
 /////////    FUNCTIONS

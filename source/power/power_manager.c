@@ -19,6 +19,7 @@
 #include "composite.h"
 #include "uart0.h"
 #include "uart2.h"
+#include "dma_i2c0.h"
 
 #include "pin_mux.h"
 #include "fsl_pmc.h"
@@ -92,8 +93,8 @@ void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t
 //	}
 
 	uart0_uninit();
-	uart2_uninit();
-
+//	uart2_uninit();
+	dma_i2c0_uninit();
 }
 
 void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode)
@@ -117,13 +118,16 @@ void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_
 	// Initialize the UART.
 	uart_config_t uartConfig;
 	UART_GetDefaultConfig(&uartConfig);
+
 	uartConfig.enableTx = true;
 	uartConfig.enableRx = false; // TODO
 	uartConfig.baudRate_Bps = 9600U;
 	uart0_init(&uartConfig);
 
-	uartConfig.baudRate_Bps = 115200U;
-	uart2_init(&uartConfig);
+//	uartConfig.baudRate_Bps = 115200U;
+//	uart2_init(&uartConfig);
+
+	dma_i2c0_init();
 
 	/*
 	 * If enter stop modes when MCG in PEE mode, then after wakeup, the MCG is in PBE mode,

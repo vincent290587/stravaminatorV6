@@ -314,20 +314,20 @@ int power_manager_run(app_power_mode_t targetPowerMode) {
 
 	if (kRCM_SourceWakeup & RCM_GetPreviousResetSources(RCM)) /* Wakeup from VLLS. */
 	{
-		LOG_INFO("\r\nMCU wakeup from VLLS modes...\r\n");
+//		LOG_INFO("\r\nMCU wakeup from VLLS modes...\r\n");
 	}
 
 	curPowerState = SMC_GetPowerModeState(SMC);
 
-	LOG_INFO("\r\n####################  Power Mode Switch  ####################\n\r\n");
-	LOG_INFO("    Core Clock = %dHz \r\n", CLOCK_GetFreq(kCLOCK_CoreSysClk));
+//	LOG_INFO("\r\n####################  Power Mode Switch  ####################\n\r\n");
+//	LOG_INFO("    Core Clock = %dHz \r\n", CLOCK_GetFreq(kCLOCK_CoreSysClk));
 
 	APP_ShowPowerMode();
 
 	/* If could not set the target power mode, loop continue. */
 	if (!APP_CheckPowerMode(targetPowerMode))
 	{
-		LOG_INFO("\r\n\r\nMode not set\r\n\r\n");
+//		LOG_INFO("\r\n\r\nMode not set\r\n\r\n");
 		return 1;
 	}
 

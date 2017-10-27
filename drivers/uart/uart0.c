@@ -33,13 +33,10 @@ void uart0_callback(UART_Type *base, uart_edma_handle_t *handle, status_t status
  * Variables
  ******************************************************************************/
 
-uart_edma_handle_t g_uartEdmaHandle;
-edma_handle_t g_uartTxEdmaHandle;
-edma_handle_t g_uartRxEdmaHandle;
+static uart_edma_handle_t g_uartEdmaHandle;
+static edma_handle_t g_uartTxEdmaHandle;
+static edma_handle_t g_uartRxEdmaHandle;
 
-
-uint8_t g_txBuffer[UART0_BUFFER_LENGTH] = {0};
-uint8_t g_rxBuffer[UART0_BUFFER_LENGTH] = {0};
 
 volatile bool rxBufferEmpty = true;
 volatile bool txBufferFull = false;
@@ -122,7 +119,10 @@ void uart0_send(uint8_t* data, size_t length) {
     xfer.dataSize = length;
 
     txOnGoing = true;
-    UART_SendEDMA(UART0, &g_uartEdmaHandle, &xfer);
+    status_t ret_code;
+    if (kStatus_Success != (ret_code = UART_SendEDMA(UART0, &g_uartEdmaHandle, &xfer))) {
+    	LOG_ERROR("UART_SendEDMA error %u \r\n", ret_code);
+    }
 
 }
 
@@ -135,39 +135,3 @@ void uart0_wait_for_transfer() {
 
 }
 
-void uart0_echo() {
-
-    uart_transfer_t sendXfer;
-    uart_transfer_t receiveXfer;
-
-    /* Start to echo. */
-    sendXfer.data = g_txBuffer;
-    sendXfer.dataSize = UART0_BUFFER_LENGTH;
-    receiveXfer.data = g_rxBuffer;
-    receiveXfer.dataSize = UART0_BUFFER_LENGTH;
-
-    while (1)
-    {
-        /* If RX is idle and g_rxBuffer is empty, start to read data to g_rxBuffer. */
-        if ((!rxOnGoing) && rxBufferEmpty)
-        {
-            rxOnGoing = true;
-            UART_ReceiveEDMA(UART0, &g_uartEdmaHandle, &receiveXfer);
-        }
-
-        /* If TX is idle and g_txBuffer is full, start to send data. */
-        if ((!txOnGoing) && txBufferFull)
-        {
-            txOnGoing = true;
-            UART_SendEDMA(UART0, &g_uartEdmaHandle, &sendXfer);
-        }
-
-        /* If g_txBuffer is empty and g_rxBuffer is full, copy g_rxBuffer to g_txBuffer. */
-        if ((!rxBufferEmpty) && (!txBufferFull))
-        {
-            memcpy(g_txBuffer, g_rxBuffer, UART0_BUFFER_LENGTH);
-            rxBufferEmpty = true;
-            txBufferFull = true;
-        }
-    }
-}

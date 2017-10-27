@@ -33,9 +33,9 @@ void uart2_callback(UART_Type *base, uart_edma_handle_t *handle, status_t status
  * Variables
  ******************************************************************************/
 
-uart_edma_handle_t g_uartEdmaHandle;
-edma_handle_t g_uartTxEdmaHandle;
-edma_handle_t g_uartRxEdmaHandle;
+static uart_edma_handle_t g_uartEdmaHandle;
+static edma_handle_t g_uartTxEdmaHandle;
+static edma_handle_t g_uartRxEdmaHandle;
 
 
 volatile bool rxBufferEmpty = true;

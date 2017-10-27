@@ -13,6 +13,7 @@
 #include "sdcard_fatfs.h"
 #include "uart0.h"
 #include "uart2.h"
+#include "dma_spi0.h"
 #include "composite.h"
 #include "power_manager.h"
 #include "Model.h"
@@ -59,7 +60,7 @@ int main(void) {
 	uart_config_t uartConfig;
 	UART_GetDefaultConfig(&uartConfig);
 	uartConfig.enableTx = true;
-	uartConfig.enableRx = true;
+	uartConfig.enableRx = false; // TODO
 
 	uartConfig.baudRate_Bps = 9600U;
 	uart0_init(&uartConfig);
@@ -67,10 +68,17 @@ int main(void) {
 	uartConfig.baudRate_Bps = 115200U;
 	uart2_init(&uartConfig);
 
+	pwManager.init();
+
+	dma_spi0_init();
+	dma_spi0_mngr_init();
+
+    //
+	// High level code
+	//
+
 	// LCD driver
 	lcd.begin();
-
-	pwManager.init();
 
 	boucle_crs.init();
 
@@ -98,8 +106,15 @@ int main(void) {
 			GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
 
 		}
+			lcd.setCursor(10,10);
+			lcd.setTextSize(3);
+			lcd.print(millis());
+			dma_spi0_mngr_finish();
 
+			dma_spi0_mngr_tasks_start();
+			W_SYSVIEW_OnIdle();
 
+		dma_spi0_mngr_run();
 	}
 
 	return 0;

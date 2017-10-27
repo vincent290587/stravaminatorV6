@@ -118,7 +118,7 @@ void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_
 	uart_config_t uartConfig;
 	UART_GetDefaultConfig(&uartConfig);
 	uartConfig.enableTx = true;
-	uartConfig.enableRx = true;
+	uartConfig.enableRx = false; // TODO
 	uartConfig.baudRate_Bps = 9600U;
 	uart0_init(&uartConfig);
 

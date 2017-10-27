@@ -7,7 +7,7 @@
 
 #include <stdbool.h>
 #include "ls027.h"
-#include "spi.h"
+#include "dma_spi0.h"
 #include "segger_wrapper.h"
 
 // release
@@ -51,6 +51,8 @@ static spi_transfer_settings spi_settings;
 static uint8_t m_orientation = 0;
 
 static uint8_t m_is_color_inverted = 0;
+
+static uint16_t m_last_updated_line = 0;
 
 /* Internal method prototypes */
 static void WriteData(uint8_t data);
@@ -120,7 +122,15 @@ static void ls027_spi_init() {
 	spi_settings.masterTxData       = masterTxData;
 	spi_settings.spi_tx_data_length = 0;
 
+	sXferTask lcd_task =
+	{
+		.p_xfer_func = LS027_UpdateFullManage,
+		.p_pre_func  = LS027_InitTransfer,
+		.p_post_func = LS027_SwitchBuffers,
+		.user_data = 0,
+	};
 
+	dma_spi0_mngr_task_add(&lcd_task);
 }
 
 /**
@@ -130,7 +140,7 @@ static void ls027_spi_init() {
 static void start_transfer(bool is_last_byte) {
 
     /* Start master transfer */
-	spi_start_transfer(&spi_settings, is_last_byte);
+	dma_spi0_transfer(&spi_settings);
 
     spi_settings.spi_tx_data_length = 0;
 
@@ -286,46 +296,6 @@ void LS027_UpdateLine(uint8_t line, uint8_t *dataP)
 
 /*
  ** ===================================================================
- **     Method      :  LS027_UpdateFull (component SharpMemDisplay)
- **     Description :
- **         Updates the whole display
- **     Parameters  : None
- **     Returns     : Nothing
- ** ===================================================================
- */
-void LS027_UpdateFull(void)
-{
-
-	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
-
-	uint16_t nb_lines_updated = 0;
-
-	for (int i=0; i < LS027_HW_HEIGHT; i++) {
-
-		if (wasLineChanged(i)) {
-
-			LS027_UpdateLine(i, m_buffer_in_use + (i*LS027_HW_WIDTH/8));
-
-			nb_lines_updated++;
-		}
-
-	}
-
-	// switching buffers
-	uint8_t *temp_pt = m_buffer_in_use;
-	m_buffer_in_use = m_buffer_prev;
-	m_buffer_prev   = temp_pt;
-
-	// reset buffer in use
-	memset(m_buffer_in_use, 0, sizeof(LS027_DisplayBuf1));
-
-	LOG_INFO("LCD: %u lines updated\r\n", nb_lines_updated);
-
-	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
-}
-
-/*
- ** ===================================================================
  **     Method      :  LS027_SetDisplayOrientation (component SharpMemDisplay)
  **     Description :
  **         Sets current display orientation
@@ -370,3 +340,101 @@ void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color) {
 
 	setBufferPixel(x, y, color);
 }
+
+
+/*
+ ** ===================================================================
+ **     Method      :  LS027_UpdateFull (component SharpMemDisplay)
+ **     Description :
+ **         Updates the whole display
+ **     Parameters  : None
+ **     Returns     : Nothing
+ ** ===================================================================
+ */
+void LS027_UpdateFullBlock(void)
+{
+
+	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
+
+	uint16_t nb_lines_updated = 0;
+
+	for (int i=0; i < LS027_HW_HEIGHT; i++) {
+
+		if (wasLineChanged(i) || 1) {
+
+			W_SYSVIEW_OnTaskStopExec(LCD_TASK);
+
+			LS027_UpdateLine(i, m_buffer_in_use + (i*LS027_HW_WIDTH/8));
+
+			nb_lines_updated++;
+		}
+
+	}
+
+	// switching buffers
+	uint8_t *temp_pt = m_buffer_in_use;
+	m_buffer_in_use = m_buffer_prev;
+	m_buffer_prev   = temp_pt;
+
+	// reset buffer in use
+	memset(m_buffer_in_use, 0, sizeof(LS027_DisplayBuf1));
+
+	//LOG_INFO("LCD: %u lines updated\r\n", nb_lines_updated);
+
+}
+
+
+/**
+ *
+ * @param
+ * @return
+ */
+int LS027_UpdateFullManage(void *user_data)
+{
+
+	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
+
+	if (wasLineChanged(m_last_updated_line) || 1) {
+
+		W_SYSVIEW_OnTaskStopExec(LCD_TASK);
+
+		LS027_UpdateLine(m_last_updated_line,
+				m_buffer_in_use + (m_last_updated_line*LS027_HW_WIDTH/8));
+
+	}
+
+	if (++m_last_updated_line < LS027_HW_HEIGHT) {
+		return 1;
+	}
+
+	return 0;
+}
+
+/**
+ *
+ * @param
+ */
+void LS027_InitTransfer(void *user_data)
+{
+	m_last_updated_line = 0;
+//	LOG_INFO("LS027 Xfer start\r\n");
+}
+
+/**
+ *
+ * @param
+ */
+void LS027_SwitchBuffers(void *user_data)
+{
+
+	// switching buffers
+	uint8_t *temp_pt = m_buffer_in_use;
+	m_buffer_in_use = m_buffer_prev;
+	m_buffer_prev   = temp_pt;
+
+	// reset buffer in use
+	memset(m_buffer_in_use, 0, sizeof(LS027_DisplayBuf1));
+
+//	LOG_INFO("LS027 Xfer finished\r\n");
+}
+

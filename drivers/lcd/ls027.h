@@ -50,77 +50,26 @@ extern "C" {
 #endif /* _cplusplus */
 
 void LS027_Clear(void);
-/*
-** ===================================================================
-**     Method      :  LS027_Clear (component SharpMemDisplay)
-**     Description :
-**         Clears the whole display memory.
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
 
 void LS027_Init(void);
-/*
-** ===================================================================
-**     Method      :  LS027_Init (component SharpMemDisplay)
-**     Description :
-**         Display driver initialization
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
+
 void LS027_UpdateLine(uint8_t line, uint8_t *dataP);
 
-
-void LS027_UpdateFull(void);
-/*
-** ===================================================================
-**     Method      :  LS027_UpdateFull (component SharpMemDisplay)
-**     Description :
-**         Updates the whole display
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
+void LS027_UpdateFullBlock(void);
 
 void LS027_SetDisplayOrientation(LS027_DisplayOrientation newOrientation);
-/*
-** ===================================================================
-**     Method      :  LS027_SetDisplayOrientation (component SharpMemDisplay)
-**     Description :
-**         Sets current display orientation
-**     Parameters  :
-**         NAME            - DESCRIPTION
-**         newOrientation  - the new orientation
-**                           for the display
-**     Returns     : Nothing
-** ===================================================================
-*/
 
 void LS027_ToggleVCOM(void);
-/*
-** ===================================================================
-**     Method      :  LS027_ToggleVCOM (component SharpMemDisplay)
-**     Description :
-**         Command used if EXTMODE=L. This function toggles the VCOM if
-**         no other command is executed
-**     Parameters  : None
-**     Returns     : Nothing
-** ===================================================================
-*/
 
 void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color);
-/**************************************************************************/
-/*!
-    @brief Draws a single pixel in image buffer
 
-    @param[in]  x
-                The x position (0 based)
-    @param[in]  y
-                The y position (0 based)
- */
-/**************************************************************************/
+// managed output
+
+int LS027_UpdateFullManage(void *);
+
+void LS027_InitTransfer(void *);
+
+void LS027_SwitchBuffers(void *);
 
 #if defined(__cplusplus)
 }

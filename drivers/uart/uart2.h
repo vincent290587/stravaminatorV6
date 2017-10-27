@@ -18,6 +18,8 @@ extern "C" {
 
 void uart2_init(uart_config_t* uartConfig);
 
+void uart2_uninit(void);
+
 void uart2_send(uint8_t* data, size_t length);
 
 void uart2_wait_for_transfer();

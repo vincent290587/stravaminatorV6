@@ -52,7 +52,7 @@ volatile bool rxOnGoing = false;
 
 /* UART user callback */
 __attribute__((weak)) void uart0_user_callback(void) {
-	// empty function
+	// TODO empty function
 }
 
 /* UART callback */
@@ -85,8 +85,6 @@ void uart0_callback(UART_Type *base, uart_edma_handle_t *handle, status_t status
  */
 void uart0_init(uart_config_t* uartConfig)
 {
-    edma_config_t config;
-
     UART_Init(UART0, uartConfig, UART0_CLK_FREQ);
 
     /* Set channel for UART */
@@ -95,9 +93,6 @@ void uart0_init(uart_config_t* uartConfig)
     DMAMUX_EnableChannel(DMAMUX0, UART0_TX_DMA_CHANNEL);
     DMAMUX_EnableChannel(DMAMUX0, UART0_RX_DMA_CHANNEL);
 
-    /* Init the EDMA module */
-    EDMA_GetDefaultConfig(&config);
-    EDMA_Init(DMA0, &config);
     EDMA_CreateHandle(&g_uartTxEdmaHandle, DMA0, UART0_TX_DMA_CHANNEL);
     EDMA_CreateHandle(&g_uartRxEdmaHandle, DMA0, UART0_RX_DMA_CHANNEL);
 
@@ -106,6 +101,16 @@ void uart0_init(uart_config_t* uartConfig)
     		&g_uartTxEdmaHandle, &g_uartRxEdmaHandle);
 
     LOG_INFO("UART0 initialized\n");
+}
+
+void uart0_uninit()
+{
+	UART_Deinit(UART0);
+
+	DMAMUX_DisableChannel(DMAMUX0, UART0_TX_DMA_CHANNEL);
+	DMAMUX_DisableChannel(DMAMUX0, UART0_RX_DMA_CHANNEL);
+
+    LOG_INFO("UART0 uninit\n");
 }
 
 void uart0_send(uint8_t* data, size_t length) {
@@ -125,7 +130,7 @@ void uart0_wait_for_transfer() {
 
     /* Wait send finished */
     while (txOnGoing) {
-
+    	// TODO
     }
 
 }

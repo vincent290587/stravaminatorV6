@@ -38,9 +38,6 @@ edma_handle_t g_uartTxEdmaHandle;
 edma_handle_t g_uartRxEdmaHandle;
 
 
-uint8_t g_txBuffer[UART2_BUFFER_LENGTH] = {0};
-uint8_t g_rxBuffer[UART2_BUFFER_LENGTH] = {0};
-
 volatile bool rxBufferEmpty = true;
 volatile bool txBufferFull = false;
 volatile bool txOnGoing = false;
@@ -65,6 +62,7 @@ void uart2_callback(UART_Type *base, uart_edma_handle_t *handle, status_t status
         txBufferFull = false;
         txOnGoing = false;
         // TX just finished
+        LOG_INFO("UART2 TX just finished\n");
     }
 
     if (kStatus_UART_RxIdle == status)
@@ -72,6 +70,8 @@ void uart2_callback(UART_Type *base, uart_edma_handle_t *handle, status_t status
         rxBufferEmpty = false;
         if (rxOnGoing == true) {
         	rxOnGoing = false;
+
+        	LOG_INFO("UART2 RX just finished\n");
 
         	// handle received string
         	uart2_user_callback();
@@ -85,8 +85,6 @@ void uart2_callback(UART_Type *base, uart_edma_handle_t *handle, status_t status
  */
 void uart2_init(uart_config_t* uartConfig)
 {
-    edma_config_t config;
-
     UART_Init(UART2, uartConfig, UART2_CLK_FREQ);
 
     /* Set channel for UART */
@@ -96,8 +94,6 @@ void uart2_init(uart_config_t* uartConfig)
     DMAMUX_EnableChannel(DMAMUX0, UART2_RX_DMA_CHANNEL);
 
     /* Init the EDMA module */
-    EDMA_GetDefaultConfig(&config);
-    EDMA_Init(DMA0, &config);
     EDMA_CreateHandle(&g_uartTxEdmaHandle, DMA0, UART2_TX_DMA_CHANNEL);
     EDMA_CreateHandle(&g_uartRxEdmaHandle, DMA0, UART2_RX_DMA_CHANNEL);
 
@@ -106,6 +102,16 @@ void uart2_init(uart_config_t* uartConfig)
     		&g_uartTxEdmaHandle, &g_uartRxEdmaHandle);
 
     LOG_INFO("UART2 initialized\n");
+}
+
+void uart2_uninit()
+{
+	UART_Deinit(UART2);
+
+	DMAMUX_DisableChannel(DMAMUX0, UART2_TX_DMA_CHANNEL);
+	DMAMUX_DisableChannel(DMAMUX0, UART2_RX_DMA_CHANNEL);
+
+    LOG_INFO("UART2 uninit\n");
 }
 
 void uart2_send(uint8_t* data, size_t length) {
@@ -117,7 +123,10 @@ void uart2_send(uint8_t* data, size_t length) {
     xfer.dataSize = length;
 
     txOnGoing = true;
-    UART_SendEDMA(UART2, &g_uartEdmaHandle, &xfer);
+    status_t ret_code;
+    if (kStatus_Success != (ret_code = UART_SendEDMA(UART2, &g_uartEdmaHandle, &xfer))) {
+    	LOG_ERROR("UART_SendEDMA error %u \r\n", ret_code);
+    }
 
 }
 

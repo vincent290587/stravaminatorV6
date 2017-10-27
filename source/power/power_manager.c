@@ -17,6 +17,8 @@
 #include "power_manager.h"
 #include "clock_config.h"
 #include "composite.h"
+#include "uart0.h"
+#include "uart2.h"
 
 #include "pin_mux.h"
 #include "fsl_pmc.h"
@@ -84,11 +86,13 @@ static smc_power_state_t curPowerState;
 
 void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode)
 {
-	/* Wait for debug console output finished. */
-//	while (!(kUART_TransmissionCompleteFlag & UART_GetStatusFlags((UART_Type *)BOARD_DEBUG_UART_BASEADDR)))
+//	if ((kSMC_PowerStateVlpr == originPowerState) && (kSMC_PowerStateRun == SMC_GetPowerModeState(SMC)))
 //	{
+//
 //	}
-//	DbgConsole_Deinit();
+
+	uart0_uninit();
+	uart2_uninit();
 
 }
 
@@ -104,27 +108,39 @@ void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_
 	}
 
 
-	if ((kSMC_PowerStateVlpr == originPowerState) && (kSMC_PowerStateRun == SMC_GetPowerModeState(SMC)))
-	{
+//	if ((kSMC_PowerStateVlpr == originPowerState) && (kSMC_PowerStateRun == SMC_GetPowerModeState(SMC)))
+//	{
 //		CLOCK_EnableUsbfs0Clock(USB_FS_CLK_SRC, USB_FS_CLK_FREQ);
-	}
+//
+//	}
+
+	// Initialize the UART.
+	uart_config_t uartConfig;
+	UART_GetDefaultConfig(&uartConfig);
+	uartConfig.enableTx = true;
+	uartConfig.enableRx = true;
+	uartConfig.baudRate_Bps = 9600U;
+	uart0_init(&uartConfig);
+
+	uartConfig.baudRate_Bps = 115200U;
+	uart2_init(&uartConfig);
 
 	/*
 	 * If enter stop modes when MCG in PEE mode, then after wakeup, the MCG is in PBE mode,
 	 * need to enter PEE mode manually.
 	 */
-	if ((kAPP_PowerModeRun != targetMode) && (kAPP_PowerModeWait != targetMode) && (kAPP_PowerModeVlpw != targetMode) &&
-			(kAPP_PowerModeVlpr != targetMode))
-	{
-		if (kSMC_PowerStateRun == originPowerState)
-		{
-			/* Wait for PLL lock. */
-			while (!(kMCG_Pll0LockFlag & CLOCK_GetStatusFlags()))
-			{
-			}
-			CLOCK_SetPeeMode();
-		}
-	}
+//	if ((kAPP_PowerModeRun != targetMode) && (kAPP_PowerModeWait != targetMode) && (kAPP_PowerModeVlpw != targetMode) &&
+//			(kAPP_PowerModeVlpr != targetMode))
+//	{
+//		if (kSMC_PowerStateRun == originPowerState)
+//		{
+//			/* Wait for PLL lock. */
+//			while (!(kMCG_Pll0LockFlag & CLOCK_GetStatusFlags()))
+//			{
+//			}
+//			CLOCK_SetPeeMode();
+//		}
+//	}
 
 //	APP_InitDebugConsole();
 }
@@ -317,7 +333,7 @@ int power_manager_run(app_power_mode_t targetPowerMode) {
 
 	/* If target mode is RUN/VLPR/HSRUN, don't need to set wakeup source. */
 
-//	APP_PowerPreSwitchHook(curPowerState, targetPowerMode);
+	APP_PowerPreSwitchHook(curPowerState, targetPowerMode);
 
 	APP_PowerModeSwitch(targetPowerMode);
 

@@ -128,7 +128,7 @@ void SeggerDisplay::displayRTT() {
 	LOG_SET_TERM(RTT_GRAPH_CHANNEL);
 
 	LOG_FLUSH();
-	LOG_INFO("\r\n");
+	LOG_GRAPH("\r\n");
 
 	for (int i=-1; i <= SEG_LCDHEIGHT; i++) {
 
@@ -136,17 +136,17 @@ void SeggerDisplay::displayRTT() {
 
 			if (0 <= i && i < SEG_LCDHEIGHT) {
 				if (this->getPixel(j, i)) {
-					LOG_INFO("*");
+					LOG_GRAPH("*");
 				} else {
-					LOG_INFO(" ");
+					LOG_GRAPH(" ");
 				}
 			} else {
-				LOG_INFO("-");
+				LOG_GRAPH("-");
 			}
 
 		}
 
-		LOG_INFO("\r\n");
+		LOG_GRAPH("\r\n");
 		LOG_FLUSH();
 
 	}

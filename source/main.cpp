@@ -39,6 +39,11 @@ int main(void) {
 	/* Init DMAMUX */
 	DMAMUX_Init(DMAMUX0);
 
+    /* Init the EDMA module */
+    edma_config_t config;
+    EDMA_GetDefaultConfig(&config);
+    EDMA_Init(DMA0, &config);
+
 	/* Init code */
 	millis_init();
 

@@ -27,27 +27,7 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define APP_DEBUG_UART_BAUDRATE 9600                 /* Debug console baud rate.           */
-#define APP_DEBUG_UART_CLKSRC_NAME kCLOCK_CoreSysClk /* System clock.       */
 
-#define APP_WAKEUP_BUTTON_GPIO BOARD_SW2_GPIO
-#define APP_WAKEUP_BUTTON_PORT BOARD_SW2_PORT
-#define APP_WAKEUP_BUTTON_GPIO_PIN BOARD_SW2_GPIO_PIN
-#define APP_WAKEUP_BUTTON_IRQ BOARD_SW2_IRQ
-#define APP_WAKEUP_BUTTON_IRQ_HANDLER BOARD_SW2_IRQ_HANDLER
-#define APP_WAKEUP_BUTTON_NAME BOARD_SW2_NAME
-#define APP_WAKEUP_BUTTON_IRQ_TYPE kPORT_InterruptFallingEdge
-
-/* Debug console RX pin: PORTB16 MUX: 3 */
-#define DEBUG_CONSOLE_RX_PORT PORTB
-#define DEBUG_CONSOLE_RX_GPIO GPIOB
-#define DEBUG_CONSOLE_RX_PIN 16
-#define DEBUG_CONSOLE_RX_PINMUX kPORT_MuxAlt3
-/* Debug console TX pin: PORTB17 MUX: 3 */
-#define DEBUG_CONSOLE_TX_PORT PORTB
-#define DEBUG_CONSOLE_TX_GPIO GPIOB
-#define DEBUG_CONSOLE_TX_PIN 17
-#define DEBUG_CONSOLE_TX_PINMUX kPORT_MuxAlt3
 #define CORE_CLK_FREQ CLOCK_GetFreq(kCLOCK_CoreSysClk)
 
 /*******************************************************************************

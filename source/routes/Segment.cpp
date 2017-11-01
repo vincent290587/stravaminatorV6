@@ -173,6 +173,11 @@ int Segment::testActivation(ListePoints& liste) {
 
 }
 
+/**
+ *
+ * @param liste Mon historique de positions
+ * @return 1 si desactivable, 0 sinon
+ */
 int Segment::testDesactivation(ListePoints& liste) {
 
 	float distP1P2, distP1, distP2;
@@ -185,13 +190,17 @@ int Segment::testDesactivation(ListePoints& liste) {
 	// position courante
 	PPc = liste.getFirstPoint();
 
+	// avant-dernier point
 	P1 = _lpts.getPointAt(-2);
-	distP1 = P1->dist(PPc);
 	// dernier point
 	P2 = _lpts.getPointAt(-1);
 
-
 	distP2 = P2->dist(PPc);
+
+	// trick to make it go faster
+	if (distP2 > DIST_ACT) return 0;
+
+	distP1 = P1->dist(PPc);
 	distP1P2 = P1->dist(P2);
 
 	// pythagore

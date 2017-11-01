@@ -34,6 +34,11 @@
                         <data>true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.dmamux" description="Pins initialization requires the DMAMUX Driver in the project." problem_level="2" source="Pins.BOARD_InitPins">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
                </dependencies>
                <pins>
                   <pin peripheral="USB0" signal="DM" pin_num="11" pin_signal="USB0_DM"/>
@@ -82,6 +87,13 @@
                   <pin peripheral="GPIOE" signal="GPIO, 26" pin_num="33" pin_signal="PTE26/ENET_1588_CLKIN/UART4_CTS_b/RTC_CLKOUT/USB_CLKIN"/>
                   <pin peripheral="GPIOB" signal="GPIO, 21" pin_num="67" pin_signal="PTB21/SPI2_SCK/FB_AD30/CMP1_OUT"/>
                   <pin peripheral="GPIOB" signal="GPIO, 22" pin_num="68" pin_signal="PTB22/SPI2_SOUT/FB_AD29/CMP2_OUT"/>
+                  <pin peripheral="DMA" signal="CH, 0" pin_num="" pin_signal="ADC0_All_COCO_Flag"/>
+                  <pin peripheral="DMA" signal="CH, 1" pin_num="" pin_signal="ADC1_All_COCO_Flag"/>
+                  <pin peripheral="DMA" signal="CH, 2" pin_num="" pin_signal="AlwaysOn58_Request"/>
+                  <pin peripheral="DMA" signal="CH, 3" pin_num="" pin_signal="AlwaysOn59_Request"/>
+                  <pin peripheral="DMA" signal="CH, 4" pin_num="" pin_signal="AlwaysOn60_Request"/>
+                  <pin peripheral="DMA" signal="CH, 5" pin_num="" pin_signal="AlwaysOn61_Request"/>
+                  <pin peripheral="DMA" signal="CH, 6" pin_num="" pin_signal="AlwaysOn62_Request"/>
                </pins>
             </function>
          </functions_list>
@@ -91,11 +103,11 @@
             <processor_version>2.0.0</processor_version>
          </clocks_profile>
          <clock_configurations>
-            <clock_configuration name="BOARD_BootClockRUN">
+            <clock_configuration name="ClockConfig_HSRUN">
                <description></description>
                <options/>
                <dependencies>
-                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Clocks initialization requires the COMMON Driver in the project." problem_level="2" source="Clocks.BOARD_BootClockRUN">
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Clocks initialization requires the COMMON Driver in the project." problem_level="2" source="Clocks.ClockConfig_HSRUN">
                      <feature name="enabled" evaluation="equal" configuration="core0">
                         <data>true</data>
                      </feature>
@@ -106,15 +118,15 @@
                   <clock_source id="OSC.OSC.outFreq" value="16 MHz" locked="false" enabled="false"/>
                </clock_sources>
                <clock_outputs>
-                  <clock_output id="Bus_clock.outFreq" value="48 MHz" locked="false" accuracy=""/>
-                  <clock_output id="Core_clock.outFreq" value="96 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Bus_clock.outFreq" value="60 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Core_clock.outFreq" value="120 MHz" locked="false" accuracy=""/>
                   <clock_output id="Flash_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
-                  <clock_output id="FlexBus_clock.outFreq" value="32 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FlexBus_clock.outFreq" value="40 MHz" locked="false" accuracy=""/>
                   <clock_output id="IRC48MCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="1 kHz" locked="false" accuracy=""/>
                   <clock_output id="PLLFLLCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
                   <clock_output id="SDHCCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
-                  <clock_output id="System_clock.outFreq" value="96 MHz" locked="false" accuracy=""/>
+                  <clock_output id="System_clock.outFreq" value="120 MHz" locked="false" accuracy=""/>
                   <clock_output id="USB48MCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
@@ -126,7 +138,7 @@
                   <setting id="MCG.OSCSEL.sel" value="SIM.IRC48MCLK" locked="false"/>
                   <setting id="MCG.PLLS.sel" value="MCG.PLL" locked="false"/>
                   <setting id="MCG.PRDIV.scale" value="12" locked="true"/>
-                  <setting id="MCG.VDIV.scale" value="24" locked="true"/>
+                  <setting id="MCG.VDIV.scale" value="30" locked="true"/>
                   <setting id="MCG_C2_OSC_MODE_CFG" value="ModeOscLowPower" locked="false"/>
                   <setting id="MCG_C2_RANGE0_CFG" value="Very_high" locked="false"/>
                   <setting id="MCG_C2_RANGE0_FRDIV_CFG" value="Very_high" locked="false"/>
@@ -135,14 +147,70 @@
                   <setting id="SDHCClkConfig" value="yes" locked="false"/>
                   <setting id="SIM.OUTDIV1.scale" value="1" locked="true"/>
                   <setting id="SIM.OUTDIV2.scale" value="2" locked="true"/>
-                  <setting id="SIM.OUTDIV3.scale" value="3" locked="false"/>
-                  <setting id="SIM.OUTDIV4.scale" value="4" locked="true"/>
+                  <setting id="SIM.OUTDIV3.scale" value="3" locked="true"/>
+                  <setting id="SIM.OUTDIV4.scale" value="5" locked="true"/>
                   <setting id="SIM.PLLFLLSEL.sel" value="IRC48M.IRC48MCLK" locked="false"/>
                   <setting id="SIM.SDHCSRCSEL.sel" value="SIM.PLLFLLSEL" locked="false"/>
                   <setting id="SIM.USBSRCSEL.sel" value="SIM.USBDIV" locked="false"/>
                   <setting id="USBClkConfig" value="yes" locked="false"/>
                </clock_settings>
                <called_from_default_init>true</called_from_default_init>
+            </clock_configuration>
+            <clock_configuration name="ClocksConfig_LPRUN">
+               <description>Copy of ClockConfig_HSRUN</description>
+               <options/>
+               <dependencies>
+                  <dependency resourceType="SWComponent" resourceId="platform.drivers.common" description="Clocks initialization requires the COMMON Driver in the project." problem_level="2" source="Clocks.ClocksConfig_LPRUN">
+                     <feature name="enabled" evaluation="equal" configuration="core0">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
+               </dependencies>
+               <clock_sources>
+                  <clock_source id="IRC48M.IRC48M.outFreq" value="48 MHz" locked="false" enabled="false"/>
+                  <clock_source id="OSC.OSC.outFreq" value="16 MHz" locked="false" enabled="false"/>
+               </clock_sources>
+               <clock_outputs>
+                  <clock_output id="Bus_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Core_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Flash_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
+                  <clock_output id="FlexBus_clock.outFreq" value="12 MHz" locked="false" accuracy=""/>
+                  <clock_output id="IRC48MCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="LPO_clock.outFreq" value="1 kHz" locked="false" accuracy=""/>
+                  <clock_output id="PLLFLLCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SDHCCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+                  <clock_output id="System_clock.outFreq" value="24 MHz" locked="false" accuracy=""/>
+                  <clock_output id="USB48MCLK.outFreq" value="48 MHz" locked="false" accuracy=""/>
+               </clock_outputs>
+               <clock_settings>
+                  <setting id="MCGMode" value="PBE" locked="false"/>
+                  <setting id="MCG.CLKS.sel" value="MCG.OSCSEL" locked="false"/>
+                  <setting id="MCG.FCRDIV.scale" value="2" locked="true"/>
+                  <setting id="MCG.FRDIV.scale" value="512" locked="false"/>
+                  <setting id="MCG.IRCS.sel" value="MCG.FCRDIV" locked="false"/>
+                  <setting id="MCG.IREFS.sel" value="MCG.FRDIV" locked="false"/>
+                  <setting id="MCG.OSCSEL.sel" value="SIM.IRC48MCLK" locked="false"/>
+                  <setting id="MCG.PLLS.sel" value="MCG.PLL" locked="false"/>
+                  <setting id="MCG.PRDIV.scale" value="12" locked="true"/>
+                  <setting id="MCG.VDIV.scale" value="24" locked="true"/>
+                  <setting id="MCG_C2_OSC_MODE_CFG" value="ModeOscLowPower" locked="false"/>
+                  <setting id="MCG_C2_RANGE0_CFG" value="Very_high" locked="false"/>
+                  <setting id="MCG_C2_RANGE0_FRDIV_CFG" value="Very_high" locked="false"/>
+                  <setting id="MCG_C5_PLLCLKEN0_CFG" value="Enabled" locked="false"/>
+                  <setting id="MCG_CG_PLLSTEN0_CFG" value="Enabled" locked="false"/>
+                  <setting id="MCRFFCLKAllowConfig" value="no" locked="false"/>
+                  <setting id="OSC_CR_SYS_OSC_CAP_LOAD_CFG" value="SC18PF" locked="false"/>
+                  <setting id="SDHCClkConfig" value="yes" locked="false"/>
+                  <setting id="SIM.OUTDIV1.scale" value="2" locked="true"/>
+                  <setting id="SIM.OUTDIV2.scale" value="4" locked="true"/>
+                  <setting id="SIM.OUTDIV3.scale" value="4" locked="true"/>
+                  <setting id="SIM.OUTDIV4.scale" value="4" locked="true"/>
+                  <setting id="SIM.PLLFLLSEL.sel" value="IRC48M.IRC48MCLK" locked="false"/>
+                  <setting id="SIM.SDHCSRCSEL.sel" value="SIM.PLLFLLSEL" locked="false"/>
+                  <setting id="SIM.USBSRCSEL.sel" value="SIM.USBDIV" locked="false"/>
+                  <setting id="USBClkConfig" value="yes" locked="false"/>
+               </clock_settings>
+               <called_from_default_init>false</called_from_default_init>
             </clock_configuration>
             <clock_configuration name="ClocksConfig_VLPR">
                <description></description>
@@ -161,13 +229,13 @@
                </dependencies>
                <clock_sources/>
                <clock_outputs>
-                  <clock_output id="Bus_clock.outFreq" value="4 MHz" locked="false" accuracy=""/>
-                  <clock_output id="Core_clock.outFreq" value="4 MHz" locked="false" accuracy=""/>
-                  <clock_output id="Flash_clock.outFreq" value="800 kHz" locked="false" accuracy=""/>
+                  <clock_output id="Bus_clock.outFreq" value="2 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Core_clock.outFreq" value="2 MHz" locked="false" accuracy=""/>
+                  <clock_output id="Flash_clock.outFreq" value="400 kHz" locked="false" accuracy=""/>
                   <clock_output id="FlexBus_clock.outFreq" value="2 MHz" locked="false" accuracy=""/>
                   <clock_output id="LPO_clock.outFreq" value="1 kHz" locked="false" accuracy=""/>
-                  <clock_output id="SDHCCLK.outFreq" value="4 MHz" locked="false" accuracy=""/>
-                  <clock_output id="System_clock.outFreq" value="4 MHz" locked="false" accuracy=""/>
+                  <clock_output id="SDHCCLK.outFreq" value="2 MHz" locked="false" accuracy=""/>
+                  <clock_output id="System_clock.outFreq" value="2 MHz" locked="false" accuracy=""/>
                </clock_outputs>
                <clock_settings>
                   <setting id="MCGMode" value="BLPI" locked="false"/>
@@ -176,7 +244,9 @@
                   <setting id="MCG.FCRDIV.scale" value="1" locked="true"/>
                   <setting id="MCG.IRCS.sel" value="MCG.FCRDIV" locked="false"/>
                   <setting id="SDHCClkConfig" value="yes" locked="false"/>
-                  <setting id="SIM.OUTDIV4.scale" value="5" locked="false"/>
+                  <setting id="SIM.OUTDIV1.scale" value="2" locked="true"/>
+                  <setting id="SIM.OUTDIV2.scale" value="2" locked="false"/>
+                  <setting id="SIM.OUTDIV4.scale" value="10" locked="true"/>
                </clock_settings>
                <called_from_default_init>false</called_from_default_init>
             </clock_configuration>
@@ -184,19 +254,38 @@
       </clocks>
       <prjgen name="Project Generator" version="1.0">
          <toolchain id="kds" type="CPP"/>
-         <project_config name="core0" rtos="middleware.baremetal">
+         <project_config name="core0" rtos="middleware.freertos">
             <description></description>
             <options/>
             <dependencies/>
-            <component_set type="driver" selection="all"/>
-            <component_set type="utility" selection="all"/>
-            <component_set type="CMSIS_driver" selection="all"/>
+            <component_set type="driver" selection="custom">
+               <component>platform.drivers.common</component>
+               <component>platform.drivers.port</component>
+               <component>platform.drivers.smc</component>
+               <component>platform.drivers.flash</component>
+               <component>platform.drivers.clock</component>
+               <component>platform.drivers.uart</component>
+               <component>platform.drivers.wdog</component>
+               <component>platform.drivers.sdhc</component>
+               <component>platform.drivers.rtc</component>
+               <component>platform.drivers.lptmr</component>
+               <component>platform.drivers.llwu</component>
+               <component>platform.drivers.i2c</component>
+               <component>platform.drivers.gpio</component>
+               <component>platform.drivers.edma</component>
+               <component>platform.drivers.dspi</component>
+               <component>platform.drivers.dmamux</component>
+            </component_set>
+            <component_set type="utility" selection="custom">
+               <component>platform.utilities.debug_console</component>
+            </component_set>
+            <component_set type="CMSIS_driver" selection="none"/>
             <component_set type="unsupported" selection="none"/>
          </project_config>
       </prjgen>
       <common name="common" version="1.0">
          <sdk_package version="2.2.0" configuration="79df4724785dc3b249b0dd01f95ddc88"/>
-         <core name="core0" role="primary" project_name="myStrava2"/>
+         <core name="core0" role="primary" project_name="myStrava_RTOS"/>
       </common>
    </tools>
 </configuration>

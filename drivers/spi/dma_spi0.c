@@ -53,14 +53,17 @@ static xferTaskState m_state;
 
 void DSPI_MasterUserCallback(SPI_Type *base, dspi_master_edma_handle_t *handle, status_t status, void *userData)
 {
-	SEGGER_SYSVIEW_RecordEnterISR();
+//	SEGGER_SYSVIEW_RecordEnterISR();
 	if (status != kStatus_Success)
 	{
 		LOG_ERROR("DMA SPI0 master callback error\r\n");
 	}
+
 	isTransferCompleted = true;
-//	LOG_INFO("Xfer completed %d\r\n\r\n", status);
-	SEGGER_SYSVIEW_RecordExitISR();
+
+//	dma_spi0_mngr_run();
+
+//	SEGGER_SYSVIEW_RecordExitISR();
 }
 
 void dma_spi0_uninit(void)
@@ -127,7 +130,6 @@ void dma_spi0_init(void)
 
 void dma_spi0_transfer(spi_transfer_settings* spi_settings) {
 
-	W_SYSVIEW_OnTaskStartExec(SPI_TASK);
 
 	/* Start master transfer */
 	masterXfer.txData = spi_settings->masterTxData;
@@ -144,7 +146,6 @@ void dma_spi0_transfer(spi_transfer_settings* spi_settings) {
 		isTransferCompleted = false;
 	}
 
-	W_SYSVIEW_OnTaskStopExec(SPI_TASK);
 }
 
 void dma_spi0_mngr_init() {
@@ -194,6 +195,8 @@ void dma_spi0_mngr_tasks_start() {
 		(*m_tasks[m_cur_task].p_pre_func)(m_tasks[m_cur_task].user_data);
 	}
 
+	// init transfers
+	dma_spi0_mngr_run();
 }
 
 bool dma_spi0_mngr_is_running() {
@@ -227,11 +230,7 @@ void dma_spi0_mngr_run() {
 			}
 
 		}
-
-		W_SYSVIEW_OnIdle();
-
 	}
-
 }
 
 void dma_spi0_mngr_finish() {

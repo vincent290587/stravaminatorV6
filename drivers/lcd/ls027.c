@@ -391,12 +391,9 @@ void LS027_UpdateFullBlock(void)
  */
 int LS027_UpdateFullManage(void *user_data)
 {
-
-	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
+	if (!m_last_updated_line) W_SYSVIEW_OnTaskStartExec(LCD_TASK);
 
 	if (wasLineChanged(m_last_updated_line) || 1) {
-
-		W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 
 		LS027_UpdateLine(m_last_updated_line,
 				m_buffer_in_use + (m_last_updated_line*LS027_HW_WIDTH/8));
@@ -404,6 +401,7 @@ int LS027_UpdateFullManage(void *user_data)
 	}
 
 	if (++m_last_updated_line < LS027_HW_HEIGHT) {
+		W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 		return 1;
 	}
 

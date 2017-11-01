@@ -14,6 +14,9 @@
 
 #define FACTOR 100000.
 
+static const float R1 = 6356752.;
+static const float R2 = 6378137.;
+
 
 float min(float val1, float val2) {
   if (val1 <= val2) return val1;
@@ -61,7 +64,7 @@ float regFenLim(float val_, float b1_i, float b1_f, float b2_i, float b2_f) {
   return res;
 }
 
-float distance_between(float lat1, float long1, float lat2, float long2) {
+float distance_between2(float lat1, float long1, float lat2, float long2) {
   float delta = 3.141592 * (long1 - long2) / 180.;
   float sdlong = sin(delta);
   float cdlong = cos(delta);
@@ -80,7 +83,40 @@ float distance_between(float lat1, float long1, float lat2, float long2) {
   return delta * 6369933;
 }
 
+/**
+ * Approximation petits angles sur une Terre ellipsoidale
+ *
+ * @param lat1 En degres
+ * @param long1 En degres
+ * @param lat2 En degres
+ * @param long2 En degres
+ * @return
+ */
+float distance_between(float lat1, float long1, float lat2, float long2) {
 
+  static float Rm = 6356752.;
+  static float latRm = 0.;
+
+  float lat1rad = 3.141592 * lat1 / 180.;
+
+  float cos2lat1 = pow(cos(lat1rad), 2.);
+
+  if (fabs(latRm - lat1rad) > 0.008) {
+	  latRm = lat1rad;
+	  Rm = sqrt(pow(R1,2.)*(1-cos2lat1) + pow(R2,2.)*cos2lat1);
+  }
+
+  // petits angles: tan = Id
+  float deltalat = 3.141592 * (lat2 -lat1) / 180.;
+  float deltalon = 3.141592 * (long2-long1) / 180.;
+
+  float dhori  = deltalon * R2 * cos(lat1rad);
+  float dverti = deltalat * Rm;
+
+  // projection plane et pythagore
+  return sqrt(dhori*dhori + dverti*dverti);
+
+}
 
 void calculePos (const char *nom, float *lat, float *lon) {
 

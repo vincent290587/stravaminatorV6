@@ -36,30 +36,12 @@
 void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode);
 void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode);
 
-/*
- * Set the clock configuration for RUN mode from VLPR mode.
- */
-extern void APP_SetClockRunFromVlpr(void);
-
-/*
- * Set the clock configuration for VLPR mode.
- */
-//extern void APP_SetClockVlpr(void);
-
-/*
- * Hook function called before power mode switch.
- */
-extern void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode);
-
-/*
- * Hook function called after power mode switch.
- */
-extern void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode);
-
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 static smc_power_state_t curPowerState;
+static app_power_mode_t  curAppMode;
+
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -79,65 +61,32 @@ void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t
 
 void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode)
 {
-	if ((kAPP_PowerModeRun != targetMode) && (kAPP_PowerModeVlpr != targetMode))
-	{
-		/*
-		 * Debug console RX pin is set to disable for current leakage, nee to re-configure pinmux.
-		 * Debug console TX pin: Don't need to change.
-		 */
-//		PORT_SetPinMux(DEBUG_CONSOLE_RX_PORT, DEBUG_CONSOLE_RX_PIN, DEBUG_CONSOLE_RX_PINMUX);
+	// if the clocks were changed, peripherals must be re-init
+	if (targetMode != kAPP_PowerModeWait &&
+			curAppMode != kAPP_PowerModeWait) {
+
+		// Re-init the UART.
+		uart_config_t uartConfig;
+		UART_GetDefaultConfig(&uartConfig);
+
+		uartConfig.enableTx = true;
+		uartConfig.enableRx = false; // TODO
+		uartConfig.baudRate_Bps = 9600U;
+		uart0_init(&uartConfig);
+
+		//	uartConfig.baudRate_Bps = 115200U;
+		//	uart2_init(&uartConfig);
+
+		// only init SPI if not going to VLP modes
+		if (kAPP_PowerModeVlpr != targetMode &&
+				kAPP_PowerModeVlpw != targetMode) {
+			dma_i2c0_init();
+		}
 	}
 
-
-//	if ((kSMC_PowerStateVlpr == originPowerState) && (kSMC_PowerStateRun == SMC_GetPowerModeState(SMC)))
-//	{
-//		CLOCK_EnableUsbfs0Clock(USB_FS_CLK_SRC, USB_FS_CLK_FREQ);
-//
-//	}
-
-	// Initialize the UART.
-	uart_config_t uartConfig;
-	UART_GetDefaultConfig(&uartConfig);
-
-	uartConfig.enableTx = true;
-	uartConfig.enableRx = false; // TODO
-	uartConfig.baudRate_Bps = 9600U;
-	uart0_init(&uartConfig);
-
-//	uartConfig.baudRate_Bps = 115200U;
-//	uart2_init(&uartConfig);
-
-	dma_i2c0_init();
-
-	/*
-	 * If enter stop modes when MCG in PEE mode, then after wakeup, the MCG is in PBE mode,
-	 * need to enter PEE mode manually.
-	 */
-//	if ((kAPP_PowerModeRun != targetMode) && (kAPP_PowerModeWait != targetMode) && (kAPP_PowerModeVlpw != targetMode) &&
-//			(kAPP_PowerModeVlpr != targetMode))
-//	{
-//		if (kSMC_PowerStateRun == originPowerState)
-//		{
-//			/* Wait for PLL lock. */
-//			while (!(kMCG_Pll0LockFlag & CLOCK_GetStatusFlags()))
-//			{
-//			}
-//			CLOCK_SetPeeMode();
-//		}
-//	}
-
-//	APP_InitDebugConsole();
+	curAppMode = targetMode;
 }
 
-//void APP_WAKEUP_BUTTON_IRQ_HANDLER(void)
-//{
-//	if ((1U << APP_WAKEUP_BUTTON_GPIO_PIN) & PORT_GetPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT))
-//	{
-//		/* Disable interrupt. */
-//		PORT_SetPinInterruptConfig(APP_WAKEUP_BUTTON_PORT, APP_WAKEUP_BUTTON_GPIO_PIN, kPORT_InterruptOrDMADisabled);
-//		PORT_ClearPinsInterruptFlags(APP_WAKEUP_BUTTON_PORT, (1U << APP_WAKEUP_BUTTON_GPIO_PIN));
-//	}
-//}
 
 void APP_ShowPowerMode(void)
 {
@@ -200,8 +149,7 @@ bool APP_CheckPowerMode(app_power_mode_t targetPowerMode)
 	}
 
 	/* Don't need to change power mode if current mode is already the target mode. */
-	if (((kAPP_PowerModeRun == targetPowerMode) && (kSMC_PowerStateRun == curPowerState)) ||
-			((kAPP_PowerModeVlpr == targetPowerMode) && (kSMC_PowerStateVlpr == curPowerState)))
+	if (curAppMode == targetPowerMode)
 	{
 		LOG_INFO("Already in the target power mode.\r\n");
 		return false;
@@ -218,15 +166,32 @@ void APP_PowerModeSwitch(app_power_mode_t targetPowerMode)
 	switch (targetPowerMode)
 	{
 	case kAPP_PowerModeVlpr:
-		ClocksConfig_VLPR();
-//		APP_SetClockVlpr();
-//		SMC_SetPowerModeVlpr(SMC, false);
-//		while (kSMC_PowerStateVlpr != SMC_GetPowerModeState(SMC))
-//		{
-//		}
+
+		if (kSMC_PowerStateVlpw == curPowerState)
+		{
+			SMC_SetPowerModeVlpr(SMC, false);
+		} else {
+			ClocksConfig_VLPR();
+		}
 		break;
 
-	case kAPP_PowerModeRun:
+	case kAPP_PowerModeRun120:
+
+		/* Power mode change. */
+		SMC_SetPowerModeRun(SMC);
+		while (kSMC_PowerStateRun != SMC_GetPowerModeState(SMC))
+		{
+		}
+
+		/* If enter RUN from VLPR, change clock after the power mode change. */
+		if (kAPP_PowerModeWait != curAppMode ||
+				SystemCoreClock != CLOCKCONFIG_HSRUN_CORE_CLOCK)
+		{
+			ClockConfig_HSRUN();
+		}
+		break;
+
+	case kAPP_PowerModeRun24:
 		/* Power mode change. */
 
 		SMC_SetPowerModeRun(SMC);
@@ -235,9 +200,10 @@ void APP_PowerModeSwitch(app_power_mode_t targetPowerMode)
 		}
 
 		/* If enter RUN from VLPR, change clock after the power mode change. */
-		if (kSMC_PowerStateVlpr == curPowerState)
+		if (kAPP_PowerModeWait != curAppMode ||
+				SystemCoreClock != CLOCKSCONFIG_LPRUN_CORE_CLOCK)
 		{
-			ClocksConfig_RUN();
+			ClocksConfig_LPRUN();
 		}
 		break;
 
@@ -279,6 +245,8 @@ int power_manager_init(void)
 {
 	/* Power related. */
 	SMC_SetPowerModeProtection(SMC, kSMC_AllowPowerModeAll);
+
+	curAppMode = kAPP_PowerModeRun120;
 
 	if (kRCM_SourceWakeup & RCM_GetPreviousResetSources(RCM)) /* Wakeup from VLLS. */
 	{

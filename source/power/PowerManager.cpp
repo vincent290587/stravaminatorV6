@@ -14,7 +14,7 @@ PowerManager::PowerManager() {
 
 	m_is_usb_init = true;
 
-	m_cur_mode = kAPP_PowerModeRun;
+	m_cur_mode = kAPP_PowerModeRun120;
 }
 
 /**
@@ -39,8 +39,8 @@ bool PowerManager::isUsbConnected() {
 void PowerManager::switchToRun() {
 	if (m_cur_mode == kAPP_PowerModeVlpr) {
 
-		power_manager_run(kAPP_PowerModeRun);
-		m_cur_mode = kAPP_PowerModeRun;
+		power_manager_run(kAPP_PowerModeRun120);
+		m_cur_mode = kAPP_PowerModeRun120;
 
 	}
 }
@@ -50,7 +50,7 @@ void PowerManager::switchToRun() {
  */
 void PowerManager::switchToVlpr() {
 	if (!this->isUsbConnected() &&
-			m_cur_mode == kAPP_PowerModeRun) {
+			m_cur_mode == kAPP_PowerModeRun120) {
 
 		if (m_is_usb_init) {
 			CompositeStop();

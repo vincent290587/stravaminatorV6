@@ -97,26 +97,26 @@ static void CLOCK_CONFIG_SetFllExtRefDiv(uint8_t frdiv)
  ******************************************************************************/
 void BOARD_InitBootClocks(void)
 {
-	ClocksConfig_RUN();
+    ClockConfig_HSRUN();
 }
 
 /*******************************************************************************
- ********************** Configuration BOARD_BootClockRUN ***********************
+ ********************** Configuration ClockConfig_HSRUN ************************
  ******************************************************************************/
 /* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
 !!Configuration
-name: BOARD_BootClockRUN
+name: ClockConfig_HSRUN
 called_from_default_init: true
 outputs:
-- {id: Bus_clock.outFreq, value: 48 MHz}
-- {id: Core_clock.outFreq, value: 96 MHz}
+- {id: Bus_clock.outFreq, value: 60 MHz}
+- {id: Core_clock.outFreq, value: 120 MHz}
 - {id: Flash_clock.outFreq, value: 24 MHz}
-- {id: FlexBus_clock.outFreq, value: 32 MHz}
+- {id: FlexBus_clock.outFreq, value: 40 MHz}
 - {id: IRC48MCLK.outFreq, value: 48 MHz}
 - {id: LPO_clock.outFreq, value: 1 kHz}
 - {id: PLLFLLCLK.outFreq, value: 48 MHz}
 - {id: SDHCCLK.outFreq, value: 48 MHz}
-- {id: System_clock.outFreq, value: 96 MHz}
+- {id: System_clock.outFreq, value: 120 MHz}
 - {id: USB48MCLK.outFreq, value: 48 MHz}
 settings:
 - {id: MCGMode, value: PEE}
@@ -127,7 +127,7 @@ settings:
 - {id: MCG.OSCSEL.sel, value: SIM.IRC48MCLK}
 - {id: MCG.PLLS.sel, value: MCG.PLL}
 - {id: MCG.PRDIV.scale, value: '12', locked: true}
-- {id: MCG.VDIV.scale, value: '24', locked: true}
+- {id: MCG.VDIV.scale, value: '30', locked: true}
 - {id: MCG_C2_OSC_MODE_CFG, value: ModeOscLowPower}
 - {id: MCG_C2_RANGE0_CFG, value: Very_high}
 - {id: MCG_C2_RANGE0_FRDIV_CFG, value: Very_high}
@@ -136,8 +136,8 @@ settings:
 - {id: SDHCClkConfig, value: 'yes'}
 - {id: SIM.OUTDIV1.scale, value: '1', locked: true}
 - {id: SIM.OUTDIV2.scale, value: '2', locked: true}
-- {id: SIM.OUTDIV3.scale, value: '3'}
-- {id: SIM.OUTDIV4.scale, value: '4', locked: true}
+- {id: SIM.OUTDIV3.scale, value: '3', locked: true}
+- {id: SIM.OUTDIV4.scale, value: '5', locked: true}
 - {id: SIM.PLLFLLSEL.sel, value: IRC48M.IRC48MCLK}
 - {id: SIM.SDHCSRCSEL.sel, value: SIM.PLLFLLSEL}
 - {id: SIM.USBSRCSEL.sel, value: SIM.USBDIV}
@@ -148,9 +148,9 @@ sources:
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
 /*******************************************************************************
- * Variables for BOARD_BootClockRUN configuration
+ * Variables for ClockConfig_HSRUN configuration
  ******************************************************************************/
-const mcg_config_t mcgConfig_BOARD_BootClockRUN =
+const mcg_config_t mcgConfig_ClockConfig_HSRUN =
     {
         .mcgMode = kMCG_ModePEE,                  /* PEE - PLL Engaged External */
         .irclkEnableMode = MCG_IRCLK_DISABLE,     /* MCGIRCLK disabled */
@@ -164,16 +164,16 @@ const mcg_config_t mcgConfig_BOARD_BootClockRUN =
             {
                 .enableMode = MCG_PLL_DISABLE,    /* MCGPLLCLK disabled */
                 .prdiv = 0xbU,                    /* PLL Reference divider: divided by 12 */
-                .vdiv = 0x0U,                     /* VCO divider: multiplied by 24 */
+                .vdiv = 0x6U,                     /* VCO divider: multiplied by 30 */
             },
     };
-const sim_clock_config_t simConfig_BOARD_BootClockRUN =
+const sim_clock_config_t simConfig_ClockConfig_HSRUN =
     {
         .pllFllSel = SIM_PLLFLLSEL_IRC48MCLK_CLK, /* PLLFLL select: IRC48MCLK clock */
         .er32kSrc = SIM_OSC32KSEL_OSC32KCLK_CLK,  /* OSC32KSEL select: OSC32KCLK clock */
-        .clkdiv1 = 0x1230000U,                    /* SIM_CLKDIV1 - OUTDIV1: /1, OUTDIV2: /2, OUTDIV3: /3, OUTDIV4: /4 */
+        .clkdiv1 = 0x1240000U,                    /* SIM_CLKDIV1 - OUTDIV1: /1, OUTDIV2: /2, OUTDIV3: /3, OUTDIV4: /5 */
     };
-const osc_config_t oscConfig_BOARD_BootClockRUN =
+const osc_config_t oscConfig_ClockConfig_HSRUN =
     {
         .freq = 0U,                               /* Oscillator frequency: 0Hz */
         .capLoad = (kOSC_Cap2P | kOSC_Cap16P),    /* Oscillator capacity load: 18pF */
@@ -185,31 +185,140 @@ const osc_config_t oscConfig_BOARD_BootClockRUN =
     };
 
 /*******************************************************************************
- * Code for BOARD_BootClockRUN configuration
+ * Code for ClockConfig_HSRUN configuration
  ******************************************************************************/
-void ClocksConfig_RUN(void)
+void ClockConfig_HSRUN(void)
 {
     /* Set the system clock dividers in SIM to safe value. */
     CLOCK_SetSimSafeDivs();
     /* Enable IRC48M oscillator for K60_1M as workaround because there is not enabled the oscillator automatically. */
     CLOCK_CONFIG_EnableIrc48MOsc();
     /* Configure FLL external reference divider (FRDIV). */
-    CLOCK_CONFIG_SetFllExtRefDiv(mcgConfig_BOARD_BootClockRUN.frdiv);
+    CLOCK_CONFIG_SetFllExtRefDiv(mcgConfig_ClockConfig_HSRUN.frdiv);
     /* Set MCG to PEE mode. */
-    CLOCK_BootToPeeMode(mcgConfig_BOARD_BootClockRUN.oscsel,
+    CLOCK_BootToPeeMode(mcgConfig_ClockConfig_HSRUN.oscsel,
                         kMCG_PllClkSelPll0,
-                        &mcgConfig_BOARD_BootClockRUN.pll0Config);
+                        &mcgConfig_ClockConfig_HSRUN.pll0Config);
     /* Set the clock configuration in SIM module. */
-    CLOCK_SetSimConfig(&simConfig_BOARD_BootClockRUN);
+    CLOCK_SetSimConfig(&simConfig_ClockConfig_HSRUN);
     /* Set SystemCoreClock variable. */
-    SystemCoreClock = BOARD_BOOTCLOCKRUN_CORE_CLOCK;
-    // update segger
-    segger_update_clocks();
+    SystemCoreClock = CLOCKCONFIG_HSRUN_CORE_CLOCK;
     /* Enable USB FS clock. */
     CLOCK_EnableUsbfs0Clock(kCLOCK_UsbSrcIrc48M, SIM_USB_CLK_48000000HZ);
     /* Set SDHC clock source. */
     CLOCK_SetSdhc0Clock(SIM_SDHC_CLK_SEL_PLLFLLSEL_CLK);
+}
 
+/*******************************************************************************
+ ********************** Configuration ClocksConfig_LPRUN ***********************
+ ******************************************************************************/
+/* TEXT BELOW IS USED AS SETTING FOR TOOLS *************************************
+!!Configuration
+name: ClocksConfig_LPRUN
+description: Copy of ClockConfig_HSRUN
+outputs:
+- {id: Bus_clock.outFreq, value: 12 MHz}
+- {id: Core_clock.outFreq, value: 24 MHz}
+- {id: Flash_clock.outFreq, value: 12 MHz}
+- {id: FlexBus_clock.outFreq, value: 12 MHz}
+- {id: IRC48MCLK.outFreq, value: 48 MHz}
+- {id: LPO_clock.outFreq, value: 1 kHz}
+- {id: PLLFLLCLK.outFreq, value: 48 MHz}
+- {id: SDHCCLK.outFreq, value: 48 MHz}
+- {id: System_clock.outFreq, value: 24 MHz}
+- {id: USB48MCLK.outFreq, value: 48 MHz}
+settings:
+- {id: MCGMode, value: PBE}
+- {id: MCG.CLKS.sel, value: MCG.OSCSEL}
+- {id: MCG.FCRDIV.scale, value: '2', locked: true}
+- {id: MCG.FRDIV.scale, value: '512'}
+- {id: MCG.IRCS.sel, value: MCG.FCRDIV}
+- {id: MCG.IREFS.sel, value: MCG.FRDIV}
+- {id: MCG.OSCSEL.sel, value: SIM.IRC48MCLK}
+- {id: MCG.PLLS.sel, value: MCG.PLL}
+- {id: MCG.PRDIV.scale, value: '12', locked: true}
+- {id: MCG.VDIV.scale, value: '24', locked: true}
+- {id: MCG_C2_OSC_MODE_CFG, value: ModeOscLowPower}
+- {id: MCG_C2_RANGE0_CFG, value: Very_high}
+- {id: MCG_C2_RANGE0_FRDIV_CFG, value: Very_high}
+- {id: MCG_C5_PLLCLKEN0_CFG, value: Enabled}
+- {id: MCG_CG_PLLSTEN0_CFG, value: Enabled}
+- {id: MCRFFCLKAllowConfig, value: 'no'}
+- {id: OSC_CR_SYS_OSC_CAP_LOAD_CFG, value: SC18PF}
+- {id: SDHCClkConfig, value: 'yes'}
+- {id: SIM.OUTDIV1.scale, value: '2', locked: true}
+- {id: SIM.OUTDIV2.scale, value: '4', locked: true}
+- {id: SIM.OUTDIV3.scale, value: '4', locked: true}
+- {id: SIM.OUTDIV4.scale, value: '4', locked: true}
+- {id: SIM.PLLFLLSEL.sel, value: IRC48M.IRC48MCLK}
+- {id: SIM.SDHCSRCSEL.sel, value: SIM.PLLFLLSEL}
+- {id: SIM.USBSRCSEL.sel, value: SIM.USBDIV}
+- {id: USBClkConfig, value: 'yes'}
+sources:
+- {id: IRC48M.IRC48M.outFreq, value: 48 MHz}
+- {id: OSC.OSC.outFreq, value: 16 MHz}
+ * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
+
+/*******************************************************************************
+ * Variables for ClocksConfig_LPRUN configuration
+ ******************************************************************************/
+const mcg_config_t mcgConfig_ClocksConfig_LPRUN =
+    {
+        .mcgMode = kMCG_ModePBE,                  /* PBE - PLL Bypassed Enternal */
+        .irclkEnableMode = MCG_IRCLK_DISABLE,     /* MCGIRCLK disabled */
+        .ircs = kMCG_IrcFast,                     /* Fast internal reference clock selected */
+        .fcrdiv = 0x1U,                           /* Fast IRC divider: divided by 2 */
+        .frdiv = 0x4U,                            /* FLL reference clock divider: divided by 512 */
+        .drs = kMCG_DrsLow,                       /* Low frequency range */
+        .dmx32 = kMCG_Dmx32Default,               /* DCO has a default range of 25% */
+        .oscsel = kMCG_OscselIrc,                 /* Selects 48 MHz IRC Oscillator */
+        .pll0Config =
+            {
+                .enableMode = kMCG_PllEnableIndependent | kMCG_PllEnableInStop,/* MCGPLLCLK enabled independently of MCG clock mode as well as in STOP mode */
+                .prdiv = 0xbU,                    /* PLL Reference divider: divided by 12 */
+                .vdiv = 0x0U,                     /* VCO divider: multiplied by 24 */
+            },
+    };
+const sim_clock_config_t simConfig_ClocksConfig_LPRUN =
+    {
+        .pllFllSel = SIM_PLLFLLSEL_IRC48MCLK_CLK, /* PLLFLL select: IRC48MCLK clock */
+        .er32kSrc = SIM_OSC32KSEL_OSC32KCLK_CLK,  /* OSC32KSEL select: OSC32KCLK clock */
+        .clkdiv1 = 0x13330000U,                   /* SIM_CLKDIV1 - OUTDIV1: /2, OUTDIV2: /4, OUTDIV3: /4, OUTDIV4: /4 */
+    };
+const osc_config_t oscConfig_ClocksConfig_LPRUN =
+    {
+        .freq = 0U,                               /* Oscillator frequency: 0Hz */
+        .capLoad = (kOSC_Cap2P | kOSC_Cap16P),    /* Oscillator capacity load: 18pF */
+        .workMode = kOSC_ModeOscLowPower,         /* Oscillator low power */
+        .oscerConfig =
+            {
+                .enableMode = OSC_ER_CLK_DISABLE, /* Disable external reference clock */
+            }
+    };
+
+/*******************************************************************************
+ * Code for ClocksConfig_LPRUN configuration
+ ******************************************************************************/
+void ClocksConfig_LPRUN(void)
+{
+    /* Set the system clock dividers in SIM to safe value. */
+    CLOCK_SetSimSafeDivs();
+    /* Enable IRC48M oscillator for K60_1M as workaround because there is not enabled the oscillator automatically. */
+    CLOCK_CONFIG_EnableIrc48MOsc();
+    /* Configure FLL external reference divider (FRDIV). */
+    CLOCK_CONFIG_SetFllExtRefDiv(mcgConfig_ClocksConfig_LPRUN.frdiv);
+    /* Set MCG to PBE mode. */
+    CLOCK_SetExternalRefClkConfig(mcgConfig_ClocksConfig_LPRUN.oscsel);
+    CLOCK_SetPbeMode(kMCG_PllClkSelPll0,
+                     &mcgConfig_ClocksConfig_LPRUN.pll0Config);
+    /* Set the clock configuration in SIM module. */
+    CLOCK_SetSimConfig(&simConfig_ClocksConfig_LPRUN);
+    /* Set SystemCoreClock variable. */
+    SystemCoreClock = CLOCKSCONFIG_LPRUN_CORE_CLOCK;
+    /* Enable USB FS clock. */
+    CLOCK_EnableUsbfs0Clock(kCLOCK_UsbSrcIrc48M, SIM_USB_CLK_48000000HZ);
+    /* Set SDHC clock source. */
+    CLOCK_SetSdhc0Clock(SIM_SDHC_CLK_SEL_PLLFLLSEL_CLK);
 }
 
 /*******************************************************************************
@@ -219,13 +328,13 @@ void ClocksConfig_RUN(void)
 !!Configuration
 name: ClocksConfig_VLPR
 outputs:
-- {id: Bus_clock.outFreq, value: 4 MHz}
-- {id: Core_clock.outFreq, value: 4 MHz}
-- {id: Flash_clock.outFreq, value: 800 kHz}
+- {id: Bus_clock.outFreq, value: 2 MHz}
+- {id: Core_clock.outFreq, value: 2 MHz}
+- {id: Flash_clock.outFreq, value: 400 kHz}
 - {id: FlexBus_clock.outFreq, value: 2 MHz}
 - {id: LPO_clock.outFreq, value: 1 kHz}
-- {id: SDHCCLK.outFreq, value: 4 MHz}
-- {id: System_clock.outFreq, value: 4 MHz}
+- {id: SDHCCLK.outFreq, value: 2 MHz}
+- {id: System_clock.outFreq, value: 2 MHz}
 settings:
 - {id: MCGMode, value: BLPI}
 - {id: powerMode, value: VLPR}
@@ -233,7 +342,9 @@ settings:
 - {id: MCG.FCRDIV.scale, value: '1', locked: true}
 - {id: MCG.IRCS.sel, value: MCG.FCRDIV}
 - {id: SDHCClkConfig, value: 'yes'}
-- {id: SIM.OUTDIV4.scale, value: '5'}
+- {id: SIM.OUTDIV1.scale, value: '2', locked: true}
+- {id: SIM.OUTDIV2.scale, value: '2'}
+- {id: SIM.OUTDIV4.scale, value: '10', locked: true}
  * BE CAREFUL MODIFYING THIS COMMENT - IT IS YAML SETTINGS FOR TOOLS **********/
 
 /*******************************************************************************
@@ -260,7 +371,7 @@ const sim_clock_config_t simConfig_ClocksConfig_VLPR =
     {
         .pllFllSel = SIM_PLLFLLSEL_MCGFLLCLK_CLK, /* PLLFLL select: MCGFLLCLK clock */
         .er32kSrc = SIM_OSC32KSEL_OSC32KCLK_CLK,  /* OSC32KSEL select: OSC32KCLK clock */
-        .clkdiv1 = 0x140000U,                     /* SIM_CLKDIV1 - OUTDIV1: /1, OUTDIV2: /1, OUTDIV3: /2, OUTDIV4: /5 */
+        .clkdiv1 = 0x11190000U,                   /* SIM_CLKDIV1 - OUTDIV1: /2, OUTDIV2: /2, OUTDIV3: /2, OUTDIV4: /10 */
     };
 const osc_config_t oscConfig_ClocksConfig_VLPR =
     {
@@ -283,8 +394,8 @@ void ClocksConfig_VLPR(void)
     CLOCK_SetSimSafeDivs();
     /* Set MCG to BLPI mode. CLOCK_BootToBlpiMode CLOCK_SetInternalRefClkConfig */
     CLOCK_SetInternalRefClkConfig(mcgConfig_ClocksConfig_VLPR.fcrdiv,
-    		mcgConfig_ClocksConfig_VLPR.ircs,
-			mcgConfig_ClocksConfig_VLPR.irclkEnableMode);
+                         mcgConfig_ClocksConfig_VLPR.ircs,
+                         mcgConfig_ClocksConfig_VLPR.irclkEnableMode);
 
     /* Enter FBE. */
     CLOCK_ExternalModeToFbeModeQuick();

@@ -20,7 +20,8 @@
 typedef enum _app_power_mode
 {
     kAPP_PowerModeMin = 200,
-    kAPP_PowerModeRun,   /* Normal RUN mode */
+    kAPP_PowerModeRun120,   /* Normal RUN mode 120MHz */
+    kAPP_PowerModeRun24,   /* Normal RUN mode 24MHz */
     kAPP_PowerModeWait,  /* WAIT mode. */
     kAPP_PowerModeStop,  /* STOP mode. */
     kAPP_PowerModeVlpr,  /* VLPR mode. */

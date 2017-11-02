@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<SequenceModel BatteryType="Li-ion" CapacityUnit="mAh" CapacityValue="1200" DischargeUnit="µA" DischargeValue="2.89" ExternalClock="true" Family="Kinetis K" FormatVersion="1.0.0" Id="b4a67a33-cb05-4bab-bce0-5df01b3e757c" McuVersion="1.0.2" MinVoltageUnit="V" MinVoltageValue="3" Name="MK64F12" PartNumber="MK64FN1M0xxx12" PeakCurrentUnit="mA" PeakCurrentValue="1000" Temperature="25 °C" VoltageUnit="V" VoltageValue="3.3">
+<SequenceModel BatteryType="Li-ion" CapacityUnit="mAh" CapacityValue="1200" DischargeUnit="µA" DischargeValue="2.89" ExternalClock="true" Family="Kinetis K" FormatVersion="1.0.0" Id="b4a67a33-cb05-4bab-bce0-5df01b3e757c" McuVersion="1.0.2" MinVoltageUnit="V" MinVoltageValue="3" Name="MK64F12" PartNumber="MK64FN1M0xxx12" PeakCurrentUnit="mA" PeakCurrentValue="500" Temperature="25 °C" VoltageUnit="V" VoltageValue="3.3">
   <StepModel MCG="PEE" Name="Run 1" Position="0" PowerMode="Run">
     <Peripherals>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="Ethernet">
+        <Configuration>
+          <Variable Name="Ethernet_Mode" Value="RMII"/>
+          <Variable Name="Clock_Source" Value="Ethernet 1588 Clock"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2C2"/>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2S0">
         <Configuration>
           <Variable Name="Receive" Value="100"/>
@@ -10,61 +17,6 @@
           <Variable Name="Transmit" Value="0"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.05" Enabled="true" Name="UART0">
-        <Configuration>
-          <Variable Name="BaudRate" Value="9.6"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP0 &amp; 6-bit DAC0">
-        <Configuration>
-          <Variable Name="cmEnable" Value="OFF"/>
-          <Variable Name="cmMode" Value="Low Speed"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.1" Enabled="true" Name="SDHC">
-        <Configuration>
-          <Variable Name="Data_Direction" Value="Read"/>
-          <Variable Name="SDHC_Mode" Value="Full-Speed"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="MMCAU">
-        <Configuration>
-          <Variable Name="cbAlgorithmType" Value="AES"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="12-bit DAC0">
-        <Configuration>
-          <Variable Name="update" Value="0.0 - 5.0 kHz"/>
-          <Variable Name="cmPwrCfg" Value="Low Power"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FlexCAN0"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM1"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="RNG"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM0"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP1 &amp; 6-bit DAC1">
-        <Configuration>
-          <Variable Name="cmEnable" Value="OFF"/>
-          <Variable Name="cmMode" Value="Low Speed"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="RTC"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2C1"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.15" Enabled="true" Name="SPI0">
-        <Configuration>
-          <Variable Name="cbCommSetup" Value="TX / Transmit"/>
-          <Variable Name="BaudRate" Value="4"/>
-          <Variable Name="cbMasterMode" Value="Master"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART2">
-        <Configuration>
-          <Variable Name="BaudRate" Value="0.01"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM3"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="OSCERCLK"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="PIT"/>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="16-bit ADC1">
         <Configuration>
           <Variable Name="cmADHSC" Value="Normal"/>
@@ -73,46 +25,48 @@
           <Variable Name="cmADLPC" Value="Low-power"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="PDB"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMT"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="SPI2">
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.0" Enabled="true" Name="SPI0">
         <Configuration>
           <Variable Name="cbCommSetup" Value="TX / Transmit"/>
-          <Variable Name="BaudRate" Value="0.01"/>
+          <Variable Name="BaudRate" Value="5"/>
           <Variable Name="cbMasterMode" Value="Master"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART1">
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.09" Enabled="true" Name="UART1">
         <Configuration>
-          <Variable Name="BaudRate" Value="0.01"/>
+          <Variable Name="BaudRate" Value="115"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CRC"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="Ethernet">
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="MMCAU">
         <Configuration>
-          <Variable Name="Ethernet_Mode" Value="RMII"/>
-          <Variable Name="Clock_Source" Value="Ethernet 1588 Clock"/>
+          <Variable Name="cbAlgorithmType" Value="AES"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="LPTMR">
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.1" Enabled="true" Name="I2C0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART2">
         <Configuration>
-          <Variable Name="cbClkSource" Value="LPO (1 kHz)"/>
+          <Variable Name="BaudRate" Value="115"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP2 &amp; 6-bit DAC2">
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.05" Enabled="true" Name="UART0">
         <Configuration>
-          <Variable Name="cmEnable" Value="OFF"/>
-          <Variable Name="cmMode" Value="Low Speed"/>
+          <Variable Name="BaudRate" Value="9.6"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="USB">
-        <Configuration>
-          <Variable Name="USB_Class" Value="HID"/>
-        </Configuration>
-      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="RNG"/>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART5">
         <Configuration>
           <Variable Name="BaudRate" Value="0.01"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM1"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="PIT"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2C1"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="12-bit DAC0">
+        <Configuration>
+          <Variable Name="update" Value="0.0 - 5.0 kHz"/>
+          <Variable Name="cmPwrCfg" Value="Low Power"/>
         </Configuration>
       </PeripheralModel>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="SPI1">
@@ -122,14 +76,32 @@
           <Variable Name="cbMasterMode" Value="Master"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="12-bit DAC1">
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP0 &amp; 6-bit DAC0">
         <Configuration>
-          <Variable Name="cmPwrCfg" Value="Low Power"/>
+          <Variable Name="cmEnable" Value="OFF"/>
+          <Variable Name="cmMode" Value="Low Speed"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART3">
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="MCGIRCLK"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP2 &amp; 6-bit DAC2">
+        <Configuration>
+          <Variable Name="cmEnable" Value="OFF"/>
+          <Variable Name="cmMode" Value="Low Speed"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="LPTMR">
+        <Configuration>
+          <Variable Name="cbClkSource" Value="LPO (1 kHz)"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART4">
         <Configuration>
           <Variable Name="BaudRate" Value="0.01"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="USB">
+        <Configuration>
+          <Variable Name="USB_Class" Value="HID"/>
         </Configuration>
       </PeripheralModel>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM2"/>
@@ -138,9 +110,16 @@
           <Variable Name="Buffer_Mode" Value="Bandgap Only"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="IRC48MCLK"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2C2"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="MCGIRCLK"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CRC"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM3"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FlexCAN0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="SPI2">
+        <Configuration>
+          <Variable Name="cbCommSetup" Value="TX / Transmit"/>
+          <Variable Name="BaudRate" Value="0.01"/>
+          <Variable Name="cbMasterMode" Value="Master"/>
+        </Configuration>
+      </PeripheralModel>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="16-bit ADC0">
         <Configuration>
           <Variable Name="cmADHSC" Value="Normal"/>
@@ -149,19 +128,40 @@
           <Variable Name="cmADLPC" Value="Low-power"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART4">
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="PDB"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.03" Enabled="true" Name="SDHC">
+        <Configuration>
+          <Variable Name="Data_Direction" Value="Read"/>
+          <Variable Name="SDHC_Mode" Value="Full-Speed"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP1 &amp; 6-bit DAC1">
+        <Configuration>
+          <Variable Name="cmEnable" Value="OFF"/>
+          <Variable Name="cmMode" Value="Low Speed"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="IRC48MCLK"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="OSCERCLK"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="RTC"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART3">
         <Configuration>
           <Variable Name="BaudRate" Value="0.01"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.1" Enabled="true" Name="I2C0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="12-bit DAC1">
+        <Configuration>
+          <Variable Name="cmPwrCfg" Value="Low Power"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMT"/>
     </Peripherals>
     <SystemCore>
-      <FreqValue>96</FreqValue>
+      <FreqValue>120</FreqValue>
       <FreqUnit>MHz</FreqUnit>
     </SystemCore>
     <Bus>
-      <FreqValue>48</FreqValue>
+      <FreqValue>60</FreqValue>
       <FreqUnit>MHz</FreqUnit>
     </Bus>
     <Flash>
@@ -173,7 +173,7 @@
       <FreqUnit>MHz</FreqUnit>
     </FlexBus>
     <FLLPLL>
-      <FreqValue>96</FreqValue>
+      <FreqValue>120</FreqValue>
       <FreqUnit>MHz</FreqUnit>
       <Mode>PLL</Mode>
     </FLLPLL>
@@ -183,50 +183,24 @@
       <Mode>External Clock</Mode>
     </REF>
     <AdditionalCurrent>
-      <CurrentValue>20.00</CurrentValue>
-      <CurrentUnit>mA</CurrentUnit>
+      <CurrentValue>0</CurrentValue>
+      <CurrentUnit>µA</CurrentUnit>
     </AdditionalCurrent>
     <TimeDuration>
-      <TimeValue>100</TimeValue>
+      <TimeValue>8</TimeValue>
       <TimeUnit>ms</TimeUnit>
     </TimeDuration>
   </StepModel>
-  <StepModel MCG="BLPI" Name="VLPR 1" Position="1" PowerMode="VLPR">
+  <StepModel MCG="PEE" Name="Run 2" Position="1" PowerMode="Wait">
     <Peripherals>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP0 &amp; 6-bit DAC0">
-        <Configuration>
-          <Variable Name="cmEnable" Value="OFF"/>
-          <Variable Name="cmMode" Value="Low Speed"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FlexCAN0"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART1">
-        <Configuration>
-          <Variable Name="BaudRate" Value="0.01"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART4"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="SPI2">
-        <Configuration>
-          <Variable Name="cbCommSetup" Value="RX / Receive"/>
-          <Variable Name="BaudRate" Value="0.01"/>
-          <Variable Name="cbMasterMode" Value="Slave"/>
-        </Configuration>
-      </PeripheralModel>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="SPI1">
         <Configuration>
-          <Variable Name="cbCommSetup" Value="RX / Receive"/>
+          <Variable Name="cbCommSetup" Value="TX / Transmit"/>
           <Variable Name="BaudRate" Value="0.01"/>
-          <Variable Name="cbMasterMode" Value="Slave"/>
+          <Variable Name="cbMasterMode" Value="Master"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP1 &amp; 6-bit DAC1">
-        <Configuration>
-          <Variable Name="cmEnable" Value="OFF"/>
-          <Variable Name="cmMode" Value="Low Speed"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="OSCERCLK"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM2"/>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="16-bit ADC0">
         <Configuration>
           <Variable Name="cmADHSC" Value="Normal"/>
@@ -236,38 +210,6 @@
         </Configuration>
       </PeripheralModel>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2C2"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CRC"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="RTC"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="12-bit DAC1">
-        <Configuration>
-          <Variable Name="cmPwrCfg" Value="Low Power"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP2 &amp; 6-bit DAC2">
-        <Configuration>
-          <Variable Name="cmEnable" Value="OFF"/>
-          <Variable Name="cmMode" Value="Low Speed"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="MCGIRCLK"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="12-bit DAC0">
-        <Configuration>
-          <Variable Name="update" Value="0.0 - 5.0 kHz"/>
-          <Variable Name="cmPwrCfg" Value="Low Power"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM3"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM1"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="LPTMR">
-        <Configuration>
-          <Variable Name="cbClkSource" Value="LPO (1 kHz)"/>
-        </Configuration>
-      </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="SDHC"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMT"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="PDB"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART2"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART3"/>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2S0">
         <Configuration>
           <Variable Name="Receive" Value="0"/>
@@ -276,29 +218,206 @@
           <Variable Name="Transmit" Value="100"/>
         </Configuration>
       </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="PIT"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="12-bit DAC0">
+        <Configuration>
+          <Variable Name="cmPwrCfg" Value="Low Power"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="PDB"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2C1"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.0" Enabled="true" Name="I2C0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="IRC48MCLK"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="OSCERCLK"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART5">
+        <Configuration>
+          <Variable Name="BaudRate" Value="0.01"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMT"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP0 &amp; 6-bit DAC0">
+        <Configuration>
+          <Variable Name="cmEnable" Value="OFF"/>
+          <Variable Name="cmMode" Value="Low Speed"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.05" Enabled="true" Name="UART0">
+        <Configuration>
+          <Variable Name="BaudRate" Value="9.6"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM1"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="Ethernet">
+        <Configuration>
+          <Variable Name="Ethernet_Mode" Value="RMII"/>
+          <Variable Name="Clock_Source" Value="Ethernet 1588 Clock"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART2">
+        <Configuration>
+          <Variable Name="BaudRate" Value="0.01"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART3">
+        <Configuration>
+          <Variable Name="BaudRate" Value="0.01"/>
+        </Configuration>
+      </PeripheralModel>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="VREF">
         <Configuration>
           <Variable Name="Buffer_Mode" Value="Bandgap Only"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM2"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="MMCAU"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM0"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART5"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2C1"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="RNG"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.49" Enabled="true" Name="SPI0">
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="SPI2">
         <Configuration>
-          <Variable Name="cbCommSetup" Value="RX / Receive"/>
-          <Variable Name="BaudRate" Value="0.25"/>
-          <Variable Name="cbMasterMode" Value="Slave"/>
+          <Variable Name="cbCommSetup" Value="TX / Transmit"/>
+          <Variable Name="BaudRate" Value="0.01"/>
+          <Variable Name="cbMasterMode" Value="Master"/>
         </Configuration>
       </PeripheralModel>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="PIT"/>
-      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="I2C0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP2 &amp; 6-bit DAC2">
+        <Configuration>
+          <Variable Name="cmEnable" Value="OFF"/>
+          <Variable Name="cmMode" Value="Low Speed"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FlexCAN0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="RTC"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="LPTMR">
+        <Configuration>
+          <Variable Name="cbClkSource" Value="LPO (1 kHz)"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="SPI0">
+        <Configuration>
+          <Variable Name="cbCommSetup" Value="TX / Transmit"/>
+          <Variable Name="BaudRate" Value="5"/>
+          <Variable Name="cbMasterMode" Value="Master"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="MCGIRCLK"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="16-bit ADC1">
+        <Configuration>
+          <Variable Name="cmADHSC" Value="Normal"/>
+          <Variable Name="txtADLSTS" Value="20"/>
+          <Variable Name="lblConvMode" Value="Single Ended"/>
+          <Variable Name="cmADLPC" Value="Low-power"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CRC"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="RNG"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP1 &amp; 6-bit DAC1">
+        <Configuration>
+          <Variable Name="cmEnable" Value="OFF"/>
+          <Variable Name="cmMode" Value="Low Speed"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART4">
+        <Configuration>
+          <Variable Name="BaudRate" Value="0.01"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.0" Enabled="true" Name="SDHC">
+        <Configuration>
+          <Variable Name="Data_Direction" Value="Read"/>
+          <Variable Name="SDHC_Mode" Value="Full-Speed"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="12-bit DAC1">
+        <Configuration>
+          <Variable Name="cmPwrCfg" Value="Low Power"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.1" Enabled="true" Name="UART1">
+        <Configuration>
+          <Variable Name="BaudRate" Value="0.01"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM3"/>
+    </Peripherals>
+    <SystemCore>
+      <FreqValue>48</FreqValue>
+      <FreqUnit>MHz</FreqUnit>
+    </SystemCore>
+    <Bus>
+      <FreqValue>24</FreqValue>
+      <FreqUnit>MHz</FreqUnit>
+    </Bus>
+    <Flash>
+      <FreqValue>24</FreqValue>
+      <FreqUnit>MHz</FreqUnit>
+    </Flash>
+    <FlexBus>
+      <FreqValue>24</FreqValue>
+      <FreqUnit>MHz</FreqUnit>
+    </FlexBus>
+    <FLLPLL>
+      <FreqValue>48</FreqValue>
+      <FreqUnit>MHz</FreqUnit>
+      <Mode>PLL</Mode>
+    </FLLPLL>
+    <REF>
+      <FreqValue>50</FreqValue>
+      <FreqUnit>MHz</FreqUnit>
+      <Mode>External Clock</Mode>
+    </REF>
+    <AdditionalCurrent>
+      <CurrentValue>0</CurrentValue>
+      <CurrentUnit>µA</CurrentUnit>
+    </AdditionalCurrent>
+    <TimeDuration>
+      <TimeValue>70</TimeValue>
+      <TimeUnit>ms</TimeUnit>
+    </TimeDuration>
+  </StepModel>
+  <StepModel MCG="BLPI" Name="VLPR 1" Position="2" PowerMode="VLPR">
+    <Peripherals>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2C2"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.78" Enabled="true" Name="I2C0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="SDHC"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="12-bit DAC1">
+        <Configuration>
+          <Variable Name="cmPwrCfg" Value="Low Power"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM3"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CRC"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="16-bit ADC0">
+        <Configuration>
+          <Variable Name="cmADHSC" Value="Normal"/>
+          <Variable Name="txtADLSTS" Value="20"/>
+          <Variable Name="lblConvMode" Value="Single Ended"/>
+          <Variable Name="cmADLPC" Value="Low-power"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2C1"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="RNG"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM1"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP0 &amp; 6-bit DAC0">
+        <Configuration>
+          <Variable Name="cmEnable" Value="OFF"/>
+          <Variable Name="cmMode" Value="Low Speed"/>
+        </Configuration>
+      </PeripheralModel>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.06" Enabled="true" Name="UART0">
         <Configuration>
           <Variable Name="BaudRate" Value="9.6"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="PDB"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="MMCAU"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="I2S0">
+        <Configuration>
+          <Variable Name="Receive" Value="0"/>
+          <Variable Name="master_clock_freq" Value="2048"/>
+          <Variable Name="Master_Mode" Value="Slave"/>
+          <Variable Name="Transmit" Value="100"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART1">
+        <Configuration>
+          <Variable Name="BaudRate" Value="0.01"/>
         </Configuration>
       </PeripheralModel>
       <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="16-bit ADC1">
@@ -309,6 +428,66 @@
           <Variable Name="cmADLPC" Value="Low-power"/>
         </Configuration>
       </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART4"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART3"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="SPI2">
+        <Configuration>
+          <Variable Name="cbCommSetup" Value="RX / Receive"/>
+          <Variable Name="BaudRate" Value="0.01"/>
+          <Variable Name="cbMasterMode" Value="Slave"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FlexCAN0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="0.49" Enabled="true" Name="SPI0">
+        <Configuration>
+          <Variable Name="cbCommSetup" Value="TX / Transmit"/>
+          <Variable Name="BaudRate" Value="0.5"/>
+          <Variable Name="cbMasterMode" Value="Master"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="12-bit DAC0">
+        <Configuration>
+          <Variable Name="cmPwrCfg" Value="Low Power"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="PIT"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="RTC"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="MCGIRCLK"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP2 &amp; 6-bit DAC2">
+        <Configuration>
+          <Variable Name="cmEnable" Value="OFF"/>
+          <Variable Name="cmMode" Value="Low Speed"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART5"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMT"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="true" Name="LPTMR">
+        <Configuration>
+          <Variable Name="cbClkSource" Value="LPO (1 kHz)"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="SPI1">
+        <Configuration>
+          <Variable Name="cbCommSetup" Value="RX / Receive"/>
+          <Variable Name="BaudRate" Value="0.01"/>
+          <Variable Name="cbMasterMode" Value="Slave"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="UART2"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM0"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="VREF">
+        <Configuration>
+          <Variable Name="Buffer_Mode" Value="Bandgap Only"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="CMP1 &amp; 6-bit DAC1">
+        <Configuration>
+          <Variable Name="cmEnable" Value="OFF"/>
+          <Variable Name="cmMode" Value="Low Speed"/>
+        </Configuration>
+      </PeripheralModel>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="OSCERCLK"/>
+      <PeripheralModel AdditionalCurrent="0 µA" DutyCycle="1.0" Enabled="false" Name="FTM2"/>
     </Peripherals>
     <SystemCore>
       <FreqValue>2</FreqValue>
@@ -337,12 +516,12 @@
       <Mode>IRC</Mode>
     </REF>
     <AdditionalCurrent>
-      <CurrentValue>20.00</CurrentValue>
-      <CurrentUnit>mA</CurrentUnit>
+      <CurrentValue>0</CurrentValue>
+      <CurrentUnit>µA</CurrentUnit>
     </AdditionalCurrent>
     <TimeDuration>
-      <TimeValue>1</TimeValue>
-      <TimeUnit>s</TimeUnit>
+      <TimeValue>920</TimeValue>
+      <TimeUnit>ms</TimeUnit>
     </TimeDuration>
   </StepModel>
   <Notes/>

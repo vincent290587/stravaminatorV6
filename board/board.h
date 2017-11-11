@@ -69,6 +69,28 @@
 #define BOARD_LED_BLUE_GPIO_PORT PORTB
 #define BOARD_LED_BLUE_GPIO_PIN 21U
 
+#ifdef DEBUG
+#define ON_BOARD_LED
+#endif
+
+#ifndef ON_BOARD_LED
+
+#define LED_RED_INIT(output)                EMPTY_MACRO
+#define LED_RED_ON()                        EMPTY_MACRO
+#define LED_RED_OFF()                       EMPTY_MACRO
+#define LED_RED_TOGGLE()                    EMPTY_MACRO
+
+#define LED_GREEN_INIT(output)              EMPTY_MACRO
+#define LED_GREEN_ON()                      EMPTY_MACRO
+#define LED_GREEN_OFF()                     EMPTY_MACRO
+#define LED_GREEN_TOGGLE()                  EMPTY_MACRO
+
+#define LED_BLUE_INIT(output)               EMPTY_MACRO
+#define LED_BLUE_ON()                       EMPTY_MACRO
+#define LED_BLUE_OFF()                      EMPTY_MACRO
+#define LED_BLUE_TOGGLE()                   EMPTY_MACRO
+
+#else
 
 #define LED_RED_INIT(output)                                                 \
     GPIO_WritePinOutput(BOARD_LED_RED_GPIO, BOARD_LED_RED_GPIO_PIN, output); \
@@ -100,6 +122,8 @@
 #define LED_BLUE_TOGGLE() \
     GPIO_TogglePinsOutput(BOARD_LED_BLUE_GPIO, 1U << BOARD_LED_BLUE_GPIO_PIN) /*!< Toggle on target LED_BLUE */
 
+
+#endif
 
 /*******************************************************************************
  * API

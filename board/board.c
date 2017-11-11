@@ -32,11 +32,7 @@ void BOARD_InitHardware(void) {
 	segger_init();
 	BOARD_InitDebugConsole();
 
-	/* Define the init structure for the output LED pin*/
-	gpio_pin_config_t led_config = {
-			kGPIO_DigitalOutput, 0,
-	};/* Init output LED GPIO. */
-	GPIO_PinInit(BOARD_LED_GREEN_GPIO, BOARD_LED_GREEN_GPIO_PIN, &led_config);
+	LED_GREEN_INIT(1);
 
 	/* Init DMAMUX */
 	DMAMUX_Init(DMAMUX0);

@@ -22,7 +22,7 @@ void usb_parser_decode(char c) {
 
 		locator.simu_lat = (float)nordic.getLat() / 10000000.;
 		locator.simu_lon = (float)nordic.getLon() / 10000000.;
-		locator.setIsUpdated();
+		locator.sec_jour = nordic.getSecJ();
 
 		usb_send_chars("New LOC received \r\n");
 

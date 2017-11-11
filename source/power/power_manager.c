@@ -20,6 +20,7 @@
 #include "uart0.h"
 #include "uart2.h"
 #include "dma_i2c0.h"
+#include "dma_spi0.h"
 
 #include "pin_mux.h"
 #include "fsl_pmc.h"
@@ -55,12 +56,17 @@ void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t
 //	}
 
 	uart0_uninit();
-//	uart2_uninit();
+	uart2_uninit();
 	dma_i2c0_uninit();
+
+	dma_spi0_uninit();
 }
 
 void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode)
 {
+    // update segger
+    segger_update_clocks();
+
 	// if the clocks were changed, peripherals must be re-init
 	if (targetMode != kAPP_PowerModeWait &&
 			curAppMode != kAPP_PowerModeWait) {
@@ -70,17 +76,20 @@ void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_
 		UART_GetDefaultConfig(&uartConfig);
 
 		uartConfig.enableTx = true;
-		uartConfig.enableRx = false; // TODO
+		uartConfig.enableRx = true; // TODO
 		uartConfig.baudRate_Bps = 9600U;
 		uart0_init(&uartConfig);
 
-		//	uartConfig.baudRate_Bps = 115200U;
-		//	uart2_init(&uartConfig);
+		uartConfig.enableRx = false; // TODO
+		uartConfig.baudRate_Bps = 115200U;
+		uart2_init(&uartConfig);
+
+		dma_i2c0_init();
 
 		// only init SPI if not going to VLP modes
 		if (kAPP_PowerModeVlpr != targetMode &&
 				kAPP_PowerModeVlpw != targetMode) {
-			dma_i2c0_init();
+			dma_spi0_init();
 		}
 	}
 
@@ -93,13 +102,13 @@ void APP_ShowPowerMode(void)
 	switch (SMC_GetPowerModeState(SMC))
 	{
 	case kSMC_PowerStateRun:
-		LOG_INFO("    Power mode: RUN\r\n");
+		LOG_INFO("-Power mode: RUN %u MHz\r\n", CORE_CLK_FREQ / 1000000);
 		break;
 	case kSMC_PowerStateVlpr:
-		LOG_INFO("    Power mode: VLPR\r\n");
+		LOG_INFO("-Power mode: VLPR %u MHz\r\n", CORE_CLK_FREQ / 1000000);
 		break;
 	default:
-		LOG_INFO("    Power mode wrong\r\n");
+		LOG_INFO("-Power mode wrong\r\n");
 		break;
 	}
 }

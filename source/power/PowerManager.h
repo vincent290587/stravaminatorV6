@@ -19,7 +19,8 @@ public:
 
 	bool isUsbConnected();
 
-	void switchToRun();
+	void switchToRun24();
+	void switchToRun120();
 	void switchToVlpr();
 
 private:

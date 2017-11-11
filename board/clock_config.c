@@ -421,8 +421,6 @@ void ClocksConfig_VLPR(void)
     }
     /* Set SystemCoreClock variable. */
     SystemCoreClock = CLOCKSCONFIG_VLPR_CORE_CLOCK;
-    // update segger
-    segger_update_clocks();
     /* Set SDHC clock source. */
     CLOCK_SetSdhc0Clock(SIM_SDHC_CLK_SEL_CORE_SYSTEM_CLK);
 

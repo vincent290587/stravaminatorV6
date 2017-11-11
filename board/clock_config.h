@@ -120,10 +120,6 @@ extern const osc_config_t oscConfig_ClocksConfig_VLPR;
 extern "C" {
 #endif /* __cplusplus*/
 
-/*!
- * @brief This function executes configuration of clocks.
- *
- */
 void ClocksConfig_VLPR(void);
 
 #if defined(__cplusplus)

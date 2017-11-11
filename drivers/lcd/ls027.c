@@ -48,11 +48,10 @@ static uint8_t LS027_sharpmem_vcom;
 
 static spi_transfer_settings spi_settings;
 
-static uint8_t m_orientation = 0;
-
 static uint8_t m_is_color_inverted = 0;
 
 static uint16_t m_last_updated_line = 0;
+static uint16_t m_nb_updated_line = 0;
 
 /* Internal method prototypes */
 static void WriteData(uint8_t data);
@@ -92,29 +91,27 @@ static inline void WriteData(uint8_t data)
 
 static void ls027_spi_init() {
 
-	dspi_master_config_t  masterConfig;
-
-	/*
-	 * Data is valid on clock rising edge and shifted on clock falling edge
-	 * Clock Idle Polarity: Low
-	 */
-	masterConfig.whichCtar                                = kDSPI_Ctar0;
-	masterConfig.ctarConfig.baudRate                      = SPI_BAUDRATE;
-	masterConfig.ctarConfig.bitsPerFrame                  = 8;
-	masterConfig.ctarConfig.cpol                          = kDSPI_ClockPolarityActiveHigh;
-	masterConfig.ctarConfig.cpha                          = kDSPI_ClockPhaseFirstEdge;
-	masterConfig.ctarConfig.direction                     = kDSPI_LsbFirst;
-	masterConfig.ctarConfig.pcsToSckDelayInNanoSec        = 1000000000 / SPI_BAUDRATE ;
-	masterConfig.ctarConfig.lastSckToPcsDelayInNanoSec    = 1000000000 / SPI_BAUDRATE ;
-	masterConfig.ctarConfig.betweenTransferDelayInNanoSec = 1000000000 / SPI_BAUDRATE ;
-	masterConfig.whichPcs                                 = LS027_CE_PIN_INIT;
-	masterConfig.pcsActiveHighOrLow                       = kDSPI_PcsActiveHigh;
-	masterConfig.enableContinuousSCK                      = false;
-	masterConfig.enableRxFifoOverWrite                    = false;
-	masterConfig.enableModifiedTimingFormat               = false;
-	masterConfig.samplePoint                              = kDSPI_SckToSin0Clock;
-
-	spi_init(&masterConfig);
+//	dspi_master_config_t  masterConfig;
+//
+//	/*
+//	 * Data is valid on clock rising edge and shifted on clock falling edge
+//	 * Clock Idle Polarity: Low
+//	 */
+//	masterConfig.whichCtar                                = kDSPI_Ctar0;
+//	masterConfig.ctarConfig.baudRate                      = SPI_BAUDRATE;
+//	masterConfig.ctarConfig.bitsPerFrame                  = 8;
+//	masterConfig.ctarConfig.cpol                          = kDSPI_ClockPolarityActiveHigh;
+//	masterConfig.ctarConfig.cpha                          = kDSPI_ClockPhaseFirstEdge;
+//	masterConfig.ctarConfig.direction                     = kDSPI_LsbFirst;
+//	masterConfig.ctarConfig.pcsToSckDelayInNanoSec        = 1000000000 / SPI_BAUDRATE ;
+//	masterConfig.ctarConfig.lastSckToPcsDelayInNanoSec    = 1000000000 / SPI_BAUDRATE ;
+//	masterConfig.ctarConfig.betweenTransferDelayInNanoSec = 1000000000 / SPI_BAUDRATE ;
+//	masterConfig.whichPcs                                 = LS027_CE_PIN_INIT;
+//	masterConfig.pcsActiveHighOrLow                       = kDSPI_PcsActiveHigh;
+//	masterConfig.enableContinuousSCK                      = false;
+//	masterConfig.enableRxFifoOverWrite                    = false;
+//	masterConfig.enableModifiedTimingFormat               = false;
+//	masterConfig.samplePoint                              = kDSPI_SckToSin0Clock;
 
 	// fill settings
 	spi_settings.configFlags        = kDSPI_MasterCtar0 | LS027_CE_PIN;
@@ -242,7 +239,6 @@ void LS027_Clear(void)
 void LS027_Init(void)
 {
 
-	m_orientation = 1;
 	m_is_color_inverted = 0;
 
 	// reset buffers
@@ -294,23 +290,6 @@ void LS027_UpdateLine(uint8_t line, uint8_t *dataP)
 	CE_ClrVal();
 }
 
-/*
- ** ===================================================================
- **     Method      :  LS027_SetDisplayOrientation (component SharpMemDisplay)
- **     Description :
- **         Sets current display orientation
- **     Parameters  :
- **         NAME            - DESCRIPTION
- **         newOrientation  - the new orientation
- **                           for the display
- **     Returns     : Nothing
- ** ===================================================================
- */
-void LS027_SetDisplayOrientation(LS027_DisplayOrientation newOrientation)
-{
-	m_orientation = newOrientation; /* setting the display orientation is not implemented yet */
-}
-
 /**************************************************************************/
 /*!
     @brief Draws a single pixel in image buffer
@@ -322,22 +301,6 @@ void LS027_SetDisplayOrientation(LS027_DisplayOrientation newOrientation)
  */
 /**************************************************************************/
 void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color) {
-
-	switch(m_orientation) {
-	case 1:
-		adagfxswap(x, y);
-		x = LS027_HW_WIDTH  - 1 - x;
-		break;
-	case 2:
-		x = LS027_HW_WIDTH  - 1 - x;
-		y = LS027_HW_HEIGHT - 1 - y;
-		break;
-	case 3:
-		adagfxswap(x, y);
-		y = LS027_HW_HEIGHT - 1 - y;
-		break;
-	}
-
 	setBufferPixel(x, y, color);
 }
 
@@ -391,17 +354,16 @@ void LS027_UpdateFullBlock(void)
  */
 int LS027_UpdateFullManage(void *user_data)
 {
-	if (!m_last_updated_line) W_SYSVIEW_OnTaskStartExec(LCD_TASK);
-
-	if (wasLineChanged(m_last_updated_line) || 1) {
+	if (wasLineChanged(m_last_updated_line)) {
 
 		LS027_UpdateLine(m_last_updated_line,
 				m_buffer_in_use + (m_last_updated_line*LS027_HW_WIDTH/8));
 
+		m_nb_updated_line++;
+
 	}
 
 	if (++m_last_updated_line < LS027_HW_HEIGHT) {
-		W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 		return 1;
 	}
 
@@ -415,6 +377,7 @@ int LS027_UpdateFullManage(void *user_data)
 void LS027_InitTransfer(void *user_data)
 {
 	m_last_updated_line = 0;
+	m_nb_updated_line = 0;
 //	LOG_INFO("LS027 Xfer start\r\n");
 //	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
 }
@@ -425,7 +388,6 @@ void LS027_InitTransfer(void *user_data)
  */
 void LS027_SwitchBuffers(void *user_data)
 {
-
 	// switching buffers
 	uint8_t *temp_pt = m_buffer_in_use;
 	m_buffer_in_use = m_buffer_prev;
@@ -434,7 +396,8 @@ void LS027_SwitchBuffers(void *user_data)
 	// reset buffer in use
 	memset(m_buffer_in_use, 0, sizeof(LS027_DisplayBuf1));
 
-//	LOG_INFO("LS027 Xfer finished\r\n");
+	LOG_INFO("LS027: %u lines updated\r\n", m_nb_updated_line);
+
 //	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 }
 

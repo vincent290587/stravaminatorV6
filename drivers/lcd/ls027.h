@@ -57,8 +57,6 @@ void LS027_UpdateLine(uint8_t line, uint8_t *dataP);
 
 void LS027_UpdateFullBlock(void);
 
-void LS027_SetDisplayOrientation(LS027_DisplayOrientation newOrientation);
-
 void LS027_ToggleVCOM(void);
 
 void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color);

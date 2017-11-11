@@ -14,9 +14,6 @@
 /* UART instance and clock */
 #define UART2_CLK_FREQ       CLOCK_GetFreq(UART2_CLK_SRC)
 
-#define UART2_TX_DMA_REQUEST kDmaRequestMux0UART2Tx
-#define UART2_RX_DMA_REQUEST kDmaRequestMux0UART2Rx
-
 #define UART2_BUFFER_LENGTH  32
 
 /*******************************************************************************
@@ -24,7 +21,7 @@
  ******************************************************************************/
 
 /* UART user callback */
-void uart2_user_callback(void);
+extern void uart2_user_callback(UART_Type *base, uart_edma_handle_t *handle, status_t status, void *userData);
 
 void uart2_callback(UART_Type *base, uart_edma_handle_t *handle, status_t status, void *userData);
 
@@ -36,47 +33,37 @@ static uart_edma_handle_t g_uartEdmaHandle;
 static edma_handle_t g_uartTxEdmaHandle;
 static edma_handle_t g_uartRxEdmaHandle;
 
+static uart_transfer_t sendXfer;
+static uart_transfer_t receiveXfer;
 
-volatile bool rxBufferEmpty = true;
-volatile bool txBufferFull = false;
-volatile bool txOnGoing = false;
-volatile bool rxOnGoing = false;
+static uint32_t m_bytes_recv = 0;
+
+static uint8_t g_rxBuffer[UART2_BUFFER_LENGTH] = {0};
+
+volatile bool txFinished = true;
+volatile bool rxFinished = false;
 
 /*******************************************************************************
  * Code
  ******************************************************************************/
 
-/* UART user callback */
-__attribute__((weak)) void uart2_user_callback(void) {
-	// empty function
-}
-
 /* UART callback */
 void uart2_callback(UART_Type *base, uart_edma_handle_t *handle, status_t status, void *userData)
 {
-    userData = userData;
 
-    if (kStatus_UART_TxIdle == status)
-    {
-        txBufferFull = false;
-        txOnGoing = false;
-        // TX just finished
-        LOG_INFO("UART2 TX just finished\n");
-    }
+	if (kStatus_UART_TxIdle == status)
+	{
+		// TX just finished
+		txFinished = true;
 
-    if (kStatus_UART_RxIdle == status)
-    {
-        rxBufferEmpty = false;
-        if (rxOnGoing == true) {
-        	rxOnGoing = false;
+	} else if (kStatus_UART_RxIdle == status)
+	{
+		// RX just finished
+		rxFinished = true;
 
-        	LOG_INFO("UART2 RX just finished\n");
-
-        	// handle received string
-        	uart2_user_callback();
-        }
-
-    }
+	} else {
+		LOG_INFO("UART2 status: %d\r\n", status);
+	}
 }
 
 /*!
@@ -84,23 +71,35 @@ void uart2_callback(UART_Type *base, uart_edma_handle_t *handle, status_t status
  */
 void uart2_init(uart_config_t* uartConfig)
 {
-    UART_Init(UART2, uartConfig, UART2_CLK_FREQ);
+	if (kStatus_Success != UART_Init(UART2, uartConfig, UART2_CLK_FREQ)) {
+		LOG_ERROR("UART2 init failure\r\n");
+	}
 
-    /* Set channel for UART */
-    DMAMUX_SetSource(DMAMUX0, UART2_TX_DMA_CHANNEL, UART2_TX_DMA_REQUEST);
-    DMAMUX_SetSource(DMAMUX0, UART2_RX_DMA_CHANNEL, UART2_RX_DMA_REQUEST);
-    DMAMUX_EnableChannel(DMAMUX0, UART2_TX_DMA_CHANNEL);
-    DMAMUX_EnableChannel(DMAMUX0, UART2_RX_DMA_CHANNEL);
+	receiveXfer.data     = g_rxBuffer;
+	receiveXfer.dataSize = UART2_BUFFER_LENGTH;
 
-    /* Init the EDMA module */
-    EDMA_CreateHandle(&g_uartTxEdmaHandle, DMA0, UART2_TX_DMA_CHANNEL);
-    EDMA_CreateHandle(&g_uartRxEdmaHandle, DMA0, UART2_RX_DMA_CHANNEL);
+	txFinished = true;
+	rxFinished = false;
 
-    /* Create UART DMA handle. */
-    UART_TransferCreateHandleEDMA(UART2, &g_uartEdmaHandle, uart2_callback, NULL,
-    		&g_uartTxEdmaHandle, &g_uartRxEdmaHandle);
+	memset (g_rxBuffer, 0, sizeof(g_rxBuffer));
 
-    LOG_INFO("UART2 initialized\n");
+	/* Set channel for UART */
+	DMAMUX_SetSource(DMAMUX0, UART2_TX_DMA_CHANNEL, kDmaRequestMux0UART2Tx);
+	DMAMUX_SetSource(DMAMUX0, UART2_RX_DMA_CHANNEL, kDmaRequestMux0UART2Rx);
+	DMAMUX_EnableChannel(DMAMUX0, UART2_TX_DMA_CHANNEL);
+	DMAMUX_EnableChannel(DMAMUX0, UART2_RX_DMA_CHANNEL);
+
+	EDMA_CreateHandle(&g_uartTxEdmaHandle, DMA0, UART2_TX_DMA_CHANNEL);
+	EDMA_CreateHandle(&g_uartRxEdmaHandle, DMA0, UART2_RX_DMA_CHANNEL);
+
+	/* Create UART DMA handle. */
+	UART_TransferCreateHandleEDMA(UART2, &g_uartEdmaHandle, uart2_callback, NULL,
+			&g_uartTxEdmaHandle, &g_uartRxEdmaHandle);
+
+	LOG_INFO("UART2 initialized\n");
+
+	// prepare reception
+	UART_ReceiveEDMA(UART2, &g_uartEdmaHandle, &receiveXfer);
 }
 
 void uart2_uninit()
@@ -110,31 +109,63 @@ void uart2_uninit()
 	DMAMUX_DisableChannel(DMAMUX0, UART2_TX_DMA_CHANNEL);
 	DMAMUX_DisableChannel(DMAMUX0, UART2_RX_DMA_CHANNEL);
 
-    LOG_INFO("UART2 uninit\n");
+	LOG_INFO("UART2 uninit\n");
 }
 
 void uart2_send(uint8_t* data, size_t length) {
 
-	uart_transfer_t xfer;
+	/* Send g_tipString out. */
+	sendXfer.data = data;
+	sendXfer.dataSize = length;
 
-    /* Send g_tipString out. */
-    xfer.data = data;
-    xfer.dataSize = length;
+	status_t ret_code;
+	if (kStatus_Success != (ret_code = UART_SendEDMA(UART2, &g_uartEdmaHandle, &sendXfer))) {
+		LOG_ERROR("UART_SendEDMA error %u \r\n", ret_code);
+	} else {
+		txFinished = false;
+	}
 
-    txOnGoing = true;
-    status_t ret_code;
-    if (kStatus_Success != (ret_code = UART_SendEDMA(UART2, &g_uartEdmaHandle, &xfer))) {
-    	LOG_ERROR("UART_SendEDMA error %u \r\n", ret_code);
-    }
+}
+
+void uart2_tasks() {
+
+	uint32_t count=0;
+
+	if (kStatus_NoTransferInProgress != UART_TransferGetReceiveCountEDMA(UART2, &g_uartEdmaHandle, &count)) {
+		// handle received bytes
+		if (count) {
+			LOG_INFO("UART2 %u new data is in the buffer !!\r\n", count - m_bytes_recv);
+
+			LOG_INFO("->  %s\r\n", g_rxBuffer+m_bytes_recv);
+
+			// reset transfer
+			UART_TransferAbortReceiveEDMA(UART2, &g_uartEdmaHandle);
+
+			// go to next rx
+			rxFinished = true;
+		}
+	}
+
+	if (rxFinished) {
+		// buffer was full
+
+		rxFinished = false;
+
+		memset (g_rxBuffer, 0, sizeof(g_rxBuffer));
+		m_bytes_recv = 0;
+
+		// restart the wait for more bytes
+		UART_ReceiveEDMA(UART2, &g_uartEdmaHandle, &receiveXfer);
+	}
 
 }
 
 void uart2_wait_for_transfer() {
 
-    /* Wait send finished */
-    while (txOnGoing) {
-
-    }
+	/* Wait send finished */
+	while (!txFinished) {
+		// TODO
+	}
 
 }
 

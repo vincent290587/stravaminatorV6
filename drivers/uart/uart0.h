@@ -23,6 +23,8 @@ void uart0_init(uart_config_t* uartConfig);
 
 void uart0_uninit(void);
 
+void uart0_tasks(void);
+
 void uart0_send(uint8_t* data, size_t length);
 
 void uart0_wait_for_transfer();

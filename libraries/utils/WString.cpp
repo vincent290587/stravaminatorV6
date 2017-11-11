@@ -28,6 +28,13 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <math.h>
+
+#define DTOA_UPPER 0x04
+#define isnanf(X)      __isnanf(X)
+#define isinff(X)      __isinff(X)
+
+char * fcvtf(float, int, int *, int *);
 
 void reverse(char* begin, char* end) {
     char *is = begin;
@@ -134,6 +141,153 @@ char * ltoa(long val, char *buf, int radix)
 	}
 }
 
+
+//
+//char * dtostrf(float val, int width, unsigned int precision, char *buf)
+//{
+//	int decpt, sign, reqd, pad;
+//	const char *s, *e;
+//	char *p;
+//
+//	int awidth = abs(width);
+//	if (isnanf(val)) {
+//		int ndigs = (val<0) ? 4 : 3;
+//		awidth = (awidth > ndigs) ? awidth - ndigs : 0;
+//		if (width<0) {
+//			while (awidth) {
+//				*buf++ = ' ';
+//				awidth--;
+//			}
+//		}
+//		if (copysignf(1.0f, val)<0) *buf++ = '-';
+//		if (DTOA_UPPER) {
+//			*buf++ = 'N';  *buf++ = 'A';  *buf++ = 'N';
+//		} else {
+//			*buf++ = 'n';  *buf++ = 'a';  *buf++ = 'n';
+//		}
+//		while (awidth) {
+//			*buf++ = ' ';
+//			awidth--;
+//		}
+//		*buf = 0;
+//		return buf;
+//	}
+//	if (isinff(val)) {
+//		int ndigs = (val<0) ? 4 : 3;
+//		awidth = (awidth > ndigs) ? awidth - ndigs : 0;
+//		if (width<0) {
+//			while (awidth) {
+//				*buf++ = ' ';
+//				awidth--;
+//			}
+//		}
+//		if (val<0) *buf++ = '-';
+//		if (DTOA_UPPER) {
+//			*buf++ = 'I';  *buf++ = 'N';  *buf++ = 'F';
+//		} else {
+//			*buf++ = 'i';  *buf++ = 'n';  *buf++ = 'f';
+//		}
+//		while (awidth) {
+//			*buf++ = ' ';
+//			awidth--;
+//		}
+//		*buf = 0;
+//		return buf;
+//	}
+//
+//	s = fcvtf(val, precision, &decpt, &sign);
+//
+//	// if only 1 digit in output
+//	if (precision == 0 && decpt == 0) {
+//		// round and move decimal point
+//		s = (*s < '5') ? "0" : "1";
+//		decpt++;
+//	}
+//
+//	// if all zeros, limit to precision
+//	if (-decpt  > (int)precision) {
+//		s = "0";
+//		decpt = -precision;
+//	}
+//
+//	reqd = strlen(s);
+//
+//	// add 1 for decimal point
+//	if (reqd > decpt) reqd++;
+//
+//	// add 1 for zero in front of decimal point
+//	if (decpt == 0) reqd++;
+//
+//	// if leading zeros after decimal point
+//	if (decpt < 0 && precision > 0) {
+//		// ensure enough trailing zeros, add 2 for '0.'
+//		reqd = precision + 2;
+//
+//		if (strlen(s) > precision + decpt) {
+//			// bug in fcvtf. e.g. 0.012, precision 2 should return 1 instead of 12.
+//			// However, 1.2, precision 0 returns correct value. So shift values so
+//			// that decimal point is after the first digit, then convert again
+//
+//			int newPrecision = precision;
+//			int newDecimalPoint;
+//
+//			// shift decimal point
+//			while (newPrecision > 0) {
+//				val *= 10.0;
+//				newPrecision--;
+//			}
+//
+//			// round after accounting for leading 0's
+//			s = fcvtf(val, newPrecision, &newDecimalPoint, &sign);
+//
+//			// if rounded up to new digit (e.g. 0.09 to 0.1), move decimal point
+//			if (newDecimalPoint - decpt == precision + 1) decpt++;
+//		}
+//	}
+//
+//	// add 1 for sign if negative
+//	if (sign) reqd++;
+//
+//	p = buf;
+//	e = p + reqd;
+//	pad = width - reqd;
+//	if (pad > 0) {
+//		e += pad;
+//		while (pad-- > 0) *p++ = ' ';
+//	}
+//	if (sign) *p++ = '-';
+//	if (decpt == 0 && precision > 0) {
+//		*p++ = '0';
+//		*p++ = '.';
+//	}
+//	else if (decpt < 0 && precision > 0) {
+//		*p++ = '0';
+//		*p++ = '.';
+//		// print leading zeros
+//		while ( decpt < 0 ) {
+//			decpt++;
+//			*p++ = '0';
+//		}
+//	}
+//	// print digits
+//	while (p < e) {
+//		*p++ = *s++;
+//		if (p == e) break;
+//		if (--decpt == 0) *p++ = '.';
+//	}
+//	if (width < 0) {
+//		pad = (reqd + width) * -1;
+//		while (pad-- > 0) *p++ = ' ';
+//	}
+//	*p = 0;
+//
+//	//char format[20];
+//	//sprintf(format, "%%%d.%df", width, precision);
+//	//sprintf(buf, format, val);
+//	return buf;
+//}
+
+
 String::String(const char *cstr)
 {
 	init();
@@ -211,7 +365,7 @@ String::String(unsigned long value, unsigned char base)
 	*this = buf;
 }
 
-String::String(float num, unsigned char digits)
+String::String(float num, unsigned int digits)
 {
 	init();
 	char buf[40];

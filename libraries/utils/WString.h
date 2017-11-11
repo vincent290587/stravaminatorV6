@@ -75,7 +75,7 @@ public:
 	String(long, unsigned char base=10);
 	String(unsigned long, unsigned char base=10);
     String(float num, unsigned char digits=2);
-	String(float num, unsigned chardigits);
+	String(float num, unsigned int digits);
 	String(double num, unsigned char digits=2);
 	~String(void);
 

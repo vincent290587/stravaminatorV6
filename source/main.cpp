@@ -39,10 +39,6 @@ int main(void) {
 
 	boucle_crs.init();
 
-	sdisplay.print("Hello");
-
-	GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
-
 	for(;;) { /* Infinite loop to avoid leaving the main function */
 
 		// USB tasks
@@ -56,15 +52,13 @@ int main(void) {
 
 			if (led_state.getData()) {
 				led_state = false;
-//				power_manager_run(kAPP_PowerModeRun);
-//				LOG_INFO("RUN mode\r\n");
+//				power_manager_run(kAPP_PowerModeRun120);
 			} else {
 				led_state = true;
-//				power_manager_run(kAPP_PowerModeVlpr);
-//				LOG_INFO("VLPR mode\r\n");
+//				power_manager_run(kAPP_PowerModeRun24);
 			}
 
-			GPIO_TogglePinsOutput(BOARD_LED_GREEN_GPIO, 1u << BOARD_LED_GREEN_GPIO_PIN);
+			LED_GREEN_TOGGLE();
 
 //			if (millis() > 15000) {
 //				power_manager_run(kAPP_PowerModeVlpr);
@@ -72,9 +66,9 @@ int main(void) {
 //			}
 
 			// update the screen
-			lcd.setCursor(10,10);
-			lcd.setTextSize(3);
-			lcd.print(millis());
+//			lcd.setCursor(10,10);
+//			lcd.setTextSize(3);
+//			lcd.print(millis());
 //			lcd.writeWhole();
 
 //			dma_spi0_mngr_tasks_start();
@@ -87,7 +81,13 @@ int main(void) {
 //			}
 //			W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
 
-			W_SYSVIEW_OnIdle();
+//			W_SYSVIEW_OnIdle();
+
+//			locator.sec_jour = millis() / 1000;
+//			LOG_INFO("Locator manual update\r\n");
+
+//			uint8_t array[10] = "Hello\r\n";
+//			uart2_send(array, 7);
 		}
 
 		dma_spi0_mngr_run();

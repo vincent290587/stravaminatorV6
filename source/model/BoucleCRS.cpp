@@ -11,6 +11,7 @@
 #include "Model.h"
 #include "sd_functions.h"
 #include "segger_wrapper.h"
+#include "dma_spi0.h"
 
 /**
  *
@@ -38,6 +39,8 @@ void BoucleCRS::init() {
 
 	init_liste_segments();
 
+	memset(&att, 0, sizeof(SAtt));
+
 }
 
 /**
@@ -48,19 +51,20 @@ void BoucleCRS::run() {
 	float min_dist_seg = 50000;
 	float tmp_dist;
 
-	pwManager.switchToRun();
-
+	pwManager.switchToRun120();
 
 	// update position
+	att.nbact = 0;
 	att.alt = 0;
-	locator.getPosition(att.lat, att.lon);
-	locator.clearIsUpdated();
+	locator.getPosition(att.lat, att.lon, att.secj);
 
-	sdisplay.clear();
-	sdisplay.setCursor(5,5);
-	sdisplay.setTextSize(1);
-	sdisplay.print("No Seg");
+//	sdisplay.clear();
+//	sdisplay.setCursor(5,5);
+//	sdisplay.setTextSize(1);
+//	sdisplay.print("No Seg");
 //	sdisplay.drawRect(40, 15, 20, 10, BLACK);
+
+	lcd.resetSegments();
 
 	mes_points.ajouteFinIso(att.lat, att.lon, 0., millis(), 8);
 
@@ -78,8 +82,8 @@ void BoucleCRS::run() {
 				W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
 				seg.majPerformance(mes_points);
 				W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
+				att.nbact += 1;
 
-				//				att.nbact += 1;
 				if (seg.getStatus() == SEG_START) {
 
 					LOG_INFO("Segment START %s\r\n", seg.getName());
@@ -102,23 +106,24 @@ void BoucleCRS::run() {
 
 				}
 
-				//				display.registerSegment(seg);
+				lcd.registerSegment(seg);
 
-				sdisplay.clear();
-				sdisplay.printSeg(0, seg, 0);
+//				sdisplay.clear();
+//				sdisplay.printSeg(0, seg, 0);
 				break;
 
-			}
-			else if (tmp_dist < 250) {
+			} else if (tmp_dist < 250) {
 
 				W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
 				seg.majPerformance(mes_points);
 				W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
 
+				lcd.registerSegment(seg);
+
 				// TODO just display the segment
-				LOG_INFO("Segment preview\r\n");
-				sdisplay.clear();
-				sdisplay.printSeg(0, seg, 0);
+//				LOG_INFO("Segment preview\r\n");
+//				sdisplay.clear();
+//				sdisplay.printSeg(0, seg, 0);
 				break;
 			}
 
@@ -126,14 +131,15 @@ void BoucleCRS::run() {
 
 	} // fin for
 
+	att.next = min_dist_seg;
 
-	LOG_INFO("Next segment: %d\r\n", (int)min_dist_seg);
+	lcd.afficheSegments();
+
+	//LOG_INFO("Next segment: %u\r\n", att.next);
+
+	pwManager.switchToRun24();
 
 	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
-	// update the screen
-	lcd.setCursor(10,10);
-	lcd.setTextSize(3);
-	lcd.print(min_dist_seg);
 	lcd.writeWhole();
 	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 

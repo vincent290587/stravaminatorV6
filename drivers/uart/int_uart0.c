@@ -82,12 +82,6 @@ void UART0_RX_TX_IRQHandler(void)
     /* If new data arrived. */
     if ((kUART_RxDataRegFullFlag | kUART_RxOverrunFlag) & UART_GetStatusFlags(UART0))
     {
-
-    	uint32_t count = 0;
-    	if (kStatus_Success == UART_TransferGetReceiveCount(UART0, &g_uartHandle, &count)) {
-    		LOG_INFO("Received %u bytes", count);
-    	}
-
         data = UART_ReadByte(UART0);
 
         locator_encode_char(data);

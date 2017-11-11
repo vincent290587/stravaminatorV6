@@ -46,6 +46,7 @@ public:
     void updateRelativePosition(Point point);
     Vecteur getDeltaListe();
     Vecteur getPosRelative();
+    Point2D getCenterListe();
 
     float dist(Point *p_);
 	float dist(float lat_, float lon_);
@@ -60,6 +61,7 @@ protected:
     std::list<Point> m_lpoints;
     Vecteur m_pos_r;
     Vecteur m_delta_l;
+    Point2D m_center_l;
     float m_dist;
     Point m_P1, m_P2;
 };

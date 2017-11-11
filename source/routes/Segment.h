@@ -75,6 +75,7 @@ class Segment {
     Point *getFirstPoint();
     float dist(Point *p) {return _lpts.dist(p);}
     Vecteur deltaListe() {return _lpts.getDeltaListe();}
+    Point2D centerListe() {return _lpts.getCenterListe();}
 
   private:
     String _nomFichier; // contient la pos du 1er point et le nom

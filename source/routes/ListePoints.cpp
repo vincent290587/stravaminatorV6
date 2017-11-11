@@ -177,10 +177,10 @@ void ListePoints::updateDelta() {
 	int indice = 0;
 	Point tmpPT1;
 	float tmp_dist = 0.;
-	float min_lon;
-	float max_lon;
-	float min_lat;
-	float max_lat;
+	float min_lon = 0.;
+	float max_lon = 0.;
+	float min_lat = 0.;
+	float max_lat = 0.;
 
 	for (auto& tmpPT2 : m_lpoints) {
 
@@ -213,6 +213,9 @@ void ListePoints::updateDelta() {
 	m_delta_l._z = getElevTot();
 	m_delta_l._t = getTempsTot();
 
+	m_center_l._lat = 0.5*(max_lat + min_lat);
+	m_center_l._lon = 0.5*(max_lon + min_lon);
+
 	m_dist = tmp_dist;
 
 }
@@ -224,7 +227,7 @@ void ListePoints::updateDelta() {
 void ListePoints::updateRelativePosition(Point point) {
 
 	Point P1, P2;
-	float tmp_dist, distP1, distP2;
+	float tmp_dist, distP1_, distP2_;
 	int init = 0;
 	Vecteur PP1, P1P2;
 
@@ -239,25 +242,25 @@ void ListePoints::updateRelativePosition(Point point) {
 
 		if (init == 0) {
 			P1 = tmpPT;
-			distP1 = P1.dist(&point);
+			distP1_ = P1.dist(&point);
 			init++;
 		} else if (init == 1) {
 			P2 = tmpPT;
-			distP2 = P2.dist(&point);
+			distP2_ = P2.dist(&point);
 			init++;
 		} else {
 
-			if (tmp_dist < distP1) {
-				if (distP1 < distP2) {
+			if (tmp_dist < distP1_) {
+				if (distP1_ < distP2_) {
 					P2 = P1;
-					distP2 = P2.dist(&point);
+					distP2_ = P2.dist(&point);
 				}
 				P1 = tmpPT;
-				distP1 = P1.dist(&point);
+				distP1_ = P1.dist(&point);
 
-			} else if (tmp_dist < distP2) {
+			} else if (tmp_dist < distP2_) {
 				P2 = tmpPT;
-				distP2 = P2.dist(&point);
+				distP2_ = P2.dist(&point);
 			}
 		}
 	}
@@ -270,12 +273,12 @@ void ListePoints::updateRelativePosition(Point point) {
 	P1P2 = Vecteur(P2, P1);
 
 	tmp_dist = P1.dist(&P2);
-	distP1   = P1.dist(&point);
+	distP1_   = P1.dist(&point);
 
 	// interpolation
 	if (tmp_dist > 0.000001) {
 		m_pos_r._y = (PP1._x * P1P2._x + PP1._y * P1P2._y) / tmp_dist;
-		m_pos_r._x = sqrt(distP1 * distP1 - m_pos_r._y * m_pos_r._y);
+		m_pos_r._x = sqrt(distP1_ * distP1_ - m_pos_r._y * m_pos_r._y);
 		m_pos_r._z = P1._alt + (P2._alt - P1._alt) * m_pos_r._y / tmp_dist;
 		m_pos_r._t = P1._rtime + (P2._rtime - P1._rtime) * m_pos_r._y / tmp_dist;
 	} else {
@@ -294,7 +297,7 @@ void ListePoints::updateRelativePosition(Point point) {
 Vecteur ListePoints::computePosRelative(Point point) {
 
 	Point P1, P2;
-	float tmp_dist, distP1, distP2;
+	float tmp_dist, distP1_, distP2_;
 	int init = 0;
 	Vecteur res, PP1, P1P2;
 
@@ -309,25 +312,25 @@ Vecteur ListePoints::computePosRelative(Point point) {
 
 		if (init == 0) {
 			P1 = tmpPT;
-			distP1 = P1.dist(&point);
+			distP1_ = P1.dist(&point);
 			init++;
 		} else if (init == 1) {
 			P2 = tmpPT;
-			distP2 = P2.dist(&point);
+			distP2_ = P2.dist(&point);
 			init++;
 		} else {
 
-			if (tmp_dist < distP1) {
-				if (distP1 < distP2) {
+			if (tmp_dist < distP1_) {
+				if (distP1_ < distP2_) {
 					P2 = P1;
-					distP2 = P2.dist(&point);
+					distP2_ = P2.dist(&point);
 				}
 				P1 = tmpPT;
-				distP1 = P1.dist(&point);
+				distP1_ = P1.dist(&point);
 
-			} else if (tmp_dist < distP2) {
+			} else if (tmp_dist < distP2_) {
 				P2 = tmpPT;
-				distP2 = P2.dist(&point);
+				distP2_ = P2.dist(&point);
 			}
 		}
 
@@ -339,12 +342,12 @@ Vecteur ListePoints::computePosRelative(Point point) {
 
 	tmp_dist = P1.dist(&P2);
 
-	distP1 = P1.dist(&point);
+	distP1_ = P1.dist(&point);
 
 	// interpolation
 	if (tmp_dist > 0.000001) {
 		res._y = (PP1._x * P1P2._x + PP1._y * P1P2._y) / tmp_dist;
-		res._x = sqrt(distP1 * distP1 - res._y * res._y);
+		res._x = sqrt(distP1_ * distP1_ - res._y * res._y);
 		res._z = P1._alt + (P2._alt - P1._alt) * res._y / tmp_dist;
 		res._t = P1._rtime + (P2._rtime - P1._rtime) * res._y / tmp_dist;
 	} else {
@@ -363,6 +366,14 @@ Vecteur ListePoints::computePosRelative(Point point) {
  */
 Vecteur ListePoints::getDeltaListe() {
 	return m_delta_l;
+}
+
+/**
+ *
+ * @return The stored list center
+ */
+Point2D ListePoints::getCenterListe() {
+    return m_center_l;
 }
 
 /**

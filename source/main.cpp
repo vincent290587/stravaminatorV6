@@ -91,6 +91,9 @@ int main(void) {
 		}
 
 		dma_spi0_mngr_run();
+
+		locator.tasks();
+
 	}
 
 	return 0;

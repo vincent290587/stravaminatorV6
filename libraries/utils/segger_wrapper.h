@@ -34,7 +34,8 @@
 #define LOG_FLUSH(X)                   SEGGER_RTT_WriteBlock(RTT_LOG_CHANNEL," ",0)
 #define LOG_SET_TERM(X)                SEGGER_RTT_SetTerminal(X)
 #elif USE_SVIEW
-#define LOG_INFO(...)                  SEGGER_SYSVIEW_PrintfHost(__VA_ARGS__)
+//#define LOG_INFO(...)                  SEGGER_SYSVIEW_PrintfHost(__VA_ARGS__)
+#define LOG_INFO(...)                  EMPTY_MACRO
 #define LOG_ERROR(...)                 SEGGER_SYSVIEW_ErrorfHost(__VA_ARGS__)
 #define LOG_GRAPH(...)                 EMPTY_MACRO
 #define LOG_FLUSH(...)                 EMPTY_MACRO
@@ -48,11 +49,17 @@
 #endif
 
 #if USE_SVIEW
+#define W_SYSVIEW_RecordEnterISR(...)  SEGGER_SYSVIEW_RecordEnterISR()
+#define W_SYSVIEW_RecordExitISR(...)   SEGGER_SYSVIEW_RecordExitISR()
+//#define W_SYSVIEW_RecordEnterISR(...)  EMPTY_MACRO
+//#define W_SYSVIEW_RecordExitISR(...)   EMPTY_MACRO
 #define W_SYSVIEW_OnIdle(...)          SEGGER_SYSVIEW_OnIdle()
 #define W_SYSVIEW_OnTaskStartExec(X)   SEGGER_SYSVIEW_OnTaskStartExec(X)
-#define W_SYSVIEW_OnTaskStopExec(X)    SEGGER_SYSVIEW_OnTaskTerminate(X)
+#define W_SYSVIEW_OnTaskStopExec(X)    SEGGER_SYSVIEW_OnTaskTerminate(X);SEGGER_SYSVIEW_OnIdle()
 #define W_SYSVIEW_OnTaskCreate(X)      SEGGER_SYSVIEW_OnTaskCreate(X)
 #else
+#define W_SYSVIEW_RecordEnterISR(...)  EMPTY_MACRO
+#define W_SYSVIEW_RecordExitISR(...)   EMPTY_MACRO
 #define W_SYSVIEW_OnIdle(...)          EMPTY_MACRO
 #define W_SYSVIEW_OnTaskStartExec(X)   EMPTY_MACRO
 #define W_SYSVIEW_OnTaskStopExec(X)    EMPTY_MACRO
@@ -70,6 +77,10 @@
 #define LCD_TASK                       (TASK_BASE + 7u)
 #define SD_ACCESS_TASK                 (TASK_BASE + 8u)
 #define SEG_PERF_TASK                  (TASK_BASE + 9u)
+#define DISPLAY_TASK1                  (TASK_BASE + 10u)
+#define DISPLAY_TASK2                  (TASK_BASE + 11u)
+#define DISPLAY_TASK3                  (TASK_BASE + 12u)
+#define DISPLAY_TASK4                  (TASK_BASE + 13u)
 
 
 /////////    FUNCTIONS

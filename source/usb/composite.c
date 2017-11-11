@@ -130,7 +130,7 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
     uint16_t *temp16 = (uint16_t *)param;
     uint8_t *temp8 = (uint8_t *)param;
 
-    SEGGER_SYSVIEW_RecordEnterISR();
+    W_SYSVIEW_RecordEnterISR();
 
     switch (event)
     {
@@ -221,7 +221,7 @@ usb_status_t USB_DeviceCallback(usb_device_handle handle, uint32_t event, void *
             break;
     }
 
-    SEGGER_SYSVIEW_RecordExitISR();
+    W_SYSVIEW_RecordExitISR();
 
     return error;
 }

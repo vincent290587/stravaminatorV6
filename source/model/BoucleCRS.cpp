@@ -50,7 +50,6 @@ void BoucleCRS::run() {
 
 	pwManager.switchToRun();
 
-	W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
 
 	// update position
 	att.alt = 0;
@@ -69,18 +68,16 @@ void BoucleCRS::run() {
 
 		if (seg.isValid() && mes_points.size() > 2) {
 
-			W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
-
 			tmp_dist = segment_allocator(seg, att.lat, att.lon);
-
-			W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
 
 			// calculate distance to closes segment
 			if (tmp_dist < min_dist_seg) min_dist_seg = tmp_dist;
 
 			if (seg.getStatus() != SEG_OFF) {
 
+				W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
 				seg.majPerformance(mes_points);
+				W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
 
 				//				att.nbact += 1;
 				if (seg.getStatus() == SEG_START) {
@@ -114,7 +111,9 @@ void BoucleCRS::run() {
 			}
 			else if (tmp_dist < 250) {
 
+				W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
 				seg.majPerformance(mes_points);
+				W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
 
 				// TODO just display the segment
 				LOG_INFO("Segment preview\r\n");
@@ -127,19 +126,21 @@ void BoucleCRS::run() {
 
 	} // fin for
 
-	W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
 
 	LOG_INFO("Next segment: %d\r\n", (int)min_dist_seg);
 
+	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
 	// update the screen
 	lcd.setCursor(10,10);
 	lcd.setTextSize(3);
 	lcd.print(min_dist_seg);
 	lcd.writeWhole();
+	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 
 //	sdisplay.displayRTT();
 
 	// go back to low power
 	pwManager.switchToVlpr();
 
+	W_SYSVIEW_OnIdle();
 }

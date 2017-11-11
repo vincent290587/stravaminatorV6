@@ -53,7 +53,7 @@ static xferTaskState m_state;
 
 void DSPI_MasterUserCallback(SPI_Type *base, dspi_master_edma_handle_t *handle, status_t status, void *userData)
 {
-//	SEGGER_SYSVIEW_RecordEnterISR();
+	W_SYSVIEW_RecordEnterISR();
 	if (status != kStatus_Success)
 	{
 		LOG_ERROR("DMA SPI0 master callback error\r\n");
@@ -63,7 +63,7 @@ void DSPI_MasterUserCallback(SPI_Type *base, dspi_master_edma_handle_t *handle, 
 
 //	dma_spi0_mngr_run();
 
-//	SEGGER_SYSVIEW_RecordExitISR();
+	W_SYSVIEW_RecordExitISR();
 }
 
 void dma_spi0_uninit(void)

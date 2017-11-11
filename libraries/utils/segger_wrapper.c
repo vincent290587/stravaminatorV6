@@ -58,11 +58,14 @@ void segger_init(void) {
 	  pInfo[nb_tasks].TaskID = I2C_TASK;
 	  pInfo[nb_tasks++].sName  = "I2C_TASK";
 
+	  pInfo[nb_tasks].TaskID = SPI_TASK;
+	  pInfo[nb_tasks++].sName  = "SPI_TASK";
+
 	  pInfo[nb_tasks].TaskID = UART_TASK;
 	  pInfo[nb_tasks++].sName  = "UART_TASK";
 
-	  pInfo[nb_tasks].TaskID = SPI_TASK;
-	  pInfo[nb_tasks++].sName  = "SPI_TASK";
+	  pInfo[nb_tasks].TaskID = LCD_TASK;
+	  pInfo[nb_tasks++].sName  = "LCD_TASK";
 
 	  pInfo[nb_tasks].TaskID = SD_ACCESS_TASK;
 	  pInfo[nb_tasks++].sName  = "SD_ACCESS_TASK";
@@ -70,8 +73,17 @@ void segger_init(void) {
 	  pInfo[nb_tasks].TaskID = SEG_PERF_TASK;
 	  pInfo[nb_tasks++].sName  = "SEG_PERF_TASK";
 
-	  pInfo[nb_tasks].TaskID = LCD_TASK;
-	  pInfo[nb_tasks++].sName  = "LCD_TASK";
+	  pInfo[nb_tasks].TaskID = DISPLAY_TASK1;
+	  pInfo[nb_tasks++].sName  = "DISPLAY_TASK1";
+
+	  pInfo[nb_tasks].TaskID = DISPLAY_TASK2;
+	  pInfo[nb_tasks++].sName  = "DISPLAY_TASK2";
+
+	  pInfo[nb_tasks].TaskID = DISPLAY_TASK3;
+	  pInfo[nb_tasks++].sName  = "DISPLAY_TASK3";
+
+	  pInfo[nb_tasks].TaskID = DISPLAY_TASK4;
+	  pInfo[nb_tasks++].sName  = "DISPLAY_TASK4";
 
 	  SEGGER_SYSVIEW_Conf();
 

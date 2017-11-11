@@ -77,6 +77,8 @@ void UART0_RX_TX_IRQHandler(void)
 {
     uint8_t data;
 
+    W_SYSVIEW_RecordEnterISR();
+
     /* If new data arrived. */
     if ((kUART_RxDataRegFullFlag | kUART_RxOverrunFlag) & UART_GetStatusFlags(UART0))
     {
@@ -90,6 +92,8 @@ void UART0_RX_TX_IRQHandler(void)
 
         locator_encode_char(data);
     }
+
+    W_SYSVIEW_RecordExitISR();
 }
 
 /**

@@ -46,14 +46,14 @@ volatile bool isTransferCompleted = true;
 static void _i2c0_callback(I2C_Type *base, i2c_master_edma_handle_t *handle,
 		status_t status, void *userData)
 {
-	SEGGER_SYSVIEW_RecordEnterISR();
+	W_SYSVIEW_RecordEnterISR();
 	if (status != kStatus_Success)
 	{
 		LOG_ERROR("DMA I2C0 master callback error\r\n");
 	}
 	isTransferCompleted = true;
 //	LOG_INFO("Xfer completed %d\r\n\r\n", status);
-	SEGGER_SYSVIEW_RecordExitISR();
+	W_SYSVIEW_RecordExitISR();
 }
 
 /**

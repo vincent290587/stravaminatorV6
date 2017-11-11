@@ -416,6 +416,7 @@ void LS027_InitTransfer(void *user_data)
 {
 	m_last_updated_line = 0;
 //	LOG_INFO("LS027 Xfer start\r\n");
+//	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
 }
 
 /**
@@ -434,5 +435,6 @@ void LS027_SwitchBuffers(void *user_data)
 	memset(m_buffer_in_use, 0, sizeof(LS027_DisplayBuf1));
 
 //	LOG_INFO("LS027 Xfer finished\r\n");
+//	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 }
 

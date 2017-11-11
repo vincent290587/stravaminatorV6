@@ -92,34 +92,34 @@ static void DetectCardByGpio(void)
 /* Card detect. */
 status_t CardInsertDetect(HOST_TYPE *hostBase)
 {
-    if (!EVENT_Create(kEVENT_CardDetect))
-    {
-        return kStatus_Fail;
-    }
-
-    /* Card detection pin will generate interrupt on either eage */
-    PORT_SetPinInterruptConfig(BOARD_SDHC_CD_PORT_BASE, BOARD_SDHC_CD_GPIO_PIN, kPORT_InterruptEitherEdge);
-    /* Open card detection pin NVIC. */
-    NVIC_EnableIRQ(BOARD_SDHC_CD_PORT_IRQ);
-
-    DetectCardByGpio();
-
-    if (!g_sdInsertedFlag)
-    {
-        /* Wait card inserted. */
-        do
-        {
-            if (!EVENT_Wait(kEVENT_CardDetect, EVENT_TIMEOUT_CARD_DETECT))
-            {
-                return kStatus_Fail;
-            }
-        } while (!g_sdInsertedFlag);
-    }
-
-    EVENT_Delete(kEVENT_CardDetect);
-
-    /* Delat some time to make card stable. */
-    Delay(1000U);
+//    if (!EVENT_Create(kEVENT_CardDetect))
+//    {
+//        return kStatus_Fail;
+//    }
+//
+//    /* Card detection pin will generate interrupt on either eage */
+//    PORT_SetPinInterruptConfig(BOARD_SDHC_CD_PORT_BASE, BOARD_SDHC_CD_GPIO_PIN, kPORT_InterruptEitherEdge);
+//    /* Open card detection pin NVIC. */
+//    NVIC_EnableIRQ(BOARD_SDHC_CD_PORT_IRQ);
+//
+//    DetectCardByGpio();
+//
+//    if (!g_sdInsertedFlag)
+//    {
+//        /* Wait card inserted. */
+//        do
+//        {
+//            if (!EVENT_Wait(kEVENT_CardDetect, EVENT_TIMEOUT_CARD_DETECT))
+//            {
+//                return kStatus_Fail;
+//            }
+//        } while (!g_sdInsertedFlag);
+//    }
+//
+//    EVENT_Delete(kEVENT_CardDetect);
+//
+//    /* Delat some time to make card stable. */
+//    Delay(1000U);
 
     return kStatus_Success;
 }

@@ -9,16 +9,15 @@
 #define SOURCE_MODEL_CADENCE_H_
 
 #include "UData.h"
-#include "Sensor.h"
 #include "stdint.h"
 
-class Cadence : public Sensor {
+class Cadence {
 public:
 	Cadence() {}
 
 private:
-	UData<uint16_t> cadence;
-	UData<float>    speed;
+	NData<uint16_t> cadence;
+	NData<float>    speed;
 };
 
 

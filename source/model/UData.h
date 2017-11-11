@@ -21,7 +21,7 @@ public:
 		m_last_updated = 0;
 	}
 
-	T getData() const {return m_data;}
+	T getData() {return m_data;}
 
 	uint32_t getLastUpdateTime() {
 		return m_last_updated;
@@ -32,16 +32,47 @@ public:
 	}
 
 	UData & operator=(const T &data) {
-		m_data = data;
-		m_last_updated = millis();
+		if (m_data != data) {
+			m_data = data;
+			m_last_updated = millis();
+		}
 		return *this;
 	}
 
 protected:
-	T m_data;
+	T m_data = 0;
 	uint32_t m_last_updated;
 
 };
 
+/**
+ *
+ */
+template <typename T>
+class NData {
+public:
+	NData() {
+		m_new_data = false;
+	}
+
+	T getData() {m_new_data = false; return m_data;}
+
+	bool hasNewData() {
+		return m_new_data;
+	}
+
+	NData & operator=(const T &data) {
+		if (m_data != data) {
+			m_data = data;
+			m_new_data = true;
+		}
+		return *this;
+	}
+
+protected:
+	T m_data = 0;
+	bool m_new_data;
+
+};
 
 #endif /* SOURCE_MODEL_UDATA_H_ */

@@ -18,11 +18,21 @@
 #include "PowerManager.h"
 #include "DebugDisplay.h"
 #include "TSharpMem.h"
+#include "TinyGPS++.h"
 
 typedef struct {
 	float lat;
 	float lon;
 	float alt;
+	float climb;
+	float vit_asc;
+	int16_t pwr;
+	uint16_t nbpts;
+	uint8_t nbact;
+	uint16_t nbsec_act;
+	uint16_t next;
+	uint32_t secj;
+	float dist;
 } SAtt;
 
 extern SAtt att;

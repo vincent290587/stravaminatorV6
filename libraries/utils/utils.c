@@ -168,3 +168,11 @@ long unsigned int toBase10 (char *entree) {
 
 }
 
+uint32_t get_sec_jour(uint8_t hour_, uint8_t min_, uint8_t sec_)
+{
+  unsigned long res = 0;
+
+  res = 3600 * hour_ + 60 * min_ + sec_;
+
+  return res;
+}

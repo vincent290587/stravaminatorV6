@@ -53,13 +53,15 @@ void BOARD_InitHardware(void) {
 	uart_config_t uartConfig;
 	UART_GetDefaultConfig(&uartConfig);
 	uartConfig.enableTx = true;
-	uartConfig.enableRx = false; // TODO
+	uartConfig.enableRx = true; // TODO
 	uartConfig.baudRate_Bps = 9600U;
 
 	uart0_init(&uartConfig);
 
-//	uartConfig.baudRate_Bps = 115200U;
-//	uart2_init(&uartConfig);
+	uartConfig.baudRate_Bps = 115200U;
+	uartConfig.enableRx = false; // TODO
+
+	uart2_init(&uartConfig);
 
 	dma_spi0_init();
 	dma_spi0_mngr_init();

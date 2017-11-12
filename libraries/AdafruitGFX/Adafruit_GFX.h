@@ -7,6 +7,7 @@
 #include "WString.h"
 #include "Print.h"
 
+#define FAST_TEXT // Enable faster drawing of glyphs
 
 extern "C" void __cxa_pure_virtual(void);
 

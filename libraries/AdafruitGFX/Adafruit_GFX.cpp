@@ -246,14 +246,24 @@ void Adafruit_GFX::drawRect(int16_t x, int16_t y, int16_t w, int16_t h,
 
 void Adafruit_GFX::drawFastVLine(int16_t x, int16_t y,
 		int16_t h, uint16_t color) {
+
+	for (uint16_t ind = y ; ind < y + h ; ind++) {
+		drawPixel(x, ind, color);
+	}
+
 	// Update in subclasses if desired!
-	drawLine(x, y, x, y+h-1, color);
+//	drawLine(x, y, x, y+h-1, color);
 }
 
 void Adafruit_GFX::drawFastHLine(int16_t x, int16_t y,
 		int16_t w, uint16_t color) {
+
+	for (uint16_t ind = x ; ind < x + w ; ind++) {
+		drawPixel(ind, y, color);
+	}
+
 	// Update in subclasses if desired!
-	drawLine(x, y, x+w-1, y, color);
+//	drawLine(x, y, x+w-1, y, color);
 }
 
 void Adafruit_GFX::fillRect(int16_t x, int16_t y, int16_t w, int16_t h,
@@ -546,8 +556,11 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,
 					if(size == 1) drawPixel(x+i, y+j, color);
 					else          fillRect(x+(i*size), y+(j*size), size, size, color);
 				} else if(bg != color) {
+#ifndef FAST_TEXT
+					// draws an unnecessary rectangle behind the text
 					if(size == 1) drawPixel(x+i, y+j, bg);
 					else          fillRect(x+i*size, y+j*size, size, size, bg);
+#endif
 				}
 			}
 		}
@@ -592,12 +605,42 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,
 		// displays supporting setAddrWindow() and pushColors()), but haven't
 		// implemented this yet.
 
+
+#ifdef FAST_TEXT
+		uint16_t hpc = 0; // Horizontal foreground pixel count
+		for(yy=0; yy<h; yy++) {
+			for(xx=0; xx<w; xx++) {
+				if(bit == 0) {
+					bits = pgm_read_byte(&bitmap[bo++]);
+					bit  = 0x80;
+				}
+				if(bits & bit) hpc++;
+				else {
+					if (hpc) {
+						if(size == 1) drawFastHLine(x+xo+xx-hpc, y+yo+yy, hpc, color);
+						else fillRect(x+(xo16+xx-hpc)*size, y+(yo16+yy)*size, size*hpc, size, color);
+						hpc=0;
+					}
+				}
+				bit >>= 1;
+			}
+			// Draw pixels for this line as we are about to increment yy
+			if (hpc) {
+				if(size == 1) drawFastHLine(x+xo+xx-hpc, y+yo+yy, hpc, color);
+				else fillRect(x+(xo16+xx-hpc)*size, y+(yo16+yy)*size, size*hpc, size, color);
+				hpc=0;
+			}
+		}
+#else
 		for(yy=0; yy<h; yy++) {
 			for(xx=0; xx<w; xx++) {
 				if(!(bit++ & 7)) {
 					bits = pgm_read_byte(&bitmap[bo++]);
 				}
 				if(bits & 0x80) {
+//					if(size == 1) drawPixel(x+xo+xx, y+yo+yy, color);
+//					else fillRect(x+(xo16+xx)*size, y+(yo16+yy)*size, size, size, color);
+
 					if(size == 1) {
 						drawPixel(x+xo16+xx, y+yo16+yy, color);
 					} else {
@@ -607,6 +650,7 @@ void Adafruit_GFX::drawChar(int16_t x, int16_t y, unsigned char c,
 				bits <<= 1;
 			}
 		}
+#endif
 
 	} // End classic vs custom font
 }

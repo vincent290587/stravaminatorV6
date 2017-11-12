@@ -13,6 +13,8 @@
 /* The board name */
 #define BOARD_NAME "FRDM-K64F"
 
+#define EMPTY_MACRO                    do {} while (0)
+
 /* The UART to use for debug messages. */
 #define BOARD_DEBUG_UART_TYPE DEBUG_CONSOLE_DEVICE_TYPE_UART
 #define BOARD_DEBUG_UART_BASEADDR (uint32_t) UART0

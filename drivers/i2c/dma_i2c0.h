@@ -32,13 +32,13 @@ void     dma_i2c0_init(void);
 
 void     dma_i2c0_uninit(void);
 
-status_t dma_i2c0_read_reg(uint8_t address_, uint8_t reg_, uint8_t *val_, uint8_t bytesNumber_, bool repeat_start);
+status_t i2c0_read_reg(uint8_t address_, uint8_t reg_, uint8_t *val_, uint8_t bytesNumber_, bool repeat_start);
 
-status_t dma_i2c0_write_reg(uint8_t address_, uint8_t reg_, uint8_t *val_, uint8_t bytesNumber_, bool repeat_start);
+status_t i2c0_write_reg(uint8_t address_, uint8_t reg_, uint8_t *val_, uint8_t bytesNumber_, bool repeat_start);
 
-status_t dma_i2c0_read(uint8_t address_, uint8_t *val_, uint8_t bytesNumber_, bool repeat_start);
+status_t i2c0_read(uint8_t address_, uint8_t *val_, uint8_t bytesNumber_, bool repeat_start);
 
-status_t dma_i2c0_write(uint8_t address_, uint8_t *val_, uint8_t bytesNumber_, bool repeat_start);
+status_t i2c0_write(uint8_t address_, uint8_t *val_, uint8_t bytesNumber_, bool repeat_start);
 
 
 #ifdef __cplusplus

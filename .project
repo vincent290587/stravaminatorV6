@@ -37,214 +37,214 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/dma_manager_2.1.0</name>
+			<name>middleware/dma_manager</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b</name>
+			<name>middleware/fatfs</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/sdmmc_2.1.2</name>
+			<name>middleware/sdmmc</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3</name>
+			<name>middleware/usb</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/dma_manager_2.1.0/fsl_dma_manager.c</name>
+			<name>middleware/dma_manager/fsl_dma_manager.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/dma_manager_2.1.0/fsl_dma_manager.c</locationURI>
+			<locationURI>SDK_LOC/middleware/dma_manager/fsl_dma_manager.c</locationURI>
 		</link>
 		<link>
-			<name>middleware/dma_manager_2.1.0/fsl_dma_manager.h</name>
+			<name>middleware/dma_manager/fsl_dma_manager.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/dma_manager_2.1.0/fsl_dma_manager.h</locationURI>
+			<locationURI>SDK_LOC/middleware/dma_manager/fsl_dma_manager.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/ChangeLogKSDK.txt</name>
+			<name>middleware/fatfs/ChangeLogKSDK.txt</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs_0.12b/ChangeLogKSDK.txt</locationURI>
+			<locationURI>SDK_LOC/middleware/fatfs/ChangeLogKSDK.txt</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/FatFs_for_Kinetis_SDK_v2.0_readme.txt</name>
+			<name>middleware/fatfs/FatFs_for_Kinetis_SDK_v2.0_readme.txt</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs_0.12b/FatFs_for_Kinetis_SDK_v2.0_readme.txt</locationURI>
+			<locationURI>SDK_LOC/middleware/fatfs/FatFs_for_Kinetis_SDK_v2.0_readme.txt</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/src</name>
+			<name>middleware/fatfs/src</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/sdmmc_2.1.2/inc</name>
+			<name>middleware/sdmmc/inc</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/sdmmc_2.1.2/src</name>
+			<name>middleware/sdmmc/src</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/device</name>
+			<name>middleware/usb/device</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/include</name>
+			<name>middleware/usb/include</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/osa</name>
+			<name>middleware/usb/osa</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/src/diskio.c</name>
+			<name>middleware/fatfs/src/diskio.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/diskio.c</locationURI>
+			<locationURI>SDK_LOC/middleware/fatfs/src/diskio.c</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/src/diskio.h</name>
+			<name>middleware/fatfs/src/diskio.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/diskio.h</locationURI>
+			<locationURI>SDK_LOC/middleware/fatfs/src/diskio.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/src/ff.c</name>
+			<name>middleware/fatfs/src/ff.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/ff.c</locationURI>
+			<locationURI>SDK_LOC/middleware/fatfs/src/ff.c</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/src/ff.h</name>
+			<name>middleware/fatfs/src/ff.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/ff.h</locationURI>
+			<locationURI>SDK_LOC/middleware/fatfs/src/ff.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/src/fsl_sd_disk</name>
+			<name>middleware/fatfs/src/fsl_sd_disk</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/src/integer.h</name>
+			<name>middleware/fatfs/src/integer.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/integer.h</locationURI>
+			<locationURI>SDK_LOC/middleware/fatfs/src/integer.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/sdmmc_2.1.2/inc/fsl_card.h</name>
+			<name>middleware/sdmmc/inc/fsl_card.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/sdmmc_2.1.2/inc/fsl_card.h</locationURI>
+			<locationURI>SDK_LOC/middleware/sdmmc/inc/fsl_card.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/sdmmc_2.1.2/inc/fsl_host.h</name>
+			<name>middleware/sdmmc/inc/fsl_host.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/sdmmc_2.1.2/inc/fsl_host.h</locationURI>
+			<locationURI>SDK_LOC/middleware/sdmmc/inc/fsl_host.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/sdmmc_2.1.2/inc/fsl_sdmmc.h</name>
+			<name>middleware/sdmmc/inc/fsl_sdmmc.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/sdmmc_2.1.2/inc/fsl_sdmmc.h</locationURI>
+			<locationURI>SDK_LOC/middleware/sdmmc/inc/fsl_sdmmc.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/sdmmc_2.1.2/inc/fsl_specification.h</name>
+			<name>middleware/sdmmc/inc/fsl_specification.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/sdmmc_2.1.2/inc/fsl_specification.h</locationURI>
+			<locationURI>SDK_LOC/middleware/sdmmc/inc/fsl_specification.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/sdmmc_2.1.2/src/fsl_sd.c</name>
+			<name>middleware/sdmmc/src/fsl_sd.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/sdmmc_2.1.2/src/fsl_sd.c</locationURI>
+			<locationURI>SDK_LOC/middleware/sdmmc/src/fsl_sd.c</locationURI>
 		</link>
 		<link>
-			<name>middleware/sdmmc_2.1.2/src/fsl_sdmmc.c</name>
+			<name>middleware/sdmmc/src/fsl_sdmmc.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/sdmmc_2.1.2/src/fsl_sdmmc.c</locationURI>
+			<locationURI>SDK_LOC/middleware/sdmmc/src/fsl_sdmmc.c</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/device/usb_device.h</name>
+			<name>middleware/usb/device/usb_device.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/device/usb_device.h</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/device/usb_device.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/device/usb_device_dci.c</name>
+			<name>middleware/usb/device/usb_device_dci.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/device/usb_device_dci.c</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/device/usb_device_dci.c</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/device/usb_device_dci.h</name>
+			<name>middleware/usb/device/usb_device_dci.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/device/usb_device_dci.h</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/device/usb_device_dci.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/device/usb_device_khci.c</name>
+			<name>middleware/usb/device/usb_device_khci.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/device/usb_device_khci.c</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/device/usb_device_khci.c</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/device/usb_device_khci.h</name>
+			<name>middleware/usb/device/usb_device_khci.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/device/usb_device_khci.h</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/device/usb_device_khci.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/include/usb.h</name>
+			<name>middleware/usb/include/usb.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/include/usb.h</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/include/usb.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/include/usb_khci.h</name>
+			<name>middleware/usb/include/usb_khci.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/include/usb_khci.h</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/include/usb_khci.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/include/usb_misc.h</name>
+			<name>middleware/usb/include/usb_misc.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/include/usb_misc.h</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/include/usb_misc.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/include/usb_spec.h</name>
+			<name>middleware/usb/include/usb_spec.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/include/usb_spec.h</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/include/usb_spec.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/osa/usb_osa.h</name>
+			<name>middleware/usb/osa/usb_osa.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/osa/usb_osa.h</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/osa/usb_osa.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/osa/usb_osa_bm.c</name>
+			<name>middleware/usb/osa/usb_osa_bm.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/osa/usb_osa_bm.c</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/osa/usb_osa_bm.c</locationURI>
 		</link>
 		<link>
-			<name>middleware/usb_1.6.3/osa/usb_osa_bm.h</name>
+			<name>middleware/usb/osa/usb_osa_bm.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/usb_1.6.3/osa/usb_osa_bm.h</locationURI>
+			<locationURI>SDK_LOC/middleware/usb/osa/usb_osa_bm.h</locationURI>
 		</link>
 		<link>
-			<name>debug/middleware/dma_manager_2.1.0/dma_manager_2.1.0/fsl_dma_manager.c</name>
+			<name>debug/middleware/dma_manager/dma_manager/fsl_dma_manager.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/dma_manager_2.1.0/fsl_dma_manager.c</locationURI>
+			<locationURI>SDK_LOC/middleware/dma_manager/fsl_dma_manager.c</locationURI>
 		</link>
 		<link>
-			<name>debug/middleware/dma_manager_2.1.0/dma_manager_2.1.0/fsl_dma_manager.h</name>
+			<name>debug/middleware/dma_manager/dma_manager/fsl_dma_manager.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/dma_manager_2.1.0/fsl_dma_manager.h</locationURI>
+			<locationURI>SDK_LOC/middleware/dma_manager/fsl_dma_manager.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/src/fsl_sd_disk/fsl_sd_disk.c</name>
+			<name>middleware/fatfs/src/fsl_sd_disk/fsl_sd_disk.c</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/fsl_sd_disk/fsl_sd_disk.c</locationURI>
+			<locationURI>SDK_LOC/middleware/fatfs/src/fsl_sd_disk/fsl_sd_disk.c</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs_0.12b/src/fsl_sd_disk/fsl_sd_disk.h</name>
+			<name>middleware/fatfs/src/fsl_sd_disk/fsl_sd_disk.h</name>
 			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/fsl_sd_disk/fsl_sd_disk.h</locationURI>
+			<locationURI>SDK_LOC/middleware/fatfs/src/fsl_sd_disk/fsl_sd_disk.h</locationURI>
 		</link>
 	</linkedResources>
 	<variableList>

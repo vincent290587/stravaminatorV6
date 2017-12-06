@@ -277,7 +277,7 @@ static usb_status_t USB_DeviceMscBulkIn(usb_device_handle handle,
                                         void *callbackParam)
 {
     usb_device_msc_struct_t *mscHandle = (usb_device_msc_struct_t *)callbackParam;
-    usb_device_msc_csw_t *csw;
+    usb_device_msc_csw_t *csw = 0;
     usb_status_t error = kStatus_USB_Error;
 
     if (message->length == USB_UNINITIALIZED_VAL_32)

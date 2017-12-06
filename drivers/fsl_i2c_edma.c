@@ -28,6 +28,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "segger_wrapper.h"
 #include "fsl_i2c_edma.h"
 
 /*******************************************************************************
@@ -437,6 +438,7 @@ status_t I2C_MasterTransferEDMA(I2C_Type *base, i2c_master_edma_handle_t *handle
 
     if (result)
     {
+    	LOG_INFO("I2C error %d", result);
         /* Send stop if received Nak. */
         if (result == kStatus_I2C_Nak)
         {

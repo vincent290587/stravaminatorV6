@@ -98,7 +98,7 @@ uint32_t millis(void) {
 void delay_ms(uint32_t delay_) {
 	uint32_t start = lptmrCounter;
 
-	W_SYSVIEW_OnIdle();
+//	W_SYSVIEW_OnIdle();
 
 	while (lptmrCounter < start + delay_ && lptmrCounter >= start) {
 		//__asm("NOP"); /* delay */

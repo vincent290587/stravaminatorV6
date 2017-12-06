@@ -31,7 +31,7 @@
 #include <stdlib.h>
 #include "usb_device_config.h"
 #include "usb_device.h"
-#include "SEGGER_SYSVIEW.h"
+#include "segger_wrapper.h"
 
 #include "usb_device_class.h"
 #include "usb_device_msc.h"
@@ -355,17 +355,16 @@ void CompositeInit(void)
     g_composite.cdcVcom.cdcAcmHandle = (class_handle_t)NULL;
     g_composite.mscDisk.mscHandle = (class_handle_t)NULL;
     g_composite.deviceHandle = NULL;
-    usb_echo("Please insert SD card\r\n");
 
     if (kStatus_USB_Success != USB_DeviceMscCardInit())
     {
-        usb_echo("Card init failed\r\n");
+    	PRINTF("Card init failed\r\n");
         return;
     }
     if (kStatus_USB_Success !=
         USB_DeviceClassInit(CONTROLLER_ID, &g_compositeDeviceConfigList, &g_composite.deviceHandle))
     {
-        usb_echo("USB device composite demo init failed\r\n");
+    	PRINTF("USB device composite demo init failed\r\n");
         return;
     }
     else

@@ -1,13 +1,14 @@
 /* This is a template for board specific configuration created by MCUXpresso Project Generator. Enjoy! */
 
 #include <stdint.h>
-#include "fsl_debug_console.h"
 #include "board.h"
 #include "fsl_gpio.h"
+#include "fsl_debug_console.h"
+#include "fsl_dma_manager.h"
+
 #include "segger_wrapper.h"
 #include "composite.h"
 #include "power_manager.h"
-
 #include "millis.h"
 #include "sdcard_fatfs.h"
 #include "uart0.h"
@@ -15,12 +16,14 @@
 #include "dma_spi0.h"
 #include "dma_i2c0.h"
 
+dmamanager_handle_t dmamanager_handle;
+
 /*!
  * @brief initialize debug console to enable printf for this demo/example
  */
 void BOARD_InitDebugConsole(void) {
 	/* The user initialization should be placed here */
-	DbgConsole_Init(BOARD_DEBUG_UART_BASEADDR, BOARD_DEBUG_UART_BAUDRATE, BOARD_DEBUG_UART_TYPE, BOARD_DEBUG_UART_CLK_FREQ);
+	DbgConsole_Init(0, 0, DEBUG_CONSOLE_DEVICE_TYPE_USBCDC, 0);
 }
 
 /*!
@@ -34,13 +37,9 @@ void BOARD_InitHardware(void) {
 
 	LED_GREEN_INIT(1);
 
-	/* Init DMAMUX */
-	DMAMUX_Init(DMAMUX0);
-
-    /* Init the EDMA module */
-    edma_config_t config;
-    EDMA_GetDefaultConfig(&config);
-    EDMA_Init(DMA0, &config);
+	/* Init DMA */
+	memset(&dmamanager_handle, 0, sizeof(dmamanager_handle_t));
+	DMAMGR_Init(&dmamanager_handle, DMA0, 8U, 0U);
 
 	/* Init code */
 	millis_init();
@@ -58,10 +57,10 @@ void BOARD_InitHardware(void) {
 
 	uart0_init(&uartConfig);
 
-	uartConfig.baudRate_Bps = 115200U;
-	uartConfig.enableRx = false; // TODO
+//	uartConfig.baudRate_Bps = 115200U;
+//	uartConfig.enableRx = false; // TODO
 
-	uart2_init(&uartConfig);
+	//uart2_init(&uartConfig);
 
 	dma_spi0_init();
 	dma_spi0_mngr_init();

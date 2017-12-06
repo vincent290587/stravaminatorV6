@@ -74,13 +74,13 @@ void Locator::tasks() {
 
 			if (snr[0].isUpdated()) {
 
-				LOG_INFO("\r\n%s in use vs. %s satsInView\r\n", satsInUse.value(), satsInView.value());
+				//LOG_INFO("\r\n%s in use vs. %s satsInView\r\n", satsInUse.value(), satsInView.value());
 
 				for (int i = 0; i < 4; ++i)
 				{
 					if (satNumber[i].isValid()) {
 
-						LOG_INFO("Satellites signal data: sat#%s SNR= %s\r\n", satNumber[i].value(), snr[i].value());
+						//LOG_INFO("Satellites signal data: sat#%s SNR= %s\r\n", satNumber[i].value(), snr[i].value());
 					}
 				}
 

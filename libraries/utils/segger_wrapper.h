@@ -17,8 +17,8 @@
 
 /////////    PARAMETERS
 
-#define USE_RTT           0
-#define USE_SVIEW         1
+#define USE_RTT           1
+#define USE_SVIEW         0
 
 #define RTT_LOG_CHANNEL   0
 #define RTT_GRAPH_CHANNEL 1
@@ -49,10 +49,10 @@
 #endif
 
 #if USE_SVIEW
-#define W_SYSVIEW_RecordEnterISR(...)  SEGGER_SYSVIEW_RecordEnterISR()
-#define W_SYSVIEW_RecordExitISR(...)   SEGGER_SYSVIEW_RecordExitISR()
-//#define W_SYSVIEW_RecordEnterISR(...)  EMPTY_MACRO
-//#define W_SYSVIEW_RecordExitISR(...)   EMPTY_MACRO
+//#define W_SYSVIEW_RecordEnterISR(...)  SEGGER_SYSVIEW_RecordEnterISR()
+//#define W_SYSVIEW_RecordExitISR(...)   SEGGER_SYSVIEW_RecordExitISR()
+#define W_SYSVIEW_RecordEnterISR(...)  EMPTY_MACRO
+#define W_SYSVIEW_RecordExitISR(...)   EMPTY_MACRO
 #define W_SYSVIEW_OnIdle(...)          SEGGER_SYSVIEW_OnIdle()
 #define W_SYSVIEW_OnTaskStartExec(X)   SEGGER_SYSVIEW_OnTaskStartExec(X)
 #define W_SYSVIEW_OnTaskStopExec(X)    SEGGER_SYSVIEW_OnTaskTerminate(X);SEGGER_SYSVIEW_OnIdle()

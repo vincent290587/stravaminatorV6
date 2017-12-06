@@ -4,6 +4,8 @@
 
 #include "board.h"
 #include "pin_mux.h"
+#include "fsl_gpio.h"
+#include "fsl_fxos.h"
 #include "clock_config.h"
 #include "Segment.h"
 #include "segger_wrapper.h"
@@ -13,8 +15,10 @@
 #include "Model.h"
 
 #include "dma_i2c0.h"
+#include "fxos.h"
 #include "dma_spi0.h"
-#include "fsl_gpio.h"
+#include "uart0.h"
+#include "uart2.h"
 
 /*!
  * @brief Application entry point.
@@ -34,8 +38,13 @@ int main(void) {
 	// High level code
 	//
 
+	uaparser.init();
+
 	// LCD driver
 	lcd.begin();
+
+//	fxos_handle_t fxos_handle;
+//	FXOS_Init(&fxos_handle);
 
 	boucle_crs.init();
 
@@ -65,12 +74,16 @@ int main(void) {
 //				LOG_INFO("VLPR mode\r\n");
 //			}
 
-			// update the screen
-//			lcd.setCursor(10,10);
-//			lcd.setTextSize(3);
-//			lcd.print(millis());
-//			lcd.writeWhole();
+			// update the segger screen
+//			sdisplay.clear();
+//			sdisplay.setCursor(3,3);
+//			sdisplay.setTextSize(2);
+//			sdisplay.print(millis());
+//			sdisplay.displayRTT();
 
+//			lcd.setCursor(10,10);
+//			lcd.setTextSize(4);
+//			lcd.print(millis());
 //			dma_spi0_mngr_tasks_start();
 //			dma_spi0_mngr_finish();
 
@@ -81,18 +94,22 @@ int main(void) {
 //			}
 //			W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
 
-//			W_SYSVIEW_OnIdle();
-
 //			locator.sec_jour = millis() / 1000;
 //			LOG_INFO("Locator manual update\r\n");
 
 //			uint8_t array[10] = "Hello\r\n";
 //			uart2_send(array, 7);
+
+//			fxos_tasks(&fxos_handle);
+
+			W_SYSVIEW_OnIdle();
 		}
 
 		dma_spi0_mngr_run();
 
 		locator.tasks();
+
+		uaparser.tasks();
 
 	}
 

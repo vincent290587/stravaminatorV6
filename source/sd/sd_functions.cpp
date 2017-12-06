@@ -90,20 +90,20 @@ int init_liste_segments(void)
 		}
 		if (fileInformation.fattrib & AM_DIR)
 		{
-			LOG_INFO("Directory file : %s\r\n", fileInformation.fname);
+//			LOG_INFO("Directory file : %s\r\n", fileInformation.fname);
 		}
 		else
 		{
 			fileInformation.fname[12] = 0;
 
-			LOG_INFO("General file : %s\r\n", fileInformation.fname);
+//			LOG_INFO("General file : %s\r\n", fileInformation.fname);
 
 			if (Segment::nomCorrect(fileInformation.fname)) {
-				LOG_INFO("Segment added\r\n");
+//				LOG_INFO("Segment added\r\n");
 				mes_segments.push_back(Segment(fileInformation.fname));
 			} else if (Parcours::nomCorrect(fileInformation.fname)) {
 				// pas de chargement en double
-				LOG_INFO("Parcours added\r\n");
+//				LOG_INFO("Parcours added\r\n");
 				mes_parcours.push_back(Parcours(fileInformation.fname));
 			} else {
 				LOG_INFO("File refused\r\n");
@@ -114,6 +114,7 @@ int init_liste_segments(void)
 	}
 
 	LOG_INFO("%u files refused\r\n", nb_files_errors);
+	LOG_INFO("%u segments addded\r\n", mes_segments.size());
 
 	W_SYSVIEW_OnTaskStopExec(SD_ACCESS_TASK);
 

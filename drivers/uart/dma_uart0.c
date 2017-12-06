@@ -130,7 +130,7 @@ void uart0_send(uint8_t* data, size_t length) {
 
 void uart0_tasks() {
 
-	uint32_t count=0;
+//	uint32_t count=0;
 
 //	if (kStatus_NoTransferInProgress != UART_TransferGetReceiveCountEDMA(UART0, &g_uartEdmaHandle, &count)) {
 //		// handle received bytes

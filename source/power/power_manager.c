@@ -56,8 +56,8 @@ void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t
 //	}
 
 	uart0_uninit();
-	uart2_uninit();
 	dma_i2c0_uninit();
+//	uart2_uninit();
 
 	dma_spi0_uninit();
 }
@@ -80,9 +80,9 @@ void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_
 		uartConfig.baudRate_Bps = 9600U;
 		uart0_init(&uartConfig);
 
-		uartConfig.enableRx = false; // TODO
-		uartConfig.baudRate_Bps = 115200U;
-		uart2_init(&uartConfig);
+//		uartConfig.enableRx = false; // TODO
+//		uartConfig.baudRate_Bps = 115200U;
+//		uart2_init(&uartConfig);
 
 		dma_i2c0_init();
 

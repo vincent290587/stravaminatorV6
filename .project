@@ -227,6 +227,16 @@
 			<locationURI>SDK_LOC/middleware/usb_1.6.3/osa/usb_osa_bm.h</locationURI>
 		</link>
 		<link>
+			<name>debug/middleware/dma_manager_2.1.0/dma_manager_2.1.0/fsl_dma_manager.c</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/dma_manager_2.1.0/fsl_dma_manager.c</locationURI>
+		</link>
+		<link>
+			<name>debug/middleware/dma_manager_2.1.0/dma_manager_2.1.0/fsl_dma_manager.h</name>
+			<type>1</type>
+			<locationURI>SDK_LOC/middleware/dma_manager_2.1.0/fsl_dma_manager.h</locationURI>
+		</link>
+		<link>
 			<name>middleware/fatfs_0.12b/src/fsl_sd_disk/fsl_sd_disk.c</name>
 			<type>1</type>
 			<locationURI>SDK_LOC/middleware/fatfs_0.12b/src/fsl_sd_disk/fsl_sd_disk.c</locationURI>

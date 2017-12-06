@@ -19,6 +19,7 @@
 #include "DebugDisplay.h"
 #include "TSharpMem.h"
 #include "TinyGPS++.h"
+#include "UAParser.h"
 
 typedef struct {
 	float lat;
@@ -56,5 +57,7 @@ extern PowerManager  pwManager;
 extern DebugDisplay  sdisplay;
 
 extern TSharpMem     lcd;
+
+extern UAParser      uaparser;
 
 #endif /* SOURCE_MODEL_H_ */

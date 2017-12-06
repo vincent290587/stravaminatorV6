@@ -72,20 +72,20 @@ bool SeggerDisplay::getPixel(int16_t x, int16_t y) {
 	if((x >= _width) || (y >= _height))
 		return false; // <0 test not needed, unsigned
 
-//	switch(rotation) {
-//	case 1:
-//		adagfxswap(x, y);
-//		x = WIDTH  - 1 - x;
-//		break;
-//	case 2:
-//		x = WIDTH  - 1 - x;
-//		y = HEIGHT - 1 - y;
-//		break;
-//	case 3:
-//		adagfxswap(x, y);
-//		y = HEIGHT - 1 - y;
-//		break;
-//	}
+	//	switch(rotation) {
+	//	case 1:
+	//		adagfxswap(x, y);
+	//		x = WIDTH  - 1 - x;
+	//		break;
+	//	case 2:
+	//		x = WIDTH  - 1 - x;
+	//		y = HEIGHT - 1 - y;
+	//		break;
+	//	case 3:
+	//		adagfxswap(x, y);
+	//		y = HEIGHT - 1 - y;
+	//		break;
+	//	}
 
 	if (buffer[(y*SEG_LCDWIDTH + x) / 8] & set[x & 7]) {
 		return true;

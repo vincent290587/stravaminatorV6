@@ -8,7 +8,7 @@
 #include "spi.h"
 #include "segger_wrapper.h"
 
-static dspi_master_handle_t g_m_handle; //global variable
+//static dspi_master_handle_t g_m_handle; //global variable
 static dspi_transfer_t      masterXfer;
 
 volatile bool isTransferCompleted = false;
@@ -16,12 +16,11 @@ volatile bool isTransferCompleted = false;
 
 void spi_init(dspi_master_config_t* masterConfig) {
 
-
 	uint32_t srcClock_Hz = CLOCK_GetFreq(DSPI0_CLK_SRC);
 
 	DSPI_MasterInit(SPI0, masterConfig, srcClock_Hz);
 
-	DSPI_MasterTransferCreateHandle(SPI0, &g_m_handle, NULL, NULL);
+//	DSPI_MasterTransferCreateHandle(SPI0, &g_m_handle, NULL, NULL);
 
 }
 

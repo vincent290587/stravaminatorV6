@@ -12,6 +12,7 @@
 #include "fsl_dspi_edma.h"
 #include "fsl_edma.h"
 #include "fsl_dmamux.h"
+#include "fsl_dma_manager.h"
 #include "dma_spi0.h"
 #include "millis.h"
 
@@ -25,6 +26,9 @@
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
+
+extern dmamanager_handle_t dmamanager_handle;
+
 /* DSPI user callback */
 void DSPI_MasterUserCallback(SPI_Type *base, dspi_master_edma_handle_t *handle, status_t status, void *userData);
 
@@ -110,6 +114,8 @@ void dma_spi0_init(void)
 	srcClock_Hz = DSPI_MASTER_CLK_FREQ;
 	DSPI_MasterInit(SPI0, &masterConfig, srcClock_Hz);
 
+//	DSPI_SetAllPcsPolarity(base, kDSPI_Pcs0ActiveLow | kDSPI_Pcs1ActiveLow);
+
 	/* Set up dspi master */
 	memset(&(dspiEdmaMasterRxRegToRxDataHandle), 0, sizeof(dspiEdmaMasterRxRegToRxDataHandle));
 	memset(&(dspiEdmaMasterTxDataToIntermediaryHandle), 0, sizeof(dspiEdmaMasterTxDataToIntermediaryHandle));
@@ -118,6 +124,19 @@ void dma_spi0_init(void)
 	EDMA_CreateHandle(&(dspiEdmaMasterRxRegToRxDataHandle), DMA0, SPI0_RX_DMA_CHANNEL);
 	EDMA_CreateHandle(&(dspiEdmaMasterTxDataToIntermediaryHandle), DMA0, SPI0_IN_DMA_CHANNEL);
 	EDMA_CreateHandle(&(dspiEdmaMasterIntermediaryToTxRegHandle), DMA0, SPI0_TX_DMA_CHANNEL);
+
+//	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
+//			(dma_request_source_t)kDmaRequestMux0SPI0Rx,
+//			SPI0_RX_DMA_CHANNEL, &dspiEdmaMasterRxRegToRxDataHandle)) {
+//		LOG_ERROR("DMA channel %u occupied", SPI0_RX_DMA_CHANNEL);
+//	}
+//
+//
+//	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
+//			(dma_request_source_t)kDmaRequestMux0SPI0Tx,
+//			SPI0_TX_DMA_CHANNEL, &dspiEdmaMasterIntermediaryToTxRegHandle)) {
+//		LOG_ERROR("DMA channel %u occupied", SPI0_TX_DMA_CHANNEL);
+//	}
 
 	DSPI_MasterTransferCreateHandleEDMA(SPI0, &g_dspi_edma_m_handle, DSPI_MasterUserCallback,
 			NULL, &dspiEdmaMasterRxRegToRxDataHandle,

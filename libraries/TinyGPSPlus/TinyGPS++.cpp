@@ -28,6 +28,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <ctype.h>
 #include <stdlib.h>
 #include "utils.h"
+#include "segger_wrapper.h"
 
 #define _GPRMCterm   "GPRMC"
 #define _GNRMCterm   "GNRMC"
@@ -203,6 +204,7 @@ bool TinyGPSPlus::endOfTermHandler()
     else
     {
       ++failedChecksumCount;
+      LOG_ERROR(" Wrong checksum !\r\n");
     }
 
     return false;
@@ -395,8 +397,8 @@ void TinyGPSDate::setDate(const char *term)
 uint16_t TinyGPSDate::year()
 {
    updated = false;
-   uint16_t year = date % 100;
-   return year + 2000;
+   uint16_t year_ = date % 100;
+   return year_ + 2000;
 }
 
 uint8_t TinyGPSDate::month()

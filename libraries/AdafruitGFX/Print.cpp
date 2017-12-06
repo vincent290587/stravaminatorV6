@@ -276,6 +276,7 @@ size_t Print::printFloat(double number, uint8_t digits)
 		uint8_t n, buf[16], count=1;
 		buf[0] = '.';
 
+
 		// Extract digits from the remainder one at a time
 		if (digits > sizeof(buf) - 1) digits = sizeof(buf) - 1;
 

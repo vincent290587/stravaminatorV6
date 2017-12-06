@@ -27,3 +27,5 @@ PowerManager  pwManager;
 DebugDisplay  sdisplay;
 
 TSharpMem     lcd;
+
+UAParser      uaparser;

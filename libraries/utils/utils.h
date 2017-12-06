@@ -37,6 +37,10 @@ double sq(double value);
 
 uint32_t get_sec_jour(uint8_t hour_, uint8_t min_, uint8_t sec_);
 
+float compute2Complement(uint8_t msb, uint8_t lsb);
+
+float percentageBatt(float tensionValue, float current);
+
 #ifdef	__cplusplus
 }
 #endif

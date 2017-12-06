@@ -176,3 +176,50 @@ uint32_t get_sec_jour(uint8_t hour_, uint8_t min_, uint8_t sec_)
 
   return res;
 }
+
+
+float compute2Complement(uint8_t msb, uint8_t lsb) {
+	uint16_t t;
+	uint16_t val;
+	uint8_t tl=lsb, th=msb;
+	float ret;
+
+	if (th & 0b00100000) {
+		t = th << 8;
+		val = (t & 0xFF00) | (tl & 0x00FF);
+		val -= 1;
+		val = ~(val | 0b1110000000000000);
+		//NRF_LOG_INFO("Raw 2c1: %u\r\n", val);
+		ret = (float)val;
+	} else {
+		t = (th & 0xFF) << 8;
+		val = (t & 0xFF00) | (tl & 0x00FF);
+		//NRF_LOG_INFO("Raw 2c2: %u\r\n", val);
+		ret = (float)-val;
+	}
+
+	return ret;
+}
+
+float percentageBatt(float tensionValue, float current) {
+
+    float fp_ = 0.;
+
+    if (tensionValue > 4.2) {
+			fp_ = 100.;
+    } else if (tensionValue > 3.78) {
+        fp_ = 536.24 * tensionValue * tensionValue * tensionValue;
+		fp_ -= 6723.8 * tensionValue * tensionValue;
+        fp_ += 28186 * tensionValue - 39402;
+
+		if (fp_ > 100.) fp_ = 100.;
+
+    } else if (tensionValue > 3.2) {
+        fp_ = pow(10, -11.4) * pow(tensionValue, 22.315);
+    } else {
+        fp_ = -1;
+    }
+
+    return fp_;
+}
+

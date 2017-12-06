@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ * that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -46,10 +50,8 @@
  * Definitions
  ******************************************************************************/
 #define USB_CDC_ACM_ENTER_CRITICAL() \
-    \
-USB_OSA_SR_ALLOC();                  \
-    \
-USB_OSA_ENTER_CRITICAL()
+    USB_OSA_SR_ALLOC();              \
+    USB_OSA_ENTER_CRITICAL()
 
 #define USB_CDC_ACM_EXIT_CRITICAL() USB_OSA_EXIT_CRITICAL()
 
@@ -58,7 +60,8 @@ USB_OSA_ENTER_CRITICAL()
 ******************************************************************************/
 /* CDC ACM device instance */
 
-USB_GLOBAL usb_device_cdc_acm_struct_t g_cdcAcmHandle[USB_DEVICE_CONFIG_CDC_ACM_MAX_INSTANCE];
+USB_GLOBAL USB_RAM_ADDRESS_ALIGNMENT(USB_DATA_ALIGN_SIZE)
+    usb_device_cdc_acm_struct_t g_cdcAcmHandle[USB_DEVICE_CONFIG_CDC_ACM];
 
 /*******************************************************************************
 * Code
@@ -75,7 +78,7 @@ USB_GLOBAL usb_device_cdc_acm_struct_t g_cdcAcmHandle[USB_DEVICE_CONFIG_CDC_ACM_
 static usb_status_t USB_DeviceCdcAcmAllocateHandle(usb_device_cdc_acm_struct_t **handle)
 {
     int32_t count;
-    for (count = 0; count < USB_DEVICE_CONFIG_CDC_ACM_MAX_INSTANCE; count++)
+    for (count = 0; count < USB_DEVICE_CONFIG_CDC_ACM; count++)
     {
         if (NULL == g_cdcAcmHandle[count].handle)
         {
@@ -685,11 +688,13 @@ usb_status_t USB_DeviceCdcAcmSend(class_handle_t handle, uint8_t ep, uint8_t *bu
 
     if (NULL != cdcAcmPipe)
     {
+        USB_CDC_ACM_ENTER_CRITICAL();
         if (1 == cdcAcmPipe->isBusy)
         {
+            USB_CDC_ACM_EXIT_CRITICAL();
             return kStatus_USB_Busy;
         }
-        USB_CDC_ACM_ENTER_CRITICAL();
+
         error = USB_DeviceSendRequest(cdcAcmHandle->handle, ep, buffer, length);
         if (kStatus_USB_Success == error)
         {

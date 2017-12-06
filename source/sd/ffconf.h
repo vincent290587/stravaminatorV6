@@ -5,7 +5,7 @@
 /  FatFs - FAT file system module configuration file
 /---------------------------------------------------------------------------*/
 
-#define _FFCONF 68020	/* Revision ID */
+#define _FFCONF 68300	/* Revision ID */
 
 /*---------------------------------------------------------------------------/
 / Freescale adaptation configuration

@@ -1,8 +1,35 @@
 /*
- * composite_private.h
+ * The Clear BSD License
+ * Copyright (c) 2015 - 2016, Freescale Semiconductor, Inc.
+ * Copyright 2016 NXP
+ * All rights reserved.
  *
- *  Created on: 5 oct. 2017
- *      Author: Vincent
+ * Redistribution and use in source and binary forms, with or without modification,
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ * that the following conditions are met:
+ *
+ * o Redistributions of source code must retain the above copyright notice, this list
+ *   of conditions and the following disclaimer.
+ *
+ * o Redistributions in binary form must reproduce the above copyright notice, this
+ *   list of conditions and the following disclaimer in the documentation and/or
+ *   other materials provided with the distribution.
+ *
+ * o Neither the name of the copyright holder nor the names of its
+ *   contributors may be used to endorse or promote products derived from this
+ *   software without specific prior written permission.
+ *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+ * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR
+ * ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+ * (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+ * LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON
+ * ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
 #ifndef SOURCE_USB_COMPOSITE_H_
@@ -53,6 +80,32 @@ typedef struct _usb_device_composite_struct
 extern "C" {
 #endif /* __cplusplus*/
 
+/*******************************************************************************
+* API
+******************************************************************************/
+/*!
+ * @brief CDC class specific callback function.
+ *
+ * This function handles the CDC class specific requests.
+ *
+ * @param handle          The CDC ACM class handle.
+ * @param event           The CDC ACM class event type.
+ * @param param           The parameter of the class specific request.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+extern usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, void *param);
+/*!
+ * @brief Virtual COM device set configuration function.
+ *
+ * This function sets configuration for CDC class.
+ *
+ * @param handle The CDC ACM class handle.
+ * @param configure The CDC ACM class configure index.
+ *
+ * @return A USB error code or kStatus_USB_Success.
+ */
+extern usb_status_t USB_DeviceCdcVcomSetConfigure(class_handle_t handle, uint8_t configure);
 /*!
  * @brief Virtual COM device initialization function.
  *
@@ -62,7 +115,15 @@ extern "C" {
  *
  * @return A USB error code or kStatus_USB_Success.
  */
-usb_status_t USB_DeviceCdcVcomInit(usb_device_composite_struct_t *deviceComposite);
+extern usb_status_t USB_DeviceCdcVcomInit(usb_device_composite_struct_t *deviceComposite);
+/*!
+ * @brief Application task function.
+ *
+ * This function runs the task for application.
+ *
+ * @return None.
+ */
+extern void USB_DeviceCdcVcomTask(void);
 
 /*!
  * @brief MSC class specific callback function.

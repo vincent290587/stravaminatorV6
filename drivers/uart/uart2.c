@@ -5,6 +5,7 @@
  *      Author: Vincent
  */
 
+#include "fsl_dmamux.h"
 #include "segger_wrapper.h"
 #include "uart2.h"
 

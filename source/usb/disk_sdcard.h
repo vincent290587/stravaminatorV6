@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015 - 2016, Freescale Semiconductor, Inc.
- * Copyright 2016 NXP
+ * Copyright 2016 - 2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ * that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -52,8 +56,11 @@ USB_DEVICE_CONFIG_USE_TASK macro should also be enable.*/
 
 /*buffer size for sd card example. the larger the buffer size ,the faster the data transfer speed is ,*/
 /*the block size should be multiple of 512, the least value is 512*/
-#define USB_DEVICE_MSC_WRITE_BUFF_SIZE (512U)
-#define USB_DEVICE_MSC_READ_BUFF_SIZE (512U)
+/*the block size should be multiple of 512, the least value is 512*/
+
+#define USB_DEVICE_MSC_WRITE_BUFF_SIZE (512 * 8U)
+#define USB_DEVICE_MSC_READ_BUFF_SIZE (512 * 8U)
+
 
 #define USB_DEVICE_SDCARD_BLOCK_SIZE_POWER (9U)
 #define USB_DEVICE_MSC_ADMA_TABLE_WORDS (8U)
@@ -62,7 +69,7 @@ typedef struct _usb_msc_buffer_struct
     uint32_t offset; /*!< Offset of the block need to access*/
     uint32_t size;   /*!< Size of the transfered data*/
     struct _usb_msc_buffer_struct *next;
-    uint8_t buffer[USB_DEVICE_MSC_WRITE_BUFF_SIZE]; /*!< Buffer address of the transferred data*/
+    uint8_t* buffer; /*!< Buffer address of the transferred data*/
 } usb_msc_buffer_struct_t;
 
 typedef struct _usb_msc_struct

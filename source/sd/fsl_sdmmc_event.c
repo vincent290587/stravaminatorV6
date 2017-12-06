@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ * that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -28,7 +32,7 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#include "event.h"
+#include "fsl_sdmmc_event.h"
 
 /*******************************************************************************
  * Definitions
@@ -42,7 +46,7 @@
  * @param eventType The event type
  * @return The event instance's pointer.
  */
-static volatile uint32_t *EVENT_GetInstance(event_t eventType);
+static volatile uint32_t *SDMMCEVENT_GetInstance(sdmmc_event_t eventType);
 
 /*******************************************************************************
  * Variables
@@ -54,12 +58,12 @@ static volatile uint32_t g_eventCardDetect;
 static volatile uint32_t g_eventTransferComplete;
 
 /*! @brief Time variable unites as milliseconds. */
-volatile uint32_t g_timeMilliseconds;
+static volatile uint32_t g_eventTimeMilliseconds;
 
 /*******************************************************************************
  * Code
  ******************************************************************************/
-void EVENT_InitTimer(void)
+void SDMMCEVENT_InitTimer(void)
 {
     /* Set systick reload value to generate 1ms interrupt */
     SysTick_Config(CLOCK_GetFreq(kCLOCK_CoreSysClk) / 1000U);
@@ -67,19 +71,19 @@ void EVENT_InitTimer(void)
 
 void SysTick_Handler(void)
 {
-    g_timeMilliseconds++;
+    g_eventTimeMilliseconds++;
 }
 
-static volatile uint32_t *EVENT_GetInstance(event_t eventType)
+static volatile uint32_t *SDMMCEVENT_GetInstance(sdmmc_event_t eventType)
 {
     volatile uint32_t *event;
 
     switch (eventType)
     {
-        case kEVENT_TransferComplete:
+        case kSDMMCEVENT_TransferComplete:
             event = &g_eventTransferComplete;
             break;
-        case kEVENT_CardDetect:
+        case kSDMMCEVENT_CardDetect:
             event = &g_eventCardDetect;
             break;
         default:
@@ -90,9 +94,9 @@ static volatile uint32_t *EVENT_GetInstance(event_t eventType)
     return event;
 }
 
-bool EVENT_Create(event_t eventType)
+bool SDMMCEVENT_Create(sdmmc_event_t eventType)
 {
-    volatile uint32_t *event = EVENT_GetInstance(eventType);
+    volatile uint32_t *event = SDMMCEVENT_GetInstance(eventType);
 
     if (event)
     {
@@ -105,19 +109,19 @@ bool EVENT_Create(event_t eventType)
     }
 }
 
-bool EVENT_Wait(event_t eventType, uint32_t timeoutMilliseconds)
+bool SDMMCEVENT_Wait(sdmmc_event_t eventType, uint32_t timeoutMilliseconds)
 {
     uint32_t startTime;
     uint32_t elapsedTime;
 
-    volatile uint32_t *event = EVENT_GetInstance(eventType);
+    volatile uint32_t *event = SDMMCEVENT_GetInstance(eventType);
 
     if (timeoutMilliseconds && event)
     {
-        startTime = g_timeMilliseconds;
+        startTime = g_eventTimeMilliseconds;
         do
         {
-            elapsedTime = (g_timeMilliseconds - startTime);
+            elapsedTime = (g_eventTimeMilliseconds - startTime);
         } while ((*event == 0U) && (elapsedTime < timeoutMilliseconds));
         *event = 0U;
 
@@ -129,9 +133,9 @@ bool EVENT_Wait(event_t eventType, uint32_t timeoutMilliseconds)
     }
 }
 
-bool EVENT_Notify(event_t eventType)
+bool SDMMCEVENT_Notify(sdmmc_event_t eventType)
 {
-    volatile uint32_t *event = EVENT_GetInstance(eventType);
+    volatile uint32_t *event = SDMMCEVENT_GetInstance(eventType);
 
     if (event)
     {
@@ -144,12 +148,22 @@ bool EVENT_Notify(event_t eventType)
     }
 }
 
-void EVENT_Delete(event_t eventType)
+void SDMMCEVENT_Delete(sdmmc_event_t eventType)
 {
-    volatile uint32_t *event = EVENT_GetInstance(eventType);
+    volatile uint32_t *event = SDMMCEVENT_GetInstance(eventType);
 
     if (event)
     {
         *event = 0U;
+    }
+}
+
+void SDMMCEVENT_Delay(uint32_t milliseconds)
+{
+    uint32_t startTime = g_eventTimeMilliseconds;
+    uint32_t periodTime = 0;
+    while (periodTime < milliseconds)
+    {
+        periodTime = g_eventTimeMilliseconds - startTime;
     }
 }

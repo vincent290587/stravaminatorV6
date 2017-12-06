@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015 - 2016, Freescale Semiconductor, Inc.
- * Copyright 2016 NXP
+ * Copyright 2016 - 2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ * that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -49,8 +53,8 @@
 
 #include "composite.h"
 
+#include "fsl_sd.h"
 #include "fsl_sd_disk.h"
-#include "fsl_card.h"
 /*******************************************************************************
 * Definitions
 ******************************************************************************/
@@ -59,7 +63,8 @@
 * Variables
 ******************************************************************************/
 static usb_device_composite_struct_t *g_deviceComposite;
-USB_DATA_ALIGNMENT usb_device_inquiry_data_fromat_struct_t g_InquiryInfo = {
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+usb_device_inquiry_data_fromat_struct_t g_InquiryInfo = {
     (USB_DEVICE_MSC_UFI_PERIPHERAL_QUALIFIER << USB_DEVICE_MSC_UFI_PERIPHERAL_QUALIFIER_SHIFT) |
         USB_DEVICE_MSC_UFI_PERIPHERAL_DEVICE_TYPE,
     (uint8_t)(USB_DEVICE_MSC_UFI_REMOVABLE_MEDIUM_BIT << USB_DEVICE_MSC_UFI_REMOVABLE_MEDIUM_BIT_SHIFT),
@@ -70,7 +75,8 @@ USB_DATA_ALIGNMENT usb_device_inquiry_data_fromat_struct_t g_InquiryInfo = {
     {'N', 'X', 'P', ' ', 'S', 'E', 'M', 'I'},
     {'N', 'X', 'P', ' ', 'M', 'A', 'S', 'S', ' ', 'S', 'T', 'O', 'R', 'A', 'G', 'E'},
     {'0', '0', '0', '1'}};
-USB_DATA_ALIGNMENT usb_device_mode_parameters_header_struct_t g_ModeParametersHeader = {
+USB_DMA_INIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+usb_device_mode_parameters_header_struct_t g_ModeParametersHeader = {
     /*refer to ufi spec mode parameter header*/
     0x0000, /*!< Mode Data Length*/
     0x00,   /*!<Default medium type (current mounted medium type)*/
@@ -78,17 +84,19 @@ USB_DATA_ALIGNMENT usb_device_mode_parameters_header_struct_t g_ModeParametersHe
     {0x00, 0x00, 0x00, 0x00} /*!<This bit should be set to zero*/
 };
 
-uint32_t g_mscReadRequestBuffer[USB_DEVICE_MSC_READ_BUFF_SIZE >> 2];
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) uint32_t g_mscReadRequestBuffer[USB_DEVICE_MSC_READ_BUFF_SIZE >> 2];
 
-uint32_t g_mscWriteRequestBuffer[USB_DEVICE_MSC_WRITE_BUFF_SIZE >> 2];
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) uint32_t g_mscWriteRequestBuffer[USB_DEVICE_MSC_WRITE_BUFF_SIZE >> 2];
 
 /* State in Card driver. */
 
 sd_card_t *usbDeviceMscCard;
-
 #if ((defined(USB_DEVICE_CONFIG_USE_TASK) && (USB_DEVICE_CONFIG_USE_TASK > 0)) && \
      (defined(USB_DEVICE_MSC_USE_WRITE_TASK) && (USB_DEVICE_MSC_USE_WRITE_TASK > 0)))
 usb_msc_buffer_struct_t dataBuffer[USB_DEVICE_MSC_BUFFER_NUMBER];
+USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE)
+uint8_t g_Buffer[USB_DEVICE_MSC_BUFFER_NUMBER][USB_DEVICE_MSC_WRITE_BUFF_SIZE]; /*!< Buffer address of the transferred
+                                                                                   data*/
 usb_msc_buffer_struct_t *currentTrasfer;
 #endif
 /*******************************************************************************
@@ -104,10 +112,14 @@ usb_msc_buffer_struct_t *currentTrasfer;
 uint8_t USB_DeviceMscCardInit(void)
 {
     usb_status_t error = kStatus_USB_Success;
-    usbDeviceMscCard = sd_disk_get_handle();
+    usbDeviceMscCard = &g_sd;
 
+#if defined(__GIC_PRIO_BITS)
+    GIC_SetPriority(SD_HOST_IRQ, (USB_DEVICE_INTERRUPT_PRIORITY - 1U));
+#else
     NVIC_SetPriority(SD_HOST_IRQ, (USB_DEVICE_INTERRUPT_PRIORITY - 1U));
-
+#endif
+    
     if (usbDeviceMscCard->host.sourceClock_Hz != SD_HOST_CLK_FREQ ||
     		usbDeviceMscCard->host.base != SD_HOST_BASEADDR) {
 
@@ -139,7 +151,7 @@ uint8_t USB_DeviceMscCardInit(void)
  */
 static void USB_BmEnterCritical(uint8_t *sr)
 {
-    *sr = __get_PRIMASK();
+    *sr = DisableGlobalIRQ();
     __ASM("CPSID I");
 }
 /*!
@@ -150,7 +162,7 @@ static void USB_BmEnterCritical(uint8_t *sr)
  */
 static void USB_BmExitCritical(uint8_t sr)
 {
-    __set_PRIMASK(sr);
+    EnableGlobalIRQ(sr);
 }
 /*!
  * @brief device msc add a buffer to the tail queue function.
@@ -288,6 +300,10 @@ void USB_DeviceMscWriteTask(void)
 void USB_DeviceMscInitQueue(void)
 {
     uint8_t i;
+    for (i = 0; i < USB_DEVICE_MSC_BUFFER_NUMBER; i++)
+    {
+        dataBuffer[i].buffer = &g_Buffer[i][0];
+    }
     g_deviceComposite->mscDisk.headlist = dataBuffer;
     usb_msc_buffer_struct_t *pre;
     usb_msc_buffer_struct_t *temp;

@@ -4,23 +4,16 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 C_SRCS += \
-../drivers/fsl_adc16.c \
 ../drivers/fsl_clock.c \
-../drivers/fsl_cmp.c \
 ../drivers/fsl_cmt.c \
 ../drivers/fsl_common.c \
 ../drivers/fsl_crc.c \
-../drivers/fsl_dac.c \
 ../drivers/fsl_dmamux.c \
 ../drivers/fsl_dspi.c \
-../drivers/fsl_dspi_cmsis.c \
 ../drivers/fsl_dspi_edma.c \
 ../drivers/fsl_edma.c \
-../drivers/fsl_enet.c \
-../drivers/fsl_ewm.c \
 ../drivers/fsl_flash.c \
 ../drivers/fsl_flexbus.c \
-../drivers/fsl_flexcan.c \
 ../drivers/fsl_ftm.c \
 ../drivers/fsl_fxos.c \
 ../drivers/fsl_gpio.c \
@@ -42,29 +35,20 @@ C_SRCS += \
 ../drivers/fsl_smc.c \
 ../drivers/fsl_sysmpu.c \
 ../drivers/fsl_uart.c \
-../drivers/fsl_uart_cmsis.c \
 ../drivers/fsl_uart_edma.c \
-../drivers/fsl_vref.c \
 ../drivers/fsl_wdog.c 
 
 OBJS += \
-./drivers/fsl_adc16.o \
 ./drivers/fsl_clock.o \
-./drivers/fsl_cmp.o \
 ./drivers/fsl_cmt.o \
 ./drivers/fsl_common.o \
 ./drivers/fsl_crc.o \
-./drivers/fsl_dac.o \
 ./drivers/fsl_dmamux.o \
 ./drivers/fsl_dspi.o \
-./drivers/fsl_dspi_cmsis.o \
 ./drivers/fsl_dspi_edma.o \
 ./drivers/fsl_edma.o \
-./drivers/fsl_enet.o \
-./drivers/fsl_ewm.o \
 ./drivers/fsl_flash.o \
 ./drivers/fsl_flexbus.o \
-./drivers/fsl_flexcan.o \
 ./drivers/fsl_ftm.o \
 ./drivers/fsl_fxos.o \
 ./drivers/fsl_gpio.o \
@@ -86,29 +70,20 @@ OBJS += \
 ./drivers/fsl_smc.o \
 ./drivers/fsl_sysmpu.o \
 ./drivers/fsl_uart.o \
-./drivers/fsl_uart_cmsis.o \
 ./drivers/fsl_uart_edma.o \
-./drivers/fsl_vref.o \
 ./drivers/fsl_wdog.o 
 
 C_DEPS += \
-./drivers/fsl_adc16.d \
 ./drivers/fsl_clock.d \
-./drivers/fsl_cmp.d \
 ./drivers/fsl_cmt.d \
 ./drivers/fsl_common.d \
 ./drivers/fsl_crc.d \
-./drivers/fsl_dac.d \
 ./drivers/fsl_dmamux.d \
 ./drivers/fsl_dspi.d \
-./drivers/fsl_dspi_cmsis.d \
 ./drivers/fsl_dspi_edma.d \
 ./drivers/fsl_edma.d \
-./drivers/fsl_enet.d \
-./drivers/fsl_ewm.d \
 ./drivers/fsl_flash.d \
 ./drivers/fsl_flexbus.d \
-./drivers/fsl_flexcan.d \
 ./drivers/fsl_ftm.d \
 ./drivers/fsl_fxos.d \
 ./drivers/fsl_gpio.d \
@@ -130,9 +105,7 @@ C_DEPS += \
 ./drivers/fsl_smc.d \
 ./drivers/fsl_sysmpu.d \
 ./drivers/fsl_uart.d \
-./drivers/fsl_uart_cmsis.d \
 ./drivers/fsl_uart_edma.d \
-./drivers/fsl_vref.d \
 ./drivers/fsl_wdog.d 
 
 
@@ -140,7 +113,7 @@ C_DEPS += \
 drivers/%.o: ../drivers/%.c
 	@echo 'Building file: $<'
 	@echo 'Invoking: Cross ARM C Compiler'
-	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -ffreestanding -fno-builtin -fsingle-precision-constant -g -Wall -Wshadow -Wlogical-op -DDEBUG -DCPU_MK64FN1M0VLL12_cm4 -DCPU_MK64FN1M0VLL12 -DFSL_RTOS_BM -DSDK_CORE_ID_CORE0 -DSDK_OS_BAREMETAL -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb\include" -I"E:\Freescale\myStrava\libraries\utils" -I"E:\Freescale\myStrava\libraries\sysview" -I"E:\Freescale\myStrava\libraries\rtt" -I"E:\Freescale\myStrava\libraries\AdafruitGFX" -I"E:\Freescale\myStrava\libraries\Nordic" -I"E:\Freescale\myStrava\libraries\TSharpMem" -I"E:\Freescale\myStrava\libraries\IntelliScreen" -I"E:\Freescale\myStrava\libraries\TinyGPSPlus" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\dma_manager" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\sdmmc\inc" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb\osa" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\usb\device" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs\src" -I"E:\Freescale\SDK_2.2_FRDM-K64F\middleware\fatfs\src\fsl_sd_disk" -I../CMSIS -I"E:\Freescale\myStrava\source" -I"E:\Freescale\myStrava\source\sd" -I"E:\Freescale\myStrava\source\usb" -I"E:\Freescale\myStrava\source\routes" -I"E:\Freescale\myStrava\source\power" -I"E:\Freescale\myStrava\source\parsers" -I"E:\Freescale\myStrava\source\model" -I"E:\Freescale\myStrava\source\display" -I"E:\Freescale\myStrava\source\sensors" -I../board -I../drivers -I../startup -I../utilities -I"E:\Freescale\myStrava\drivers\lcd" -I"E:\Freescale\myStrava\drivers\spi" -I"E:\Freescale\myStrava\drivers\uart" -I"E:\Freescale\myStrava\drivers\i2c" -I"E:\Freescale\myStrava\drivers\xfer" -std=gnu99 -Wbad-function-cast -MMD -fno-builtin -fno-exceptions -mapcs -nostdlib -larm_cortexM4lf_math -lm -lstdc++ -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m4 -mthumb -mfloat-abi=hard -mfpu=fpv4-sp-d16 -Og -fmessage-length=0 -fsigned-char -ffunction-sections -fdata-sections -fno-common -ffreestanding -fno-builtin -fsingle-precision-constant -g -Wall -Wshadow -Wlogical-op -DDEBUG -DCPU_MK64FN1M0VLL12_cm4 -DCPU_MK64FN1M0VLL12 -DFSL_RTOS_BM -DSDK_CORE_ID_CORE0 -DSDK_OS_BAREMETAL -I"E:\Freescale\SDK_2.3.0_FRDM-K64F\middleware\usb\include" -I"E:\Freescale\myStrava\libraries\utils" -I"E:\Freescale\myStrava\libraries\sysview" -I"E:\Freescale\myStrava\libraries\rtt" -I"E:\Freescale\myStrava\libraries\AdafruitGFX" -I"E:\Freescale\myStrava\libraries\Nordic" -I"E:\Freescale\myStrava\libraries\TSharpMem" -I"E:\Freescale\myStrava\libraries\IntelliScreen" -I"E:\Freescale\myStrava\libraries\TinyGPSPlus" -I"E:\Freescale\SDK_2.3.0_FRDM-K64F\middleware\dma_manager" -I"E:\Freescale\SDK_2.3.0_FRDM-K64F\middleware\sdmmc\inc" -I"E:\Freescale\SDK_2.3.0_FRDM-K64F\middleware\usb\osa" -I"E:\Freescale\SDK_2.3.0_FRDM-K64F\middleware\usb\device" -I"E:\Freescale\SDK_2.3.0_FRDM-K64F\middleware\fatfs\src" -I"E:\Freescale\SDK_2.3.0_FRDM-K64F\middleware\fatfs\src\fsl_sd_disk" -I../CMSIS -I"E:\Freescale\myStrava\source" -I"E:\Freescale\myStrava\source\sd" -I"E:\Freescale\myStrava\source\usb" -I"E:\Freescale\myStrava\source\routes" -I"E:\Freescale\myStrava\source\power" -I"E:\Freescale\myStrava\source\parsers" -I"E:\Freescale\myStrava\source\model" -I"E:\Freescale\myStrava\source\display" -I"E:\Freescale\myStrava\source\sensors" -I../board -I../drivers -I../startup -I../utilities -I"E:\Freescale\myStrava\drivers\lcd" -I"E:\Freescale\myStrava\drivers\spi" -I"E:\Freescale\myStrava\drivers\uart" -I"E:\Freescale\myStrava\drivers\i2c" -I"E:\Freescale\myStrava\drivers\xfer" -std=gnu99 -Wbad-function-cast -MMD -fno-builtin -fno-exceptions -mapcs -nostdlib -larm_cortexM4lf_math -lm -lstdc++ -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" -c -o "$@" "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

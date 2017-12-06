@@ -1,9 +1,12 @@
 /*
+ * The Clear BSD License
  * Copyright (c) 2015, Freescale Semiconductor, Inc.
  * Copyright 2016-2017 NXP
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without modification,
- * are permitted provided that the following conditions are met:
+ * are permitted (subject to the limitations in the disclaimer below) provided
+ * that the following conditions are met:
  *
  * o Redistributions of source code must retain the above copyright notice, this list
  *   of conditions and the following disclaimer.
@@ -16,6 +19,7 @@
  *   contributors may be used to endorse or promote products derived from this
  *   software without specific prior written permission.
  *
+ * NO EXPRESS OR IMPLIED LICENSES TO ANY PARTY'S PATENT RIGHTS ARE GRANTED BY THIS LICENSE.
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
  * WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
@@ -32,7 +36,10 @@
 #include <string.h>
 #include "ff.h"
 #include "diskio.h"
+#include "fsl_sd_disk.h"
 #include "segger_wrapper.h"
+#include "fsl_sdmmc_common.h"
+#include "fsl_common.h"
 #include "fsl_sysmpu.h"
 #include "fsl_debug_console.h"
 #include "composite_public.h"
@@ -48,6 +55,10 @@
 /*******************************************************************************
  * Prototypes
  ******************************************************************************/
+/*!
+* @brief wait card insert function.
+*/
+static status_t sdcardWaitCardInsert(void);
 
 /*******************************************************************************
  * Variables
@@ -55,10 +66,29 @@
 static FATFS g_fileSystem; /* File system object */
 static FIL g_fileObject;   /* File object */
 
-static uint8_t g_bufferWrite[BUFFER_SIZE]; /* Write buffer */
-static uint8_t g_bufferRead[BUFFER_SIZE];  /* Read buffer */
-
 const TCHAR driverNumberBuffer[3U] = {SDDISK + '0', ':', '/'};
+
+/* @brief decription about the read/write buffer
+* The size of the read/write buffer should be a multiple of 512, since SDHC/SDXC card uses 512-byte fixed
+* block length and this driver example is enabled with a SDHC/SDXC card.If you are using a SDSC card, you
+* can define the block length by yourself if the card supports partial access.
+* The address of the read/write buffer should align to the specific DMA data buffer address align value if
+* DMA transfer is used, otherwise the buffer address is not important.
+* At the same time buffer address/size should be aligned to the cache line size if cache is supported.
+*/
+SDK_ALIGN(uint8_t g_bufferWrite[SDK_SIZEALIGN(BUFFER_SIZE, SDMMC_DATA_BUFFER_ALIGN_CACHE)],
+          MAX(SDMMC_DATA_BUFFER_ALIGN_CACHE, SDMMCHOST_DMA_BUFFER_ADDR_ALIGN));
+SDK_ALIGN(uint8_t g_bufferRead[SDK_SIZEALIGN(BUFFER_SIZE, SDMMC_DATA_BUFFER_ALIGN_CACHE)],
+          MAX(SDMMC_DATA_BUFFER_ALIGN_CACHE, SDMMCHOST_DMA_BUFFER_ADDR_ALIGN));
+/*! @brief SDMMC host detect card configuration */
+static const sdmmchost_detect_card_t s_sdCardDetect = {
+#ifndef BOARD_SD_DETECT_TYPE
+    .cdType = kSDMMCHOST_DetectCardByGpioCD,
+#else
+    .cdType = BOARD_SD_DETECT_TYPE,
+#endif
+    .cdTimeOut_ms = (~0U),
+};
 /*******************************************************************************
  * Code
  ******************************************************************************/
@@ -267,4 +297,36 @@ int essai(void)
     }
 
     return 0;
+}
+
+
+static status_t sdcardWaitCardInsert(void)
+{
+    /* Save host information. */
+    g_sd.host.base = SD_HOST_BASEADDR;
+    g_sd.host.sourceClock_Hz = SD_HOST_CLK_FREQ;
+    /* card detect type */
+    g_sd.usrParam.cd = &s_sdCardDetect;
+    /* SD host init function */
+    if (SD_HostInit(&g_sd) != kStatus_Success)
+    {
+        PRINTF("\r\nSD host init fail\r\n");
+        return kStatus_Fail;
+    }
+    /* power off card */
+    SD_PowerOffCard(g_sd.host.base, g_sd.usrParam.pwr);
+    /* wait card insert */
+    if (SD_WaitCardDetectStatus(SD_HOST_BASEADDR, &s_sdCardDetect, true) == kStatus_Success)
+    {
+        PRINTF("\r\nCard inserted.\r\n");
+        /* power on the card */
+        SD_PowerOnCard(g_sd.host.base, g_sd.usrParam.pwr);
+    }
+    else
+    {
+        PRINTF("\r\nCard detect fail.\r\n");
+        return kStatus_Fail;
+    }
+
+    return kStatus_Success;
 }

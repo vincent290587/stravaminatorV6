@@ -9,6 +9,7 @@
 /*  SDK Included Files */
 #include "segger_wrapper.h"
 #include "board.h"
+#include "fsl_dmamux.h"
 #include "fsl_i2c_edma.h"
 #include "dma_i2c0.h"
 /*******************************************************************************

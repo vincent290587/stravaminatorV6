@@ -11,9 +11,9 @@
 #include "spi.h"
 #include "xfer_manager.h"
 
-#define SPI0_TX_DMA_CHANNEL 4U
-#define SPI0_IN_DMA_CHANNEL 5U
-#define SPI0_RX_DMA_CHANNEL 6U
+#define SPI0_TX_DMA_CHANNEL 0U
+#define SPI0_IN_DMA_CHANNEL 1U
+#define SPI0_RX_DMA_CHANNEL 2U
 
 
 #ifdef __cplusplus

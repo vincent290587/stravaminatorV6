@@ -84,11 +84,28 @@ void dma_spi0_uninit(void)
 void dma_spi0_init(void)
 {
 
-	DMAMUX_SetSource(DMAMUX0, SPI0_RX_DMA_CHANNEL, kDmaRequestMux0SPI0Rx);
-	DMAMUX_EnableChannel(DMAMUX0, SPI0_RX_DMA_CHANNEL);
+	/* Set up dspi master */
+	memset(&(dspiEdmaMasterRxRegToRxDataHandle), 0, sizeof(dspiEdmaMasterRxRegToRxDataHandle));
+	memset(&(dspiEdmaMasterTxDataToIntermediaryHandle), 0, sizeof(dspiEdmaMasterTxDataToIntermediaryHandle));
+	memset(&(dspiEdmaMasterIntermediaryToTxRegHandle), 0, sizeof(dspiEdmaMasterIntermediaryToTxRegHandle));
 
-	DMAMUX_SetSource(DMAMUX0, SPI0_TX_DMA_CHANNEL, kDmaRequestMux0SPI0Tx);
-	DMAMUX_EnableChannel(DMAMUX0, SPI0_TX_DMA_CHANNEL);
+	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
+			(dma_request_source_t)kDmaRequestMux0SPI0Rx,
+			SPI0_RX_DMA_CHANNEL, &dspiEdmaMasterRxRegToRxDataHandle)) {
+		LOG_ERROR("DMA channel %u occupied", SPI0_RX_DMA_CHANNEL);
+	}
+
+	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
+			(dma_request_source_t)kDmaRequestMux0SPI0Tx,
+			SPI0_TX_DMA_CHANNEL, &dspiEdmaMasterIntermediaryToTxRegHandle)) {
+		LOG_ERROR("DMA channel %u occupied", SPI0_TX_DMA_CHANNEL);
+	}
+
+	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
+			0,
+			SPI0_IN_DMA_CHANNEL, &dspiEdmaMasterTxDataToIntermediaryHandle)) {
+		LOG_ERROR("DMA channel %u occupied", SPI0_IN_DMA_CHANNEL);
+	}
 
 	/*DSPI init*/
 	uint32_t srcClock_Hz;
@@ -115,28 +132,6 @@ void dma_spi0_init(void)
 	DSPI_MasterInit(SPI0, &masterConfig, srcClock_Hz);
 
 //	DSPI_SetAllPcsPolarity(base, kDSPI_Pcs0ActiveLow | kDSPI_Pcs1ActiveLow);
-
-	/* Set up dspi master */
-	memset(&(dspiEdmaMasterRxRegToRxDataHandle), 0, sizeof(dspiEdmaMasterRxRegToRxDataHandle));
-	memset(&(dspiEdmaMasterTxDataToIntermediaryHandle), 0, sizeof(dspiEdmaMasterTxDataToIntermediaryHandle));
-	memset(&(dspiEdmaMasterIntermediaryToTxRegHandle), 0, sizeof(dspiEdmaMasterIntermediaryToTxRegHandle));
-
-	EDMA_CreateHandle(&(dspiEdmaMasterRxRegToRxDataHandle), DMA0, SPI0_RX_DMA_CHANNEL);
-	EDMA_CreateHandle(&(dspiEdmaMasterTxDataToIntermediaryHandle), DMA0, SPI0_IN_DMA_CHANNEL);
-	EDMA_CreateHandle(&(dspiEdmaMasterIntermediaryToTxRegHandle), DMA0, SPI0_TX_DMA_CHANNEL);
-
-//	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
-//			(dma_request_source_t)kDmaRequestMux0SPI0Rx,
-//			SPI0_RX_DMA_CHANNEL, &dspiEdmaMasterRxRegToRxDataHandle)) {
-//		LOG_ERROR("DMA channel %u occupied", SPI0_RX_DMA_CHANNEL);
-//	}
-//
-//
-//	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
-//			(dma_request_source_t)kDmaRequestMux0SPI0Tx,
-//			SPI0_TX_DMA_CHANNEL, &dspiEdmaMasterIntermediaryToTxRegHandle)) {
-//		LOG_ERROR("DMA channel %u occupied", SPI0_TX_DMA_CHANNEL);
-//	}
 
 	DSPI_MasterTransferCreateHandleEDMA(SPI0, &g_dspi_edma_m_handle, DSPI_MasterUserCallback,
 			NULL, &dspiEdmaMasterRxRegToRxDataHandle,

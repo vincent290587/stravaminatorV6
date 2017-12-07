@@ -41,7 +41,7 @@ void BOARD_InitHardware(void) {
 
 	/* Init DMA */
 	memset(&dmamanager_handle, 0, sizeof(dmamanager_handle_t));
-	DMAMGR_Init(&dmamanager_handle, DMA0, 8U, 0U);
+	DMAMGR_Init(&dmamanager_handle, DMA0, 16U, 0U);
 
 	/* Init code */
 	millis_init();

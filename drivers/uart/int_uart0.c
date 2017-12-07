@@ -47,22 +47,10 @@
 #define UART_CLK_FREQ CLOCK_GetFreq(UART0_CLK_SRC)
 
 
-/*! @brief Ring buffer size (Unit: Byte). */
-#define UART0_RING_BUFFER_SIZE 128
-
 /*******************************************************************************
  * Variables
  ******************************************************************************/
 
-/*! @brief Ring buffer to save received data. */
-/*
-  Ring buffer for data input and output, in this example, input data are saved
-  to ring buffer in IRQ handler. The main function polls the ring buffer status,
-  if there are new data, then send them out.
-  Ring buffer full: (((rxIndex + 1) % UART0_RING_BUFFER_SIZE) == txIndex)
-  Ring buffer empty: (rxIndex == txIndex)
-*/
-uint8_t demoRingBuffer[UART0_RING_BUFFER_SIZE];
 volatile uint16_t txIndex; /* Index of the data to send out. */
 volatile uint16_t rxIndex; /* Index of the memory to save new arrived data. */
 

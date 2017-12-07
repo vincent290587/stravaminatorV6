@@ -10,22 +10,10 @@
  ******************************************************************************/
 
 /* The board name */
-/* The board name */
 #define BOARD_NAME "FRDM-K64F"
 
 #define EMPTY_MACRO                    do {} while (0)
 
-///* The UART to use for debug messages. */
-//#define BOARD_DEBUG_UART_TYPE DEBUG_CONSOLE_DEVICE_TYPE_UART
-//#define BOARD_DEBUG_UART_BASEADDR (uint32_t) UART0
-//#define BOARD_DEBUG_UART_CLKSRC SYS_CLK
-//#define BOARD_DEBUG_UART_CLK_FREQ CLOCK_GetCoreSysClkFreq()
-//#define BOARD_UART_IRQ UART0_RX_TX_IRQn
-//#define BOARD_UART_IRQ_HANDLER UART0_RX_TX_IRQHandler
-
-//#ifndef BOARD_DEBUG_UART_BAUDRATE
-//#define BOARD_DEBUG_UART_BAUDRATE 115200
-//#endif /* BOARD_DEBUG_UART_BAUDRATE */
 
 /* The SDHC instance/channel used for board */
 #define BOARD_SDHC_CD_GPIO_IRQ_HANDLER PORTB_IRQHandler
@@ -43,17 +31,6 @@
 #define BOARD_SDHC_CD_LOGIC_RISING
 
 #define BOARD_ACCEL_I2C_BASEADDR I2C0
-
-///* ERPC DSPI configuration */
-//#define ERPC_BOARD_DSPI_BASEADDR SPI0
-//#define ERPC_BOARD_DSPI_BAUDRATE 500000U
-//#define ERPC_BOARD_DSPI_CLKSRC DSPI0_CLK_SRC
-//#define ERPC_BOARD_DSPI_CLK_FREQ CLOCK_GetFreq(DSPI0_CLK_SRC)
-//#define ERPC_BOARD_DSPI_INT_GPIO GPIOB
-//#define ERPC_BOARD_DSPI_INT_PORT PORTB
-//#define ERPC_BOARD_DSPI_INT_PIN 2U
-//#define ERPC_BOARD_DSPI_INT_PIN_IRQ PORTB_IRQn
-//#define ERPC_BOARD_DSPI_INT_PIN_IRQ_HANDLER PORTB_IRQHandler
 
 /* Board accelerometer driver */
 #define BOARD_ACCEL_FXOS

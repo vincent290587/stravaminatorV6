@@ -37,7 +37,7 @@ int main(void) {
     //
 	// High level code
 	//
-
+	dma_spi0_mngr_init();
 	uaparser.init();
 
 	// LCD driver
@@ -67,7 +67,8 @@ int main(void) {
 //				power_manager_run(kAPP_PowerModeRun24);
 			}
 
-			LED_GREEN_TOGGLE();
+			LED_BLUE_TOGGLE();
+			LOG_INFO("LED toggling\r\n");
 
 //			if (millis() > 15000) {
 //				power_manager_run(kAPP_PowerModeVlpr);
@@ -81,11 +82,12 @@ int main(void) {
 //			sdisplay.print(millis());
 //			sdisplay.displayRTT();
 
-//			lcd.setCursor(10,10);
-//			lcd.setTextSize(4);
-//			lcd.print(millis());
-//			dma_spi0_mngr_tasks_start();
-//			dma_spi0_mngr_finish();
+			lcd.setCursor(10,10);
+			lcd.setTextSize(4);
+			lcd.print(millis());
+
+//			LS027_UpdateFullBlock(); // DMA brute code
+			lcd.writeWhole(); // DMA managed code
 
 //          // test rapidite math
 //			W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);

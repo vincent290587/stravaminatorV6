@@ -25,6 +25,8 @@
 static uint8_t LS027_DisplayBuf1[LS027_BUFFER_SIZE]; /* buffer for the display */
 static uint8_t LS027_DisplayBuf2[LS027_BUFFER_SIZE]; /* buffer for the display */
 
+static uint8_t LS027_SpiBuf[1 + LS027_BUFFER_SIZE + (240*2) + 1]; /* buffer for the display */
+
 static uint8_t* m_buffer_in_use;
 static uint8_t* m_buffer_prev;
 
@@ -37,6 +39,9 @@ static uint8_t* m_buffer_prev;
 
 static const uint8_t set[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
 static const uint8_t clr[] = { 0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF, 0x7F };
+
+static const uint8_t conv_set[] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
+static const uint8_t conv_clr[] = { 0x7F, 0xBF, 0xDF, 0xEF, 0xF7, 0xFB, 0xFD, 0xFE };
 
 /*******************************************************************************
  * Variables
@@ -186,6 +191,13 @@ static void setBufferPixel(uint16_t x, uint16_t y, uint16_t color) {
 		m_buffer_in_use[(y*LS027_HW_WIDTH + x) / 8] &= clr[x & 7];
 	}
 
+	// fill buffer
+	if (color && !m_is_color_inverted) {
+		LS027_SpiBuf[1 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] |= conv_set[x & 7];
+	} else {
+		LS027_SpiBuf[1 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] &= conv_clr[x & 7];
+	}
+
 }
 
 /*
@@ -316,34 +328,39 @@ void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color) {
  */
 void LS027_UpdateFullBlock(void)
 {
+	uint16_t addr = 0;
 
 	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
 
-	uint16_t nb_lines_updated = 0;
+	LS027_SpiBuf[addr++] = (LS027_BIT_WRITECMD | LS027_sharpmem_vcom);
 
+	LS027_TOGGLE_VCOM;
+
+	/* Set the address for lines and dummy data */
 	for (int i=0; i < LS027_HW_HEIGHT; i++) {
 
-		if (wasLineChanged(i) || 1) {
+		// line address
+		LS027_SpiBuf[addr++] = i + 1;
 
-			W_SYSVIEW_OnTaskStopExec(LCD_TASK);
+		// data bytes
+		addr += LS027_HW_WIDTH / 8;
 
-			LS027_UpdateLine(i, m_buffer_in_use + (i*LS027_HW_WIDTH/8));
-
-			nb_lines_updated++;
-		}
+		// dummy data
+		LS027_SpiBuf[addr++] = 0x00;
 
 	}
 
-	// switching buffers
-	uint8_t *temp_pt = m_buffer_in_use;
-	m_buffer_in_use = m_buffer_prev;
-	m_buffer_prev   = temp_pt;
+	// dummy data
+	LS027_SpiBuf[addr++] = 0x00;
 
-	// reset buffer in use
-	memset(m_buffer_in_use, 0, sizeof(LS027_DisplayBuf1));
+	LOG_INFO("LS027 SPI buffer size %u\r\n", addr);
 
-	//LOG_INFO("LCD: %u lines updated\r\n", nb_lines_updated);
+	spi_settings.masterTxData       = LS027_SpiBuf;
+	spi_settings.spi_tx_data_length = sizeof(LS027_SpiBuf);
 
+	start_transfer(true);
+
+	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 }
 
 

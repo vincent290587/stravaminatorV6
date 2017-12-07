@@ -96,43 +96,12 @@ static inline void WriteData(uint8_t data)
 
 static void ls027_spi_init() {
 
-//	dspi_master_config_t  masterConfig;
-//
-//	/*
-//	 * Data is valid on clock rising edge and shifted on clock falling edge
-//	 * Clock Idle Polarity: Low
-//	 */
-//	masterConfig.whichCtar                                = kDSPI_Ctar0;
-//	masterConfig.ctarConfig.baudRate                      = SPI_BAUDRATE;
-//	masterConfig.ctarConfig.bitsPerFrame                  = 8;
-//	masterConfig.ctarConfig.cpol                          = kDSPI_ClockPolarityActiveHigh;
-//	masterConfig.ctarConfig.cpha                          = kDSPI_ClockPhaseFirstEdge;
-//	masterConfig.ctarConfig.direction                     = kDSPI_LsbFirst;
-//	masterConfig.ctarConfig.pcsToSckDelayInNanoSec        = 1000000000 / SPI_BAUDRATE ;
-//	masterConfig.ctarConfig.lastSckToPcsDelayInNanoSec    = 1000000000 / SPI_BAUDRATE ;
-//	masterConfig.ctarConfig.betweenTransferDelayInNanoSec = 1000000000 / SPI_BAUDRATE ;
-//	masterConfig.whichPcs                                 = LS027_CE_PIN_INIT;
-//	masterConfig.pcsActiveHighOrLow                       = kDSPI_PcsActiveHigh;
-//	masterConfig.enableContinuousSCK                      = false;
-//	masterConfig.enableRxFifoOverWrite                    = false;
-//	masterConfig.enableModifiedTimingFormat               = false;
-//	masterConfig.samplePoint                              = kDSPI_SckToSin0Clock;
-
 	// fill settings
 	spi_settings.configFlags        = kDSPI_MasterCtar0 | LS027_CE_PIN;
 	spi_settings.masterRxData       = 0;
 	spi_settings.masterTxData       = masterTxData;
 	spi_settings.spi_tx_data_length = 0;
 
-	sXferTask lcd_task =
-	{
-		.p_xfer_func = LS027_UpdateFullManage,
-		.p_pre_func  = LS027_InitTransfer,
-		.p_post_func = LS027_SwitchBuffers,
-		.user_data = 0,
-	};
-
-	dma_spi0_mngr_task_add(&lcd_task);
 }
 
 /**
@@ -183,13 +152,6 @@ static void setBufferPixel(uint16_t x, uint16_t y, uint16_t color) {
 
 	// clip
 	if((x < 0) || (x >= LS027_HW_WIDTH) || (y < 0) || (y >= LS027_HW_HEIGHT)) return;
-
-	// fill buffer
-	if (color && !m_is_color_inverted) {
-		m_buffer_in_use[(y*LS027_HW_WIDTH + x) / 8] |= set[x & 7];
-	} else {
-		m_buffer_in_use[(y*LS027_HW_WIDTH + x) / 8] &= clr[x & 7];
-	}
 
 	// fill buffer
 	if (color && !m_is_color_inverted) {
@@ -326,7 +288,7 @@ void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color) {
  **     Returns     : Nothing
  ** ===================================================================
  */
-void LS027_UpdateFullBlock(void)
+void LS027_UpdateFull(void)
 {
 	uint16_t addr = 0;
 
@@ -387,35 +349,3 @@ int LS027_UpdateFullManage(void *user_data)
 
 	return 0;
 }
-
-/**
- *
- * @param
- */
-void LS027_InitTransfer(void *user_data)
-{
-	m_last_updated_line = 0;
-	m_nb_updated_line = 0;
-//	LOG_INFO("LS027 Xfer start\r\n");
-//	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
-}
-
-/**
- *
- * @param
- */
-void LS027_SwitchBuffers(void *user_data)
-{
-	// switching buffers
-	uint8_t *temp_pt = m_buffer_in_use;
-	m_buffer_in_use = m_buffer_prev;
-	m_buffer_prev   = temp_pt;
-
-	// reset buffer in use
-	memset(m_buffer_in_use, 0, sizeof(LS027_DisplayBuf1));
-
-	LOG_INFO("LS027: %u lines updated\r\n", m_nb_updated_line);
-
-//	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
-}
-

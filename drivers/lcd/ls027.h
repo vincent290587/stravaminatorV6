@@ -55,19 +55,13 @@ void LS027_Init(void);
 
 void LS027_UpdateLine(uint8_t line, uint8_t *dataP);
 
-void LS027_UpdateFullBlock(void);
+void LS027_UpdateFull(void);
 
 void LS027_ToggleVCOM(void);
 
 void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color);
 
-// managed output
-
 int LS027_UpdateFullManage(void *);
-
-void LS027_InitTransfer(void *);
-
-void LS027_SwitchBuffers(void *);
 
 #if defined(__cplusplus)
 }

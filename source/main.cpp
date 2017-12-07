@@ -17,6 +17,7 @@
 #include "dma_i2c0.h"
 #include "fxos.h"
 #include "dma_spi0.h"
+#include "spi_scheduler.h"
 #include "uart0.h"
 #include "uart2.h"
 

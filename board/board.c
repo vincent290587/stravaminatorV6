@@ -65,7 +65,6 @@ void BOARD_InitHardware(void) {
 	//uart2_init(&uartConfig);
 
 	dma_spi0_init();
-	dma_spi0_mngr_init();
 
 	dma_i2c0_init();
 

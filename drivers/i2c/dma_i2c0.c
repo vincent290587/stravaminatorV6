@@ -10,6 +10,7 @@
 #include "segger_wrapper.h"
 #include "board.h"
 #include "fsl_dmamux.h"
+#include "fsl_dma_manager.h"
 #include "fsl_i2c_edma.h"
 #include "dma_i2c0.h"
 /*******************************************************************************
@@ -30,15 +31,18 @@
  * Variables
  ******************************************************************************/
 
-static i2c_master_config_t masterConfig;
+extern dmamanager_handle_t dmamanager_handle;
+
+static i2c_master_config_t   masterConfig;
 static i2c_master_transfer_t masterXfer;
 
 uint8_t g_master_buff[I2C_DATA_LENGTH];
 
 i2c_master_edma_handle_t g_m_dma_handle;
-edma_handle_t edmaHandle;
 
-volatile bool isSpiTransferCompleted = true;
+edma_handle_t m_i2c_edma_handle;
+
+volatile bool isI2cTransferCompleted = true;
 
 /*******************************************************************************
  * Code
@@ -52,8 +56,11 @@ static void _i2c0_callback(I2C_Type *base, i2c_master_edma_handle_t *handle,
 	{
 		LOG_ERROR("DMA I2C0 master callback error\r\n");
 	}
-	isSpiTransferCompleted = true;
+
+	isI2cTransferCompleted = true;
+
 //	LOG_INFO("Xfer completed %d\r\n\r\n", status);
+
 	W_SYSVIEW_RecordExitISR();
 }
 
@@ -70,14 +77,15 @@ void dma_i2c0_init(void)
 
 	memset(&g_m_dma_handle, 0, sizeof(g_m_dma_handle));
 
-	DMAMUX_SetSource(DMAMUX0, I2C0_DMA_CHANNEL, kDmaRequestMux0I2C0);
-	DMAMUX_EnableChannel(DMAMUX0, I2C0_DMA_CHANNEL);
+	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
+			(dma_request_source_t)kDmaRequestMux0I2C0,
+			I2C0_DMA_CHANNEL, &m_i2c_edma_handle)) {
+		LOG_ERROR("DMA channel %u occupied", I2C0_DMA_CHANNEL);
+	}
 
-	EDMA_CreateHandle(&edmaHandle, DMA0, I2C0_DMA_CHANNEL);
+	I2C_MasterCreateEDMAHandle(I2C0, &g_m_dma_handle, _i2c0_callback, NULL, &m_i2c_edma_handle);
 
-	I2C_MasterCreateEDMAHandle(I2C0, &g_m_dma_handle, _i2c0_callback, NULL, &edmaHandle);
-
-	isSpiTransferCompleted = true;
+	isI2cTransferCompleted = true;
 }
 
 /**
@@ -85,7 +93,7 @@ void dma_i2c0_init(void)
  */
 void dma_i2c0_uninit(void)
 {
-	isSpiTransferCompleted = true;
+	isI2cTransferCompleted = true;
 
 	DMAMUX_DisableChannel(DMAMUX0, I2C0_DMA_CHANNEL);
 
@@ -117,10 +125,10 @@ static status_t dma_i2c0_transfer(i2c_transfer_settings* i2c_settings) {
 	{
 		LOG_ERROR("I2C_MasterTransferEDMA error: %u\r\n ", ret_code);
 	} else {
-		isSpiTransferCompleted = false;
+		isI2cTransferCompleted = false;
 	}
 
-	while (!isSpiTransferCompleted) {
+	while (!isI2cTransferCompleted) {
 		// TODO power optimize
 	}
 

@@ -37,7 +37,7 @@ void BOARD_InitHardware(void) {
 
 	LED_GREEN_INIT(0);
 	LED_RED_INIT(1);
-	LED_BLUE_INIT(1);
+	LED_BLUE_INIT(0);
 
 	/* Init DMA */
 	memset(&dmamanager_handle, 0, sizeof(dmamanager_handle_t));

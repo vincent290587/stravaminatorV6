@@ -67,6 +67,7 @@ int main(void) {
 //				power_manager_run(kAPP_PowerModeRun24);
 			}
 
+			LED_RED_TOGGLE();
 			LED_BLUE_TOGGLE();
 			LOG_INFO("LED toggling\r\n");
 

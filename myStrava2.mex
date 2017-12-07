@@ -587,21 +587,17 @@
                         </struct>
                      </config_set>
                   </instance>
-                  <instance name="I2C_1" type="i2c" type_id="i2c_2566d7363e7e9aaedabb432110e372d7" mode="I2C_Transfer" peripheral="I2C0" enabled="true">
-                     <config_set name="transferCfg">
-                        <struct name="transfer">
-                           <setting name="init_transfer" value="true"/>
-                           <struct name="master_transfer_cfg">
-                              <setting name="flags" value="kI2C_TransferDefaultFlag"/>
-                              <setting name="slaveAddress" value="0"/>
-                              <setting name="direction" value="kI2C_Write"/>
-                              <setting name="subaddress" value="0"/>
-                              <setting name="subaddressSize" value="0"/>
-                              <setting name="dataSize" value="10"/>
-                           </struct>
-                           <setting name="init_callback" value="true"/>
-                           <setting name="callback_fcn" value="i2c0_callback"/>
-                           <setting name="user_data" value=""/>
+                  <instance name="I2C_1" type="i2c" type_id="i2c_2566d7363e7e9aaedabb432110e372d7" mode="I2C_Interrupt" peripheral="I2C0" enabled="true">
+                     <config_set name="interrupt" quick_selection="QS_IRQ_priority1">
+                        <set name="interrupt_sel">
+                           <selected>
+                              <id>kI2C_GlobalInterruptEnable</id>
+                           </selected>
+                        </set>
+                        <struct name="interrupt">
+                           <setting name="IRQn" value="I2C0_IRQn"/>
+                           <setting name="enable_priority" value="false"/>
+                           <setting name="enable_custom_name" value="false"/>
                         </struct>
                      </config_set>
                      <config_set name="fsl_i2c">

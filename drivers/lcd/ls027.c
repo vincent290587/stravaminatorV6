@@ -46,7 +46,7 @@ static const uint8_t conv_clr[] = { 0x7F, 0xBF, 0xDF, 0xEF, 0xF7, 0xFB, 0xFD, 0x
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-static uint8_t masterRxData[TRANSFER_SIZE] = {0U};
+
 static uint8_t masterTxData[TRANSFER_SIZE] = {0U};
 
 static uint8_t LS027_sharpmem_vcom;
@@ -120,7 +120,7 @@ static void ls027_spi_init() {
 
 	// fill settings
 	spi_settings.configFlags        = kDSPI_MasterCtar0 | LS027_CE_PIN;
-	spi_settings.masterRxData       = masterRxData;
+	spi_settings.masterRxData       = 0;
 	spi_settings.masterTxData       = masterTxData;
 	spi_settings.spi_tx_data_length = 0;
 
@@ -353,8 +353,9 @@ void LS027_UpdateFullBlock(void)
 	// dummy data
 	LS027_SpiBuf[addr++] = 0x00;
 
-	LOG_INFO("LS027 SPI buffer size %u\r\n", addr);
+	assert(addr == sizeof(LS027_SpiBuf));
 
+	spi_settings.masterRxData       = 0;
 	spi_settings.masterTxData       = LS027_SpiBuf;
 	spi_settings.spi_tx_data_length = sizeof(LS027_SpiBuf);
 

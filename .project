@@ -67,16 +67,6 @@
 			<locationURI>SDK_LOC/middleware/dma_manager/fsl_dma_manager.h</locationURI>
 		</link>
 		<link>
-			<name>middleware/fatfs/ChangeLogKSDK.txt</name>
-			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs/ChangeLogKSDK.txt</locationURI>
-		</link>
-		<link>
-			<name>middleware/fatfs/FatFs_for_Kinetis_SDK_v2.0_readme.txt</name>
-			<type>1</type>
-			<locationURI>SDK_LOC/middleware/fatfs/FatFs_for_Kinetis_SDK_v2.0_readme.txt</locationURI>
-		</link>
-		<link>
 			<name>middleware/fatfs/src</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>

@@ -35,7 +35,9 @@ void BOARD_InitHardware(void) {
 	segger_init();
 	BOARD_InitDebugConsole();
 
-	LED_GREEN_INIT(1);
+	LED_GREEN_INIT(0);
+	LED_RED_INIT(1);
+	LED_BLUE_INIT(1);
 
 	/* Init DMA */
 	memset(&dmamanager_handle, 0, sizeof(dmamanager_handle_t));

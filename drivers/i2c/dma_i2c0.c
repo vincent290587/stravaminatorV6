@@ -38,7 +38,7 @@ uint8_t g_master_buff[I2C_DATA_LENGTH];
 i2c_master_edma_handle_t g_m_dma_handle;
 edma_handle_t edmaHandle;
 
-volatile bool isTransferCompleted = true;
+volatile bool isSpiTransferCompleted = true;
 
 /*******************************************************************************
  * Code
@@ -52,7 +52,7 @@ static void _i2c0_callback(I2C_Type *base, i2c_master_edma_handle_t *handle,
 	{
 		LOG_ERROR("DMA I2C0 master callback error\r\n");
 	}
-	isTransferCompleted = true;
+	isSpiTransferCompleted = true;
 //	LOG_INFO("Xfer completed %d\r\n\r\n", status);
 	W_SYSVIEW_RecordExitISR();
 }
@@ -77,7 +77,7 @@ void dma_i2c0_init(void)
 
 	I2C_MasterCreateEDMAHandle(I2C0, &g_m_dma_handle, _i2c0_callback, NULL, &edmaHandle);
 
-	isTransferCompleted = true;
+	isSpiTransferCompleted = true;
 }
 
 /**
@@ -85,7 +85,7 @@ void dma_i2c0_init(void)
  */
 void dma_i2c0_uninit(void)
 {
-	isTransferCompleted = true;
+	isSpiTransferCompleted = true;
 
 	DMAMUX_DisableChannel(DMAMUX0, I2C0_DMA_CHANNEL);
 
@@ -117,10 +117,10 @@ static status_t dma_i2c0_transfer(i2c_transfer_settings* i2c_settings) {
 	{
 		LOG_ERROR("I2C_MasterTransferEDMA error: %u\r\n ", ret_code);
 	} else {
-		isTransferCompleted = false;
+		isSpiTransferCompleted = false;
 	}
 
-	while (!isTransferCompleted) {
+	while (!isSpiTransferCompleted) {
 		// TODO power optimize
 	}
 

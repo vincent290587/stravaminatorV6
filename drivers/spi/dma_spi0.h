@@ -9,7 +9,6 @@
 #define DRIVERS_SPI_DMA_SPI0_H_
 
 #include "spi.h"
-#include "xfer_manager.h"
 
 #define SPI0_TX_DMA_CHANNEL 0U
 #define SPI0_IN_DMA_CHANNEL 1U
@@ -28,21 +27,6 @@ void dma_spi0_uninit(void);
 
 void dma_spi0_transfer(spi_transfer_settings* spi_settings);
 
-// SPI manager
-
-void dma_spi0_mngr_init();
-
-void dma_spi0_mngr_stop();
-
-void dma_spi0_mngr_task_add(sXferTask *task);
-
-void dma_spi0_mngr_tasks_start();
-
-bool dma_spi0_mngr_is_running();
-
-void dma_spi0_mngr_run();
-
-void dma_spi0_mngr_finish();
 
 #ifdef __cplusplus
 }

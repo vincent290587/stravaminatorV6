@@ -1,12 +1,12 @@
 /*
- * xfer_manager.h
+ * spi_scheduler.h
  *
- *  Created on: 27 oct. 2017
+ *  Created on: 8 déc. 2017
  *      Author: Vincent
  */
 
-#ifndef DRIVERS_XFER_XFER_MANAGER_H_
-#define DRIVERS_XFER_XFER_MANAGER_H_
+#ifndef SOURCE_SCHEDULING_SPI_SCHEDULER_H_
+#define SOURCE_SCHEDULING_SPI_SCHEDULER_H_
 
 typedef void (*pre_hook_func)(void*);
 typedef void (*post_hook_func)(void*);
@@ -28,10 +28,25 @@ typedef enum {
 extern "C" {
 #endif
 
+// SPI manager
+
+void dma_spi0_mngr_init();
+
+void dma_spi0_mngr_stop();
+
+void dma_spi0_mngr_task_add(sXferTask *task);
+
+void dma_spi0_mngr_tasks_start();
+
+bool dma_spi0_mngr_is_running();
+
+void dma_spi0_mngr_run();
+
+void dma_spi0_mngr_finish();
 
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DRIVERS_XFER_XFER_MANAGER_H_ */
+#endif /* SOURCE_SCHEDULING_SPI_SCHEDULER_H_ */

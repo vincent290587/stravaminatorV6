@@ -11,7 +11,7 @@
 //static dspi_master_handle_t g_m_handle; //global variable
 static dspi_transfer_t      masterXfer;
 
-volatile bool isTransferCompleted = false;
+volatile bool isSpiTransferCompleted = false;
 
 
 void spi_init(dspi_master_config_t* masterConfig) {

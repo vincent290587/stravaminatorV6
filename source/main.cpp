@@ -84,12 +84,21 @@ int main(void) {
 //			sdisplay.print(millis());
 //			sdisplay.displayRTT();
 
+//			lcd.clearDisplay();
+//
+//			dma_spi0_mngr_tasks_start();
+			dma_spi0_mngr_finish();
+
 			lcd.setCursor(10,10);
 			lcd.setTextSize(4);
 			lcd.print(millis());
 
-//			LS027_UpdateFullBlock(); // DMA brute code
-			lcd.writeWhole(); // DMA managed code
+			LS027_InvertColors();
+
+			lcd.writeWhole();
+
+			dma_spi0_mngr_tasks_start();
+
 
 //          // test rapidite math
 //			W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);

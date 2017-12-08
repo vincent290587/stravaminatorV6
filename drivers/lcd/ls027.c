@@ -38,8 +38,8 @@ static uint8_t LS027_SpiBuf[1 + LS027_BUFFER_SIZE + (240*2) + 1]; /* buffer for 
 #define LS027_TOGGLE_VCOM    do { LS027_sharpmem_vcom = LS027_sharpmem_vcom ? 0x00 : LS027_BIT_VCOM; } while(0);
 #define adagfxswap(a, b) { int16_t t = a; a = b; b = t; }
 
-static const uint8_t conv_set[] = { 0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01 };
-static const uint8_t conv_clr[] = { 0x7F, 0xBF, 0xDF, 0xEF, 0xF7, 0xFB, 0xFD, 0xFE };
+static const uint8_t set[] = { 0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80 };
+static const uint8_t clr[] = { 0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF, 0x7F };
 
 /*******************************************************************************
  * Variables
@@ -131,7 +131,11 @@ static void ls027_spi_init() {
 
 static void ls027_spi_buffer_clear(void* context)
 {
-	memset(LS027_SpiBuf, 0, sizeof(LS027_SpiBuf));
+	if (!m_is_color_inverted) {
+		memset(LS027_SpiBuf, 0x00, sizeof(LS027_SpiBuf));
+	} else {
+		memset(LS027_SpiBuf, 0xFF, sizeof(LS027_SpiBuf));
+	}
 }
 
 static int ls027_spi_clear(void* context)
@@ -252,9 +256,9 @@ static void setBufferPixel(uint16_t x, uint16_t y, uint16_t color) {
 
 	// fill buffer
 	if (color && !m_is_color_inverted) {
-		LS027_SpiBuf[1 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] |= conv_set[x & 7];
+		LS027_SpiBuf[1 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] |= set[x & 7];
 	} else {
-		LS027_SpiBuf[1 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] &= conv_clr[x & 7];
+		LS027_SpiBuf[1 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] &= clr[x & 7];
 	}
 
 }
@@ -319,7 +323,7 @@ void LS027_Init(void)
 //	memset(LS027_DisplayBuf1, 0, sizeof(LS027_DisplayBuf1));
 //	memset(LS027_DisplayBuf2, 0, sizeof(LS027_DisplayBuf2));
 
-	memset(LS027_SpiBuf, 0, sizeof(LS027_SpiBuf));
+	ls027_spi_buffer_clear(NULL);
 
 	// init double buffer
 //	m_buffer_in_use = LS027_DisplayBuf1;
@@ -331,6 +335,11 @@ void LS027_Init(void)
 	ls027_spi_init();
 }
 
+void LS027_InvertColors(void)
+{
+	m_is_color_inverted = !m_is_color_inverted;
+
+}
 
 /*!
     @brief Draws a single pixel in image buffer

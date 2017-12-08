@@ -5,7 +5,9 @@
  *      Author: Vincent
  */
 
+#include <stdint.h>
 #include <stdbool.h>
+#include "millis.h"
 #include "segger_wrapper.h"
 #include "spi_scheduler.h"
 
@@ -18,6 +20,8 @@ extern bool isSpiTransferCompleted;
 
 static   bool isXferStarted = false;
 volatile bool isXferDone    = true;
+
+static uint32_t last_task_start = 0;
 
 void dma_spi0_mngr_callback() {
 	isXferDone = true;
@@ -103,6 +107,8 @@ void dma_spi0_mngr_run() {
 		assert(m_tasks[m_cur_task].p_xfer_func);
 		int res = (*m_tasks[m_cur_task].p_xfer_func)(m_tasks[m_cur_task].user_data);
 
+		last_task_start = millis();
+
 		LOG_INFO("Xfer task started %u\r\n", res);
 
 		isXferStarted = true;
@@ -111,7 +117,7 @@ void dma_spi0_mngr_run() {
 
 		isXferStarted = false;
 
-		LOG_INFO("Xfer task finished\r\n");
+		LOG_INFO("Xfer task finished in %u ms\r\n", millis() - last_task_start);
 
 		// the task is finished
 		if (m_tasks[m_cur_task].p_post_func)

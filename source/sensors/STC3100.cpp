@@ -10,7 +10,7 @@
 #include "millis.h"
 #include "segger_wrapper.h"
 #include "STC3100.h"
-#include "dma_i2c0.h"
+#include "int_i2c0.h"
 #include "utils.h"
 
 /*=========================================================================*/

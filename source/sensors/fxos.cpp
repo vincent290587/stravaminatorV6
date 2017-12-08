@@ -5,7 +5,7 @@
  *      Author: Vincent
  */
 
-#include "dma_i2c0.h"
+#include "int_i2c0.h"
 #include "fsl_fxos.h"
 #include "segger_wrapper.h"
 #include <sensors/fxos.h>

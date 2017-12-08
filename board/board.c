@@ -14,7 +14,7 @@
 #include "uart0.h"
 #include "uart2.h"
 #include "dma_spi0.h"
-#include "dma_i2c0.h"
+#include "int_i2c0.h"
 
 dmamanager_handle_t dmamanager_handle;
 

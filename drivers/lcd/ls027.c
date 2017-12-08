@@ -23,13 +23,7 @@
 
 #define TRANSFER_SIZE         64U        /*! Transfer dataSize */
 
-//static uint8_t LS027_DisplayBuf1[LS027_BUFFER_SIZE]; /* buffer for the display */
-//static uint8_t LS027_DisplayBuf2[LS027_BUFFER_SIZE]; /* buffer for the display */
-
 static uint8_t LS027_SpiBuf[1 + LS027_BUFFER_SIZE + (240*2) + 1]; /* buffer for the display */
-
-//static uint8_t* m_buffer_in_use;
-//static uint8_t* m_buffer_prev;
 
 /* some aspects of the protocol are pretty timing sensitive... */
 #define LS027_BIT_WRITECMD   (0x01)
@@ -52,9 +46,6 @@ static uint8_t LS027_sharpmem_vcom;
 static spi_transfer_settings spi_settings;
 
 static uint8_t m_is_color_inverted = 0;
-
-static uint16_t m_last_updated_line = 0;
-static uint16_t m_nb_updated_line = 0;
 
 static sXferTask m_spi_task;
 
@@ -229,22 +220,6 @@ static void ls027_update_line(uint8_t line, uint8_t *dataP)
 
 /**
  *
- * @param i Line number: 0..240
- */
-//static bool wasLineChanged(uint16_t i) {
-//
-//	if (memcmp(m_buffer_in_use + (i*LS027_HW_WIDTH/8),
-//			m_buffer_prev + (i*LS027_HW_WIDTH/8),
-//			LS027_HW_WIDTH/8)) {
-//		return true;
-//	} else {
-//		return false;
-//	}
-//
-//}
-
-/**
- *
  * @param x Col number:  0..400
  * @param y Line number: 0..240
  * @param color Color to be printed
@@ -319,15 +294,7 @@ void LS027_Init(void)
 
 	m_is_color_inverted = 0;
 
-	// reset buffers
-//	memset(LS027_DisplayBuf1, 0, sizeof(LS027_DisplayBuf1));
-//	memset(LS027_DisplayBuf2, 0, sizeof(LS027_DisplayBuf2));
-
 	ls027_spi_buffer_clear(NULL);
-
-	// init double buffer
-//	m_buffer_in_use = LS027_DisplayBuf1;
-//	m_buffer_prev   = LS027_DisplayBuf2;
 
 	/* Set the vcom bit to a defined state */
 	LS027_sharpmem_vcom = LS027_BIT_VCOM;
@@ -338,7 +305,6 @@ void LS027_Init(void)
 void LS027_InvertColors(void)
 {
 	m_is_color_inverted = !m_is_color_inverted;
-
 }
 
 /*!
@@ -375,26 +341,3 @@ void LS027_UpdateFull(void)
 	dma_spi0_mngr_task_add(&m_spi_task);
 }
 
-
-/**
- *
- * @param
- * @return
- */
-//int LS027_UpdateFullManage(void *user_data)
-//{
-//	if (wasLineChanged(m_last_updated_line)) {
-//
-//		ls027_update_line(m_last_updated_line,
-//				m_buffer_in_use + (m_last_updated_line*LS027_HW_WIDTH/8));
-//
-//		m_nb_updated_line++;
-//
-//	}
-//
-//	if (++m_last_updated_line < LS027_HW_HEIGHT) {
-//		return 1;
-//	}
-//
-//	return 0;
-//}

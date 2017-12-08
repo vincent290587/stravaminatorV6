@@ -14,7 +14,7 @@
 #include "power_manager.h"
 #include "Model.h"
 
-#include "dma_i2c0.h"
+#include "int_i2c0.h"
 #include "fxos.h"
 #include "dma_spi0.h"
 #include "spi_scheduler.h"

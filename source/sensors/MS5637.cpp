@@ -6,7 +6,7 @@
  */
 
 #include "fsl_common.h"
-#include "dma_i2c0.h"
+#include "int_i2c0.h"
 #include "MS5637.h"
 #include "millis.h"
 #include "segger_wrapper.h"

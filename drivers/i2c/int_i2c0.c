@@ -10,10 +10,8 @@
 #include "segger_wrapper.h"
 #include "millis.h"
 #include "board.h"
-#include "fsl_dmamux.h"
-#include "fsl_dma_manager.h"
-#include "fsl_i2c_edma.h"
-#include "dma_i2c0.h"
+#include "fsl_i2c.h"
+#include "int_i2c0.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -31,8 +29,6 @@
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-
-extern dmamanager_handle_t dmamanager_handle;
 
 static i2c_master_config_t   masterConfig;
 static i2c_master_transfer_t masterXfer;

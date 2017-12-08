@@ -13,6 +13,7 @@ RM := rm -rf
 -include source/usb/subdir.mk
 -include source/sensors/subdir.mk
 -include source/sd/subdir.mk
+-include source/scheduling/subdir.mk
 -include source/routes/subdir.mk
 -include source/power/subdir.mk
 -include source/parsers/subdir.mk

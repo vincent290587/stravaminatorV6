@@ -14,9 +14,10 @@
 #include "power_manager.h"
 #include "Model.h"
 
-#include "dma_i2c0.h"
+#include "int_i2c0.h"
 #include "fxos.h"
 #include "dma_spi0.h"
+#include "spi_scheduler.h"
 #include "uart0.h"
 #include "uart2.h"
 
@@ -37,7 +38,7 @@ int main(void) {
     //
 	// High level code
 	//
-
+	dma_spi0_mngr_init();
 	uaparser.init();
 
 	// LCD driver
@@ -67,7 +68,9 @@ int main(void) {
 //				power_manager_run(kAPP_PowerModeRun24);
 			}
 
-			LED_GREEN_TOGGLE();
+			LED_RED_TOGGLE();
+			LED_BLUE_TOGGLE();
+			LOG_INFO("LED toggling\r\n");
 
 //			if (millis() > 15000) {
 //				power_manager_run(kAPP_PowerModeVlpr);
@@ -81,11 +84,21 @@ int main(void) {
 //			sdisplay.print(millis());
 //			sdisplay.displayRTT();
 
-//			lcd.setCursor(10,10);
-//			lcd.setTextSize(4);
-//			lcd.print(millis());
+//			lcd.clearDisplay();
+//
 //			dma_spi0_mngr_tasks_start();
-//			dma_spi0_mngr_finish();
+			dma_spi0_mngr_finish();
+
+			lcd.setCursor(10,10);
+			lcd.setTextSize(4);
+			lcd.print(millis());
+
+			LS027_InvertColors();
+
+			lcd.writeWhole();
+
+			dma_spi0_mngr_tasks_start();
+
 
 //          // test rapidite math
 //			W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
@@ -99,6 +112,18 @@ int main(void) {
 
 //			uint8_t array[10] = "Hello\r\n";
 //			uart2_send(array, 7);
+
+//			uint8_t reg = 24U;
+//			uint8_t i2c_buff[8] = {0};
+//
+//			i2c0_write(0x70, &reg, 1);
+//			i2c0_read(0x70, i2c_buff, sizeof(i2c_buff));
+//
+//			i2c0_read_reg(0x70, reg, i2c_buff, sizeof(i2c_buff));
+//
+//			LOG_INFO("Read %02X %02X %02X %02X \r\n",
+//					i2c_buff[0], i2c_buff[1],
+//					i2c_buff[2], i2c_buff[3]);
 
 //			fxos_tasks(&fxos_handle);
 

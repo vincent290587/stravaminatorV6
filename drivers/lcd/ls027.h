@@ -18,8 +18,8 @@
 
 typedef bool LS027_PixelColor; /* one bit is enough to describe the color as we have a monochrome display */
 
-#define LS027_PIXEL_BLACK          0 /* 0 is a black pixel */
-#define LS027_PIXEL_WHITE          1 /* 1 is a white pixel */
+#define LS027_PIXEL_BLACK          1 /* 0 is a black pixel */
+#define LS027_PIXEL_WHITE          0 /* 1 is a white pixel */
 #define LS027_COLOR_PIXEL_SET      LS027_PIXEL_WHITE /* color for a pixel set */
 #define LS027_COLOR_PIXEL_CLR      LS027_PIXEL_BLACK /* color for a pixel cleared */
 #define LS027_COLOR_BLACK          LS027_PIXEL_BLACK
@@ -53,21 +53,13 @@ void LS027_Clear(void);
 
 void LS027_Init(void);
 
-void LS027_UpdateLine(uint8_t line, uint8_t *dataP);
+void LS027_InvertColors(void);
 
-void LS027_UpdateFullBlock(void);
+void LS027_UpdateFull(void);
 
 void LS027_ToggleVCOM(void);
 
 void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color);
-
-// managed output
-
-int LS027_UpdateFullManage(void *);
-
-void LS027_InitTransfer(void *);
-
-void LS027_SwitchBuffers(void *);
 
 #if defined(__cplusplus)
 }

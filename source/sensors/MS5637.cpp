@@ -6,7 +6,7 @@
  */
 
 #include "fsl_common.h"
-#include "dma_i2c0.h"
+#include "int_i2c0.h"
 #include "MS5637.h"
 #include "millis.h"
 #include "segger_wrapper.h"
@@ -191,7 +191,7 @@ bool MS5637::getTempAndPressure(float *temperature, float *pressure,
  */
 bool MS5637::wireWriteByte(uint8_t val) {
 
-	if (kStatus_Success != i2c0_write(MS5637_ADDR, &val, 1, false)) {
+	if (kStatus_Success != i2c0_write(MS5637_ADDR, &val, 1)) {
 		return false;
 	}
 
@@ -208,7 +208,7 @@ bool MS5637::wireWriteByte(uint8_t val) {
  */
 int MS5637::wireReadDataBlock(uint8_t reg, uint8_t *val, unsigned int len) {
 
-	if (kStatus_Success != i2c0_read_reg(MS5637_ADDR, reg, val, len, false)) {
+	if (kStatus_Success != i2c0_read_reg(MS5637_ADDR, reg, val, len)) {
 		return 0;
 	}
 

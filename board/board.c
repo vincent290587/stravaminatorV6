@@ -14,7 +14,7 @@
 #include "uart0.h"
 #include "uart2.h"
 #include "dma_spi0.h"
-#include "dma_i2c0.h"
+#include "int_i2c0.h"
 
 dmamanager_handle_t dmamanager_handle;
 
@@ -37,11 +37,11 @@ void BOARD_InitHardware(void) {
 
 	LED_GREEN_INIT(0);
 	LED_RED_INIT(1);
-	LED_BLUE_INIT(1);
+	LED_BLUE_INIT(0);
 
 	/* Init DMA */
 	memset(&dmamanager_handle, 0, sizeof(dmamanager_handle_t));
-	DMAMGR_Init(&dmamanager_handle, DMA0, 8U, 0U);
+	DMAMGR_Init(&dmamanager_handle, DMA0, 16U, 0U);
 
 	/* Init code */
 	millis_init();
@@ -54,7 +54,7 @@ void BOARD_InitHardware(void) {
 	uart_config_t uartConfig;
 	UART_GetDefaultConfig(&uartConfig);
 	uartConfig.enableTx = true;
-	uartConfig.enableRx = false; // TODO
+	uartConfig.enableRx = true; // TODO
 	uartConfig.baudRate_Bps = 9600U;
 
 	uart0_init(&uartConfig);
@@ -65,8 +65,7 @@ void BOARD_InitHardware(void) {
 	//uart2_init(&uartConfig);
 
 	dma_spi0_init();
-	dma_spi0_mngr_init();
 
-	dma_i2c0_init();
+	i2c0_init();
 
 }

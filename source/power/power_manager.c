@@ -19,7 +19,7 @@
 #include "composite.h"
 #include "uart0.h"
 #include "uart2.h"
-#include "dma_i2c0.h"
+#include "int_i2c0.h"
 #include "dma_spi0.h"
 
 #include "pin_mux.h"
@@ -56,7 +56,7 @@ void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t
 //	}
 
 	uart0_uninit();
-	dma_i2c0_uninit();
+	i2c0_uninit();
 //	uart2_uninit();
 
 	dma_spi0_uninit();
@@ -84,7 +84,7 @@ void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_
 //		uartConfig.baudRate_Bps = 115200U;
 //		uart2_init(&uartConfig);
 
-		dma_i2c0_init();
+		i2c0_init();
 
 		// only init SPI if not going to VLP modes
 		if (kAPP_PowerModeVlpr != targetMode &&

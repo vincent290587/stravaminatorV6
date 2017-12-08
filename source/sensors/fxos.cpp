@@ -5,7 +5,7 @@
  *      Author: Vincent
  */
 
-#include "dma_i2c0.h"
+#include "int_i2c0.h"
 #include "fsl_fxos.h"
 #include "segger_wrapper.h"
 #include <sensors/fxos.h>
@@ -23,7 +23,7 @@ status_t FXOS_ReadReg(fxos_handle_t *handle, uint8_t reg, uint8_t *val, uint8_t 
 {
 	status_t status = kStatus_Success;
 
-	status = i2c0_read_reg(FXOS_7BIT_ADDRESS, reg, val, bytesNumber, false);
+	status = i2c0_read_reg(FXOS_7BIT_ADDRESS, reg, val, bytesNumber);
 
 	return status;
 }
@@ -35,7 +35,7 @@ status_t FXOS_WriteReg(fxos_handle_t *handle, uint8_t reg, uint8_t val)
 
 	buff[0] = val;
 
-	status = i2c0_write_reg(FXOS_7BIT_ADDRESS, reg, buff, 1, false);
+	status = i2c0_write_reg(FXOS_7BIT_ADDRESS, reg, buff, sizeof(buff));
 
 	return status;
 }

@@ -14,6 +14,7 @@
 #include "fsl_dmamux.h"
 #include "fsl_dma_manager.h"
 #include "dma_spi0.h"
+#include "spi_scheduler.h"
 #include "millis.h"
 
 /*******************************************************************************
@@ -44,12 +45,9 @@ edma_handle_t dspiEdmaMasterIntermediaryToTxRegHandle;
 
 dspi_transfer_t masterXfer;
 
-volatile bool isTransferCompleted = true;
+volatile bool isSpiTransferCompleted = true;
 
-static sXferTask m_tasks[5];
-static uint8_t m_tasks_nb;
-static uint8_t m_cur_task;
-static xferTaskState m_state;
+
 
 /*******************************************************************************
  * Code
@@ -63,9 +61,9 @@ void DSPI_MasterUserCallback(SPI_Type *base, dspi_master_edma_handle_t *handle, 
 		LOG_ERROR("DMA SPI0 master callback error\r\n");
 	}
 
-	isTransferCompleted = true;
+	isSpiTransferCompleted = true;
 
-//	dma_spi0_mngr_run();
+	dma_spi0_mngr_callback();
 
 	W_SYSVIEW_RecordExitISR();
 }
@@ -84,11 +82,28 @@ void dma_spi0_uninit(void)
 void dma_spi0_init(void)
 {
 
-	DMAMUX_SetSource(DMAMUX0, SPI0_RX_DMA_CHANNEL, kDmaRequestMux0SPI0Rx);
-	DMAMUX_EnableChannel(DMAMUX0, SPI0_RX_DMA_CHANNEL);
+	/* Set up dspi master */
+	memset(&(dspiEdmaMasterRxRegToRxDataHandle), 0, sizeof(dspiEdmaMasterRxRegToRxDataHandle));
+	memset(&(dspiEdmaMasterTxDataToIntermediaryHandle), 0, sizeof(dspiEdmaMasterTxDataToIntermediaryHandle));
+	memset(&(dspiEdmaMasterIntermediaryToTxRegHandle), 0, sizeof(dspiEdmaMasterIntermediaryToTxRegHandle));
 
-	DMAMUX_SetSource(DMAMUX0, SPI0_TX_DMA_CHANNEL, kDmaRequestMux0SPI0Tx);
-	DMAMUX_EnableChannel(DMAMUX0, SPI0_TX_DMA_CHANNEL);
+	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
+			(dma_request_source_t)kDmaRequestMux0SPI0Rx,
+			SPI0_RX_DMA_CHANNEL, &dspiEdmaMasterRxRegToRxDataHandle)) {
+		LOG_ERROR("DMA channel %u occupied", SPI0_RX_DMA_CHANNEL);
+	}
+
+	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
+			(dma_request_source_t)kDmaRequestMux0SPI0Tx,
+			SPI0_TX_DMA_CHANNEL, &dspiEdmaMasterIntermediaryToTxRegHandle)) {
+		LOG_ERROR("DMA channel %u occupied", SPI0_TX_DMA_CHANNEL);
+	}
+
+	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
+			0,
+			SPI0_IN_DMA_CHANNEL, &dspiEdmaMasterTxDataToIntermediaryHandle)) {
+		LOG_ERROR("DMA channel %u occupied", SPI0_IN_DMA_CHANNEL);
+	}
 
 	/*DSPI init*/
 	uint32_t srcClock_Hz;
@@ -116,28 +131,6 @@ void dma_spi0_init(void)
 
 //	DSPI_SetAllPcsPolarity(base, kDSPI_Pcs0ActiveLow | kDSPI_Pcs1ActiveLow);
 
-	/* Set up dspi master */
-	memset(&(dspiEdmaMasterRxRegToRxDataHandle), 0, sizeof(dspiEdmaMasterRxRegToRxDataHandle));
-	memset(&(dspiEdmaMasterTxDataToIntermediaryHandle), 0, sizeof(dspiEdmaMasterTxDataToIntermediaryHandle));
-	memset(&(dspiEdmaMasterIntermediaryToTxRegHandle), 0, sizeof(dspiEdmaMasterIntermediaryToTxRegHandle));
-
-	EDMA_CreateHandle(&(dspiEdmaMasterRxRegToRxDataHandle), DMA0, SPI0_RX_DMA_CHANNEL);
-	EDMA_CreateHandle(&(dspiEdmaMasterTxDataToIntermediaryHandle), DMA0, SPI0_IN_DMA_CHANNEL);
-	EDMA_CreateHandle(&(dspiEdmaMasterIntermediaryToTxRegHandle), DMA0, SPI0_TX_DMA_CHANNEL);
-
-//	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
-//			(dma_request_source_t)kDmaRequestMux0SPI0Rx,
-//			SPI0_RX_DMA_CHANNEL, &dspiEdmaMasterRxRegToRxDataHandle)) {
-//		LOG_ERROR("DMA channel %u occupied", SPI0_RX_DMA_CHANNEL);
-//	}
-//
-//
-//	if (kStatus_Success != DMAMGR_RequestChannel(&dmamanager_handle,
-//			(dma_request_source_t)kDmaRequestMux0SPI0Tx,
-//			SPI0_TX_DMA_CHANNEL, &dspiEdmaMasterIntermediaryToTxRegHandle)) {
-//		LOG_ERROR("DMA channel %u occupied", SPI0_TX_DMA_CHANNEL);
-//	}
-
 	DSPI_MasterTransferCreateHandleEDMA(SPI0, &g_dspi_edma_m_handle, DSPI_MasterUserCallback,
 			NULL, &dspiEdmaMasterRxRegToRxDataHandle,
 			&dspiEdmaMasterTxDataToIntermediaryHandle,
@@ -149,12 +142,13 @@ void dma_spi0_init(void)
 
 void dma_spi0_transfer(spi_transfer_settings* spi_settings) {
 
-
 	/* Start master transfer */
 	masterXfer.txData = spi_settings->masterTxData;
 	masterXfer.rxData = spi_settings->masterRxData;
 	masterXfer.dataSize = spi_settings->spi_tx_data_length;
 	masterXfer.configFlags = spi_settings->configFlags | kDSPI_MasterPcsContinuous;
+
+	dma_spi0_finish_transfer();
 
 	// transfer the block
 	status_t ret_code;
@@ -162,111 +156,15 @@ void dma_spi0_transfer(spi_transfer_settings* spi_settings) {
 	{
 		LOG_ERROR("DSPI_MasterTransferEDMA error: %u\r\n ", ret_code);
 	} else {
-		isTransferCompleted = false;
+		isSpiTransferCompleted = false;
 	}
 
 }
 
-void dma_spi0_mngr_init() {
+void dma_spi0_finish_transfer(void) {
 
-	m_state = E_XFER_MNGR_IDLE;
-	m_cur_task = 0;
-	m_tasks_nb = 0;
-
-	isTransferCompleted = true;
-}
-
-void dma_spi0_mngr_stop() {
-
-	if (m_state == E_XFER_MNGR_RUN) {
-		// post hook
-		(*m_tasks[m_cur_task].p_post_func)(m_tasks[m_cur_task].user_data);
+	while (!isSpiTransferCompleted) {
+		// TODO sleep
 	}
-
-	m_state = E_XFER_MNGR_IDLE;
-	m_cur_task = 0;
-
-	isTransferCompleted = true;
-}
-
-void dma_spi0_mngr_task_add(sXferTask *task) {
-
-	memcpy(m_tasks+m_tasks_nb, task, sizeof(sXferTask));
-	m_tasks_nb++;
-
-	LOG_INFO("Xfer task added\r\n");
-
-}
-
-void dma_spi0_mngr_tasks_start() {
-
-	if (m_state == E_XFER_MNGR_RUN) {
-		dma_spi0_mngr_stop();
-	}
-
-	m_cur_task = 0;
-	isTransferCompleted = true;
-
-	if (m_tasks_nb) {
-		m_state = E_XFER_MNGR_RUN;
-
-		// start pre-hook of first task
-		(*m_tasks[m_cur_task].p_pre_func)(m_tasks[m_cur_task].user_data);
-	}
-
-	// init transfers
-	dma_spi0_mngr_run();
-}
-
-bool dma_spi0_mngr_is_running() {
-
-	if (m_state == E_XFER_MNGR_RUN) {
-		return true;
-	}
-	return false;
-}
-
-void dma_spi0_mngr_run() {
-
-	// make sure we fill the DMA buffers every time with a while
-	while (m_state == E_XFER_MNGR_RUN && isTransferCompleted) {
-
-		int res = (*m_tasks[m_cur_task].p_xfer_func)(m_tasks[m_cur_task].user_data);
-
-		if (res == 0) {
-			// the task is finished
-			(*m_tasks[m_cur_task].p_post_func)(m_tasks[m_cur_task].user_data);
-
-			// check if all tasks finished
-			if (m_cur_task+1 < m_tasks_nb) {
-
-				// start of next task
-				m_cur_task++;
-				(*m_tasks[m_cur_task].p_pre_func)(m_tasks[m_cur_task].user_data);
-
-			} else {
-				m_state = E_XFER_MNGR_IDLE;
-			}
-
-		}
-	}
-}
-
-void dma_spi0_mngr_finish() {
-
-	if (m_state != E_XFER_MNGR_RUN) return;
-
-	// TODO
-//	sleep();
-
-	// make sure we fill the DMA buffers every time with a while
-	while (m_state == E_XFER_MNGR_RUN) {
-
-		if (isTransferCompleted) dma_spi0_mngr_run();
-
-	}
-
-	// TODO
-//	run();
 
 }

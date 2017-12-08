@@ -14,6 +14,7 @@
 #include "fsl_dmamux.h"
 #include "fsl_dma_manager.h"
 #include "dma_spi0.h"
+#include "spi_scheduler.h"
 #include "millis.h"
 
 /*******************************************************************************
@@ -62,7 +63,7 @@ void DSPI_MasterUserCallback(SPI_Type *base, dspi_master_edma_handle_t *handle, 
 
 	isSpiTransferCompleted = true;
 
-//	dma_spi0_mngr_run();
+	dma_spi0_mngr_callback();
 
 	W_SYSVIEW_RecordExitISR();
 }
@@ -141,12 +142,13 @@ void dma_spi0_init(void)
 
 void dma_spi0_transfer(spi_transfer_settings* spi_settings) {
 
-
 	/* Start master transfer */
 	masterXfer.txData = spi_settings->masterTxData;
 	masterXfer.rxData = spi_settings->masterRxData;
 	masterXfer.dataSize = spi_settings->spi_tx_data_length;
 	masterXfer.configFlags = spi_settings->configFlags | kDSPI_MasterPcsContinuous;
+
+	dma_spi0_finish_transfer();
 
 	// transfer the block
 	status_t ret_code;
@@ -155,6 +157,14 @@ void dma_spi0_transfer(spi_transfer_settings* spi_settings) {
 		LOG_ERROR("DSPI_MasterTransferEDMA error: %u\r\n ", ret_code);
 	} else {
 		isSpiTransferCompleted = false;
+	}
+
+}
+
+void dma_spi0_finish_transfer(void) {
+
+	while (!isSpiTransferCompleted) {
+		// TODO sleep
 	}
 
 }

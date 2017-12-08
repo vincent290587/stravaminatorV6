@@ -53,7 +53,7 @@ void LS027_Clear(void);
 
 void LS027_Init(void);
 
-void LS027_UpdateLine(uint8_t line, uint8_t *dataP);
+//void LS027_UpdateLine(uint8_t line, uint8_t *dataP);
 
 void LS027_UpdateFull(void);
 
@@ -61,7 +61,7 @@ void LS027_ToggleVCOM(void);
 
 void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color);
 
-int LS027_UpdateFullManage(void *);
+//int LS027_UpdateFullManage(void *);
 
 #if defined(__cplusplus)
 }

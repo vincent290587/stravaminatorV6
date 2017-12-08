@@ -9,12 +9,19 @@
 #include "segger_wrapper.h"
 #include "spi_scheduler.h"
 
-static sXferTask m_tasks[5];
+static sXferTask m_tasks[SPI_SCHEDULER_MAX_NB_TASKS];
 static uint8_t m_tasks_nb;
 static uint8_t m_cur_task;
 static xferTaskState m_state;
 
 extern bool isSpiTransferCompleted;
+
+static   bool isXferStarted = false;
+volatile bool isXferDone    = true;
+
+void dma_spi0_mngr_callback() {
+	isXferDone = true;
+}
 
 void dma_spi0_mngr_init() {
 
@@ -22,45 +29,56 @@ void dma_spi0_mngr_init() {
 	m_cur_task = 0;
 	m_tasks_nb = 0;
 
-	isSpiTransferCompleted = true;
+	isXferStarted = false;
+	isXferDone    = true;
+
 }
 
 void dma_spi0_mngr_stop() {
 
 	if (m_state == E_XFER_MNGR_RUN) {
 		// post hook
-		(*m_tasks[m_cur_task].p_post_func)(m_tasks[m_cur_task].user_data);
+		if (m_tasks[m_cur_task].p_post_func)
+			(*m_tasks[m_cur_task].p_post_func)(m_tasks[m_cur_task].user_data);
 	}
 
 	m_state = E_XFER_MNGR_IDLE;
 	m_cur_task = 0;
 
-	isSpiTransferCompleted = true;
+	isXferStarted = false;
+	isXferDone    = true;
 }
 
 void dma_spi0_mngr_task_add(sXferTask *task) {
 
-	memcpy(m_tasks+m_tasks_nb, task, sizeof(sXferTask));
-	m_tasks_nb++;
+	if (m_tasks_nb < SPI_SCHEDULER_MAX_NB_TASKS) {
+		memcpy(m_tasks+m_tasks_nb, task, sizeof(sXferTask));
+		m_tasks_nb++;
 
-	LOG_INFO("Xfer task added\r\n");
+		LOG_INFO("Xfer task added\r\n");
+	} else {
+		LOG_INFO("Xfer task buffer full\r\n");
+	}
 
 }
 
 void dma_spi0_mngr_tasks_start() {
 
 	if (m_state == E_XFER_MNGR_RUN) {
-		dma_spi0_mngr_stop();
+//		dma_spi0_mngr_stop();
+		return;
 	}
 
 	m_cur_task = 0;
-	isSpiTransferCompleted = true;
+	isXferStarted = false;
+	isXferDone    = true;
 
 	if (m_tasks_nb) {
 		m_state = E_XFER_MNGR_RUN;
 
 		// start pre-hook of first task
-		(*m_tasks[m_cur_task].p_pre_func)(m_tasks[m_cur_task].user_data);
+		if (m_tasks[m_cur_task].p_pre_func)
+			(*m_tasks[m_cur_task].p_pre_func)(m_tasks[m_cur_task].user_data);
 	}
 
 	// init transfers
@@ -78,26 +96,45 @@ bool dma_spi0_mngr_is_running() {
 void dma_spi0_mngr_run() {
 
 	// make sure we fill the DMA buffers every time with a while
-	while (m_state == E_XFER_MNGR_RUN && isSpiTransferCompleted) {
+	if (m_state == E_XFER_MNGR_RUN && isXferDone && !isXferStarted) {
 
+		isXferDone = false;
+
+		assert(m_tasks[m_cur_task].p_xfer_func);
 		int res = (*m_tasks[m_cur_task].p_xfer_func)(m_tasks[m_cur_task].user_data);
 
-		if (res == 0) {
-			// the task is finished
+		LOG_INFO("Xfer task started %u\r\n", res);
+
+		isXferStarted = true;
+
+	} else if (m_state == E_XFER_MNGR_RUN && isXferDone && isXferStarted) {
+
+		isXferStarted = false;
+
+		LOG_INFO("Xfer task finished\r\n");
+
+		// the task is finished
+		if (m_tasks[m_cur_task].p_post_func)
 			(*m_tasks[m_cur_task].p_post_func)(m_tasks[m_cur_task].user_data);
 
-			// check if all tasks finished
-			if (m_cur_task+1 < m_tasks_nb) {
+		// check if all tasks finished
+		if (m_cur_task+1 < m_tasks_nb) {
 
-				// start of next task
-				m_cur_task++;
+			// start of next task
+			m_cur_task++;
+			if (m_tasks[m_cur_task].p_pre_func)
 				(*m_tasks[m_cur_task].p_pre_func)(m_tasks[m_cur_task].user_data);
 
-			} else {
-				m_state = E_XFER_MNGR_IDLE;
-			}
+		} else {
+			m_state = E_XFER_MNGR_IDLE;
+			m_cur_task = 0;
 
+			// TODO careful here
+			m_tasks_nb = 0;
+
+			LOG_INFO("Xfer all tasks finished\r\n");
 		}
+
 	}
 }
 
@@ -108,10 +145,9 @@ void dma_spi0_mngr_finish() {
 	// TODO
 //	sleep();
 
-	// make sure we fill the DMA buffers every time with a while
 	while (m_state == E_XFER_MNGR_RUN) {
 
-		if (isSpiTransferCompleted) dma_spi0_mngr_run();
+		dma_spi0_mngr_run();
 
 	}
 

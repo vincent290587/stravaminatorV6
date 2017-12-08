@@ -27,6 +27,7 @@ void dma_spi0_uninit(void);
 
 void dma_spi0_transfer(spi_transfer_settings* spi_settings);
 
+void dma_spi0_finish_transfer(void);
 
 #ifdef __cplusplus
 }

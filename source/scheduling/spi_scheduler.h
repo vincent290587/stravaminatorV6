@@ -8,6 +8,8 @@
 #ifndef SOURCE_SCHEDULING_SPI_SCHEDULER_H_
 #define SOURCE_SCHEDULING_SPI_SCHEDULER_H_
 
+#define SPI_SCHEDULER_MAX_NB_TASKS      20
+
 typedef void (*pre_hook_func)(void*);
 typedef void (*post_hook_func)(void*);
 typedef int  (*xfer_func)(void*);
@@ -29,6 +31,8 @@ extern "C" {
 #endif
 
 // SPI manager
+
+void dma_spi0_mngr_callback();
 
 void dma_spi0_mngr_init();
 

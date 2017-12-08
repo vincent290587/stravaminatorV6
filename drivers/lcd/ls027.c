@@ -9,6 +9,7 @@
 #include "ls027.h"
 #include "dma_spi0.h"
 #include "segger_wrapper.h"
+#include "spi_scheduler.h"
 
 // release
 #define LS027_CE_PIN          kDSPI_MasterPcs2
@@ -22,13 +23,13 @@
 
 #define TRANSFER_SIZE         64U        /*! Transfer dataSize */
 
-static uint8_t LS027_DisplayBuf1[LS027_BUFFER_SIZE]; /* buffer for the display */
-static uint8_t LS027_DisplayBuf2[LS027_BUFFER_SIZE]; /* buffer for the display */
+//static uint8_t LS027_DisplayBuf1[LS027_BUFFER_SIZE]; /* buffer for the display */
+//static uint8_t LS027_DisplayBuf2[LS027_BUFFER_SIZE]; /* buffer for the display */
 
 static uint8_t LS027_SpiBuf[1 + LS027_BUFFER_SIZE + (240*2) + 1]; /* buffer for the display */
 
-static uint8_t* m_buffer_in_use;
-static uint8_t* m_buffer_prev;
+//static uint8_t* m_buffer_in_use;
+//static uint8_t* m_buffer_prev;
 
 /* some aspects of the protocol are pretty timing sensitive... */
 #define LS027_BIT_WRITECMD   (0x01)
@@ -54,6 +55,8 @@ static uint8_t m_is_color_inverted = 0;
 
 static uint16_t m_last_updated_line = 0;
 static uint16_t m_nb_updated_line = 0;
+
+static sXferTask m_spi_task;
 
 /* Internal method prototypes */
 static void WriteData(uint8_t data);
@@ -91,6 +94,31 @@ static inline void WriteData(uint8_t data)
 }
 
 
+/**
+ * Starts a SPI transfer
+ * @param is_last_byte
+ */
+static int start_transfer(void) {
+
+    /* Start master transfer */
+	dma_spi0_transfer(&spi_settings);
+
+    spi_settings.spi_tx_data_length = 0;
+
+    return 0;
+}
+
+static void CE_ClrVal () {
+
+	start_transfer();
+}
+
+static void CE_SetVal () {
+	// CS pin is toggled by HW SPI automatically
+	spi_settings.spi_tx_data_length = 0;
+}
+
+
 static void ls027_spi_init() {
 
 	// fill settings
@@ -101,43 +129,115 @@ static void ls027_spi_init() {
 
 }
 
-/**
- * Starts a SPI transfer
- * @param is_last_byte
+static void ls027_spi_buffer_clear(void* context)
+{
+	memset(LS027_SpiBuf, 0, sizeof(LS027_SpiBuf));
+}
+
+static int ls027_spi_clear(void* context)
+{
+	/* send clear command */
+	CE_SetVal();
+	WriteData(LS027_sharpmem_vcom | LS027_BIT_CLEAR);
+	WriteData(0x00);
+	LS027_TOGGLE_VCOM;
+	CE_ClrVal();
+
+	return 0;
+}
+
+static int ls027_update_full(void* context)
+{
+	uint16_t addr = 0;
+
+	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
+
+	LS027_SpiBuf[addr++] = (LS027_BIT_WRITECMD | LS027_sharpmem_vcom);
+
+	LS027_TOGGLE_VCOM;
+
+	/* Set the address for lines and dummy data */
+	for (int i=0; i < LS027_HW_HEIGHT; i++) {
+
+		// line address
+		LS027_SpiBuf[addr++] = i + 1;
+
+		// data bytes
+		addr += LS027_HW_WIDTH / 8;
+
+		// dummy data
+		LS027_SpiBuf[addr++] = 0x00;
+
+	}
+
+	// dummy data
+	LS027_SpiBuf[addr++] = 0x00;
+
+	assert(addr == sizeof(LS027_SpiBuf));
+
+	spi_settings.masterRxData       = 0;
+	spi_settings.masterTxData       = LS027_SpiBuf;
+	spi_settings.spi_tx_data_length = sizeof(LS027_SpiBuf);
+
+	start_transfer();
+
+	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
+
+	return 0;
+}
+
+
+/*
+ ** ===================================================================
+ **     Method      :  ls027_update_line (component SharpMemDisplay)
+ **     Description :
+ **         Updates a single line on the LCD
+ **     Parameters  :
+ **         NAME            - DESCRIPTION
+ **         line            - Line number to update, range 0-93
+ **       * dataP           - Pointer to data, must be array
+ **
+ **     Returns     : Nothing
+ ** ===================================================================
  */
-static void start_transfer(bool is_last_byte) {
+static void ls027_update_line(uint8_t line, uint8_t *dataP)
+{
+	int i;
 
-    /* Start master transfer */
-	dma_spi0_transfer(&spi_settings);
+	/* Send the write command */
+	CE_SetVal();
+	WriteData(LS027_BIT_WRITECMD | LS027_sharpmem_vcom);
+	LS027_TOGGLE_VCOM;
 
-    spi_settings.spi_tx_data_length = 0;
+	/* Send the address for line */
+	WriteData(line+1);
 
+	/* Send data byte for selected line */
+	for (i=0; i<(LS027_HW_WIDTH/8); i++) {
+		WriteData(LS027_RevertBits(dataP[i]));
+	}
+	/* Send trailing 16 bits  */
+	WriteData(0x00);
+	WriteData(0x00);
+	CE_ClrVal();
 }
 
-static void CE_ClrVal () {
-	// CS pin is toggled by HW SPI automatically
-	start_transfer(true);
-}
-static void CE_SetVal () {
-	// CS pin is toggled by HW SPI automatically
-	spi_settings.spi_tx_data_length = 0;
-}
 
 /**
  *
  * @param i Line number: 0..240
  */
-static bool wasLineChanged(uint16_t i) {
-
-	if (memcmp(m_buffer_in_use + (i*LS027_HW_WIDTH/8),
-			m_buffer_prev + (i*LS027_HW_WIDTH/8),
-			LS027_HW_WIDTH/8)) {
-		return true;
-	} else {
-		return false;
-	}
-
-}
+//static bool wasLineChanged(uint16_t i) {
+//
+//	if (memcmp(m_buffer_in_use + (i*LS027_HW_WIDTH/8),
+//			m_buffer_prev + (i*LS027_HW_WIDTH/8),
+//			LS027_HW_WIDTH/8)) {
+//		return true;
+//	} else {
+//		return false;
+//	}
+//
+//}
 
 /**
  *
@@ -190,12 +290,15 @@ void LS027_ToggleVCOM(void)
  */
 void LS027_Clear(void)
 {
-	/* send clear command */
-	CE_SetVal();
-	WriteData(LS027_sharpmem_vcom | LS027_BIT_CLEAR);
-	WriteData(0x00);
-	LS027_TOGGLE_VCOM;
-	CE_ClrVal();
+	// program the task
+	memset(&m_spi_task, 0, sizeof(m_spi_task));
+
+	m_spi_task.user_data   = 0;
+	m_spi_task.p_pre_func  = 0;
+	m_spi_task.p_xfer_func = ls027_spi_clear;
+	m_spi_task.p_post_func = ls027_spi_buffer_clear;
+
+	dma_spi0_mngr_task_add(&m_spi_task);
 }
 
 /*
@@ -213,12 +316,14 @@ void LS027_Init(void)
 	m_is_color_inverted = 0;
 
 	// reset buffers
-	memset(LS027_DisplayBuf1, 0, sizeof(LS027_DisplayBuf1));
-	memset(LS027_DisplayBuf2, 0, sizeof(LS027_DisplayBuf2));
+//	memset(LS027_DisplayBuf1, 0, sizeof(LS027_DisplayBuf1));
+//	memset(LS027_DisplayBuf2, 0, sizeof(LS027_DisplayBuf2));
+
+	memset(LS027_SpiBuf, 0, sizeof(LS027_SpiBuf));
 
 	// init double buffer
-	m_buffer_in_use = LS027_DisplayBuf1;
-	m_buffer_prev   = LS027_DisplayBuf2;
+//	m_buffer_in_use = LS027_DisplayBuf1;
+//	m_buffer_prev   = LS027_DisplayBuf2;
 
 	/* Set the vcom bit to a defined state */
 	LS027_sharpmem_vcom = LS027_BIT_VCOM;
@@ -226,42 +331,7 @@ void LS027_Init(void)
 	ls027_spi_init();
 }
 
-/*
- ** ===================================================================
- **     Method      :  LS027_UpdateLine (component SharpMemDisplay)
- **     Description :
- **         Updates a single line on the LCD
- **     Parameters  :
- **         NAME            - DESCRIPTION
- **         line            - Line number to update, range 0-93
- **       * dataP           - Pointer to data, must be array
- **
- **     Returns     : Nothing
- ** ===================================================================
- */
-void LS027_UpdateLine(uint8_t line, uint8_t *dataP)
-{
-	int i;
 
-	/* Send the write command */
-	CE_SetVal();
-	WriteData(LS027_BIT_WRITECMD | LS027_sharpmem_vcom);
-	LS027_TOGGLE_VCOM;
-
-	/* Send the address for line */
-	WriteData(line+1);
-
-	/* Send data byte for selected line */
-	for (i=0; i<(LS027_HW_WIDTH/8); i++) {
-		WriteData(LS027_RevertBits(dataP[i]));
-	}
-	/* Send trailing 16 bits  */
-	WriteData(0x00);
-	WriteData(0x00);
-	CE_ClrVal();
-}
-
-/**************************************************************************/
 /*!
     @brief Draws a single pixel in image buffer
 
@@ -270,7 +340,6 @@ void LS027_UpdateLine(uint8_t line, uint8_t *dataP)
     @param[in]  y
                 The y position (0 based)
  */
-/**************************************************************************/
 void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color) {
 	setBufferPixel(x, y, color);
 }
@@ -287,40 +356,14 @@ void LS027_drawPixel(uint16_t x, uint16_t y, uint16_t color) {
  */
 void LS027_UpdateFull(void)
 {
-	uint16_t addr = 0;
+	// program the task
+	memset(&m_spi_task, 0, sizeof(m_spi_task));
 
-	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
+	m_spi_task.p_pre_func = 0;
+	m_spi_task.p_xfer_func = ls027_update_full;
+	m_spi_task.p_post_func = ls027_spi_buffer_clear;
 
-	LS027_SpiBuf[addr++] = (LS027_BIT_WRITECMD | LS027_sharpmem_vcom);
-
-	LS027_TOGGLE_VCOM;
-
-	/* Set the address for lines and dummy data */
-	for (int i=0; i < LS027_HW_HEIGHT; i++) {
-
-		// line address
-		LS027_SpiBuf[addr++] = i + 1;
-
-		// data bytes
-		addr += LS027_HW_WIDTH / 8;
-
-		// dummy data
-		LS027_SpiBuf[addr++] = 0x00;
-
-	}
-
-	// dummy data
-	LS027_SpiBuf[addr++] = 0x00;
-
-	assert(addr == sizeof(LS027_SpiBuf));
-
-	spi_settings.masterRxData       = 0;
-	spi_settings.masterTxData       = LS027_SpiBuf;
-	spi_settings.spi_tx_data_length = sizeof(LS027_SpiBuf);
-
-	start_transfer(true);
-
-	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
+	dma_spi0_mngr_task_add(&m_spi_task);
 }
 
 
@@ -329,20 +372,20 @@ void LS027_UpdateFull(void)
  * @param
  * @return
  */
-int LS027_UpdateFullManage(void *user_data)
-{
-	if (wasLineChanged(m_last_updated_line)) {
-
-		LS027_UpdateLine(m_last_updated_line,
-				m_buffer_in_use + (m_last_updated_line*LS027_HW_WIDTH/8));
-
-		m_nb_updated_line++;
-
-	}
-
-	if (++m_last_updated_line < LS027_HW_HEIGHT) {
-		return 1;
-	}
-
-	return 0;
-}
+//int LS027_UpdateFullManage(void *user_data)
+//{
+//	if (wasLineChanged(m_last_updated_line)) {
+//
+//		ls027_update_line(m_last_updated_line,
+//				m_buffer_in_use + (m_last_updated_line*LS027_HW_WIDTH/8));
+//
+//		m_nb_updated_line++;
+//
+//	}
+//
+//	if (++m_last_updated_line < LS027_HW_HEIGHT) {
+//		return 1;
+//	}
+//
+//	return 0;
+//}

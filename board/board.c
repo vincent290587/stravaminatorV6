@@ -66,6 +66,6 @@ void BOARD_InitHardware(void) {
 
 	dma_spi0_init();
 
-	dma_i2c0_init();
+	i2c0_init();
 
 }

@@ -24,9 +24,6 @@ PowerManager::PowerManager() {
  */
 void PowerManager::init() {
 	power_manager_init();
-
-	LED_RED_INIT(1);
-	LED_BLUE_INIT(1);
 }
 
 /**

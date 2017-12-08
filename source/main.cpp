@@ -113,6 +113,18 @@ int main(void) {
 //			uint8_t array[10] = "Hello\r\n";
 //			uart2_send(array, 7);
 
+//			uint8_t reg = 24U;
+//			uint8_t i2c_buff[8] = {0};
+//
+//			i2c0_write(0x70, &reg, 1);
+//			i2c0_read(0x70, i2c_buff, sizeof(i2c_buff));
+//
+//			i2c0_read_reg(0x70, reg, i2c_buff, sizeof(i2c_buff));
+//
+//			LOG_INFO("Read %02X %02X %02X %02X \r\n",
+//					i2c_buff[0], i2c_buff[1],
+//					i2c_buff[2], i2c_buff[3]);
+
 //			fxos_tasks(&fxos_handle);
 
 			W_SYSVIEW_OnIdle();

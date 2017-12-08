@@ -153,7 +153,7 @@ uint16_t VEML6075::read16_raw(uint8_t reg) {
 	// read from I2C
 	uint8_t raw_data[2];
 
-	if (kStatus_Success != i2c0_read_reg(VEML6075_ADDR, reg, raw_data, 2, false)) {
+	if (kStatus_Success != i2c0_read_reg(VEML6075_ADDR, reg, raw_data, 2)) {
 		return 0xFFFF;
 	}
 
@@ -171,7 +171,7 @@ void VEML6075::write16(uint8_t reg, uint16_t raw_data) {
 	uint8_t data[2] = {(uint8_t)(0xFF & raw_data), (uint8_t)((0xFF00 & raw_data) >> 8)};
 
 	while (retries--) {
-		if (kStatus_Success == i2c0_write_reg(VEML6075_ADDR, reg, data, 2, false)) {
+		if (kStatus_Success == i2c0_write_reg(VEML6075_ADDR, reg, data, 2)) {
 			// success
 			return;
 		}

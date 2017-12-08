@@ -56,6 +56,13 @@ STC3100::STC3100(int32_t sensorID) {
     @brief  Setups the HW
  */
 /**************************************************************************/
+
+/**
+ *
+ * @param r_sens Sense resistor in milliohms
+ * @param res Sampling mode
+ * @return
+ */
 bool STC3100::init(uint32_t r_sens, stc3100_res_t res) {
 
 	_r_sens = r_sens;
@@ -123,7 +130,7 @@ void STC3100::computeVoltage()
 	t = th;
 	t <<= 8;
 	val = (t & 0xFF00) | tl;
-
+	// LSB is 2.44mV
 	_voltage = (float)  val * 0.00244;
 
 }
@@ -137,6 +144,10 @@ void STC3100::computeCharge()
 	LOG_INFO("Charge L=0x%x H=0x%x\r\n", tl, th);
 
 	val = compute2Complement(th, tl);
+	//
+	// charge is in mA.h
+	//
+	// LSB = 6.7 uV.h
 	_charge = (val * 6.7 / _r_sens);
 
 }
@@ -149,6 +160,7 @@ void STC3100::computeCurrent()
 	LOG_INFO("Current L=0x%x H=0x%x\r\n", tl, th);
 
 	val = compute2Complement(th, tl);
+	// LSB = 11.77uV
 	_current = (val * 11.77 / _r_sens);
 
 }
@@ -176,7 +188,16 @@ float STC3100::getCorrectedVoltage(float int_res) {
 
 }
 
+/**
+ *
+ * @return The average current consumption in ma
+ */
+float STC3100::getAverageCurrent(void) {
 
+	float el_time_h = millis() / (3600 * 1000);
+	float res = _charge / el_time_h;
+
+}
 
 /***************************************************************************
  PRIVATE FUNCTIONS

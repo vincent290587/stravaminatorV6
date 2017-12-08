@@ -75,10 +75,12 @@ public:
 
 	bool refresh();
 
-	float getCurrent() { return _current;}
-	float getVoltage() {return _voltage;}
-	float getTemperature() {return _temperature;}
+	float getCurrent() const { return _current;}
+	float getVoltage() const {return _voltage;}
+	float getTemperature() const {return _temperature;}
 	float getCorrectedVoltage(float int_res);
+
+	float getAverageCurrent(void);
 
 	float getCharge() const {
 		return _charge;
@@ -90,13 +92,13 @@ private:
 	int32_t _r_sens;
 	tSTC31000Data _stc_data;
 
-	// voltage
+	/**Value of the battery voltage in V*/
 	float _voltage;
 	/**Value of the current in mA*/
 	float _current;
-	/**Value of the temperature in C*/
+	/**Value of the temperature in °C*/
 	float _temperature;
-	/**Value of the current charge of the battery in mAh*/
+	/**Value of the charge which went through the batt in mA.h */
 	float _charge;
 	// counter
 	float _counter;

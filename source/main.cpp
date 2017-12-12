@@ -59,7 +59,7 @@ int main(void) {
 		// debug LED
 		if (led_state.getAge() > 1000) {
 
-			if (led_state.getData()) {
+			if (led_state == true) {
 				led_state = false;
 //				power_manager_run(kAPP_PowerModeRun120);
 			} else {

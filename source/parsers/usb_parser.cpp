@@ -20,11 +20,14 @@ void usb_parser_decode(char c) {
 	switch (nordic.encode(c)) {
 	case _SENTENCE_LOC:
 
-		locator.simu_lat = (float)nordic.getLat() / 10000000.;
-		locator.simu_lon = (float)nordic.getLon() / 10000000.;
-		locator.sec_jour = nordic.getSecJ();
+		locator.sim_loc.m_data.lat = (float)nordic.getLat() / 10000000.;
+		locator.sim_loc.m_data.lon = (float)nordic.getLon() / 10000000.;
+		locator.sim_loc.m_data.alt = (float)nordic.getEle();
+		locator.sim_loc.m_data.utc_time = nordic.getSecJ();
 
-		usb_send_chars("New LOC received \r\n");
+		locator.sim_loc.setIsUpdated();
+
+		usb_send_chars("New simulation LOC received \r\n");
 
 		break;
 	default:

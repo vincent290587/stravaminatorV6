@@ -8,7 +8,7 @@
 #ifndef SOURCE_PARAMETERS_H_
 #define SOURCE_PARAMETERS_H_
 
-#define LNS_OVER_GPS_DTIME_MS     8000
+#define LNS_OVER_GPS_DTIME_S      6
 
 #define SENSORS_READING_DELAY     100
 

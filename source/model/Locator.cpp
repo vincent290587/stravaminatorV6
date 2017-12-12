@@ -43,8 +43,6 @@ uint32_t locator_encode_char(char c) {
 Locator::Locator() {
 	m_is_updated = false;
 
-	sec_jour = 0;
-
 	// Initialize all the uninitialized TinyGPSCustom objects
 	for (int i = 0; i < 4; ++i)
 	{
@@ -55,6 +53,85 @@ Locator::Locator() {
 
 /**
  *
+ * @return
+ */
+eLocationSource Locator::getUpdateSource() {
+
+	if (sim_loc.hasNewData()) {
+		return eLocationSourceSimu;
+	}
+
+	if (gps_loc.hasNewData()) {
+		return eLocationSourceGPS;
+	}
+
+	// NRF has newer data than GPS
+	if (nrf_loc.hasNewData() &&
+			nrf_loc.m_data.utc_time > gps_loc.m_data.utc_time + LNS_OVER_GPS_DTIME_S) {
+		return eLocationSourceNRF;
+	}
+
+	return eLocationSourceNone;
+}
+
+/**
+ *
+ * @return
+ */
+bool Locator::isUpdated()      {
+
+	if (eLocationSourceNone != this->getUpdateSource()) {
+		return true;
+	}
+	return false;
+}
+
+/**
+ *
+ * @param lat
+ * @param lon
+ * @param sec_
+ * @return
+ */
+eLocationSource Locator::getPosition(float& lat, float& lon, uint32_t& sec) {
+
+	eLocationSource res = this->getUpdateSource();
+
+	switch (res) {
+	case eLocationSourceSimu:
+	{
+		sLocationData& data = sim_loc.getData();
+		lat = data.lat;
+		lon = data.lon;
+		sec = data.utc_time;
+	}
+	break;
+	case eLocationSourceNRF:
+	{
+		sLocationData& data = nrf_loc.getData();
+		lat = data.lat;
+		lon = data.lon;
+		sec = data.utc_time;
+	}
+	break;
+	case eLocationSourceGPS:
+	{
+		sLocationData& data = gps_loc.getData();
+		lat = data.lat;
+		lon = data.lon;
+		sec = data.utc_time;
+	}
+	break;
+	case eLocationSourceNone:
+	default:
+		break;
+	}
+
+	return res;
+}
+
+/**
+ * Used to get the data from the GPS parsing module
  */
 void Locator::tasks() {
 
@@ -62,15 +139,17 @@ void Locator::tasks() {
 		m_is_updated = false;
 
 		if (gps.time.isUpdated()) {
-			sec_jour = get_sec_jour(gps.time.hour(), gps.time.minute(), gps.time.second());
+			gps_loc.m_data.utc_time = get_sec_jour(gps.time.hour(), gps.time.minute(), gps.time.second());
 		}
 
 		if (gps.location.isValid()) {
 
-			m_speed    = gps.speed.kmph();
-			m_altitude = gps.altitude.meters();
-			gps_lat    = gps.location.lat();
-			gps_lon    = gps.location.lng();
+			gps_loc.m_data.speed  = gps.speed.kmph();
+			gps_loc.m_data.alt    = gps.altitude.meters();
+			gps_loc.m_data.lat    = gps.location.lat();
+			gps_loc.m_data.lon    = gps.location.lng();
+
+			gps_loc.setIsUpdated();
 
 			if (snr[0].isUpdated()) {
 
@@ -88,75 +167,4 @@ void Locator::tasks() {
 
 		}
 	}
-}
-
-/**
- *
- * @return
- */
-bool Locator::isUpdated()      {
-
-	if (simu_lat.hasNewData()) {
-		return true;
-	}
-
-	// NRF has newer data than GPS
-	if (nrf_lon.hasNewData() &&
-			gps_lat.getAge() > nrf_lat.getAge() + LNS_OVER_GPS_DTIME_MS) {
-		return true;
-	}
-
-	if (gps_lon.hasNewData()) {
-		return sec_jour.hasNewData();
-	}
-
-	return false;
-}
-
-
-/**
- *
- * @param lat
- * @param lon
- * @return
- */
-int Locator::getPosition(float& lat, float& lon) {
-
-	// pick simulation positioning first
-	if (simu_lat.hasNewData()) {
-		lat = simu_lat.getData();
-		lon = simu_lon.getData();
-		return 0;
-	}
-
-	// pick only LNS positioning if the GPS data is old
-	if (nrf_lon.hasNewData() &&
-				gps_lat.getAge() > nrf_lat.getAge() + LNS_OVER_GPS_DTIME_MS) {
-		lat = nrf_lat.getData();
-		lon = nrf_lon.getData();
-		return 0;
-	}
-
-	if (gps_lon.hasNewData()) {
-		lat = gps_lat.getData();
-		lon = gps_lon.getData();
-		return 0;
-	}
-
-	return 1;
-}
-
-
-/**
- *
- * @param lat
- * @param lon
- * @param sec_
- * @return
- */
-int Locator::getPosition(float& lat, float& lon, uint32_t& sec_) {
-
-	sec_ = sec_jour.getData();
-
-	return this->getPosition(lat, lon);
 }

@@ -11,6 +11,21 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+typedef enum {
+	eLocationSourceNone,
+	eLocationSourceSimu,
+	eLocationSourceNRF,
+	eLocationSourceGPS,
+} eLocationSource;
+
+typedef struct {
+	float lat;
+	float lon;
+	float alt;
+	float speed;
+	uint32_t utc_time;
+} sLocationData;
+
 #if defined(__cplusplus)
 extern "C" {
 #endif /* _cplusplus */
@@ -31,25 +46,15 @@ public:
 
 	void tasks();
 
-	int getPosition(float& lat, float& lon);
-	int getPosition(float& lat, float& lon, uint32_t& sec_);
+	eLocationSource getPosition(float& lat, float& lon, uint32_t& sec_);
+
+	eLocationSource getUpdateSource();
 
 	bool isUpdated();
 
-	NData<unsigned long int> sec_jour;
-
-	float m_speed, m_altitude;
-
-	UData<float> gps_lat;
-	NData<float> gps_lon;
-
-	NData<float> simu_lat;
-	NData<float> simu_lon;
-
-	UData<float> nrf_lat;
-	NData<float> nrf_lon;
-	NData<float> nrf_alt;
-	NData<float> nrf_utc_s;
+	NData<sLocationData> nrf_loc;
+	NData<sLocationData> sim_loc;
+	NData<sLocationData> gps_loc;
 
 private:
 

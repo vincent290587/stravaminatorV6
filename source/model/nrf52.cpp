@@ -70,10 +70,7 @@ static void _post_transfer(void* p_context) {
 	}
 
 	if (spis_decode_hrm(masterRxData, &nrf52_data.hrm_info)) {
-		hrm.data.bpm = nrf52_data.hrm_info.bpm;
-		hrm.data.rr  = nrf52_data.hrm_info.rr;
-
-		hrm.setIsUpdated();
+		hrm = nrf52_data.hrm_info;
 	}
 
 	if (spis_decode_bsc(masterRxData, &nrf52_data.bsc_info)) {
@@ -84,7 +81,7 @@ static void _post_transfer(void* p_context) {
 	}
 
 	if (spis_decode_fec(masterRxData, &nrf52_data.fec_info)) {
-
+		fec_info = nrf52_data.fec_info;
 	}
 
 	memset(&masterRxData, 0, sizeof(masterRxData));

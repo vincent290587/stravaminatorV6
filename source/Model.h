@@ -16,6 +16,7 @@
 #include "Nordic.h"
 #include "Locator.h"
 #include "Cadence.h"
+#include "HRM.h"
 #include "BoucleCRS.h"
 #include "PowerManager.h"
 #include "DebugDisplay.h"
@@ -73,6 +74,10 @@ extern MS5637        baro;
 
 extern Cadence       cad;
 
-extern sSpisTxInfoPage0 nrf52_data;
+extern HRM           hrm;
+
+extern sFecControl   fec_control;
+
+extern sSpisRxInfoPage0 nrf52_page0;
 
 #endif /* SOURCE_MODEL_H_ */

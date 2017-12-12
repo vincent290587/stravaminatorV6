@@ -56,17 +56,22 @@ static void _post_transfer(void* p_context) {
 
 	W_SYSVIEW_OnTaskStopExec(NRF52_TASK);
 
+	sSpisTxInfoPage0 nrf52_data;
+
 	nrf52_data.flags = masterRxData[TX_BUFF_FLAGS_POS];
 
 	if (spis_decode_lns(masterRxData, &nrf52_data.lns_info)) {
-		locator.nrf_alt = nrf52_data.lns_info.lat;
-		locator.nrf_lon = nrf52_data.lns_info.lon;
-		locator.nrf_alt = nrf52_data.lns_info.ele;
-		locator.nrf_utc_s = nrf52_data.lns_info.secj;
+		locator.nrf_loc.m_data.lat = nrf52_data.lns_info.lat;
+		locator.nrf_loc.m_data.lon = nrf52_data.lns_info.lon;
+		locator.nrf_loc.m_data.alt = nrf52_data.lns_info.ele;
+		locator.nrf_loc.m_data.utc_time = nrf52_data.lns_info.secj;
+
+		locator.nrf_loc.setIsUpdated();
 	}
 
 	if (spis_decode_hrm(masterRxData, &nrf52_data.hrm_info)) {
-
+		hrm.bpm = nrf52_data.hrm_info.bpm;
+		hrm.rr  = nrf52_data.hrm_info.rr;
 	}
 
 	if (spis_decode_bsc(masterRxData, &nrf52_data.bsc_info)) {
@@ -110,7 +115,10 @@ void nrf52_prepare_buffer(void) {
 
 	sSpisRxInfo data;
 
-	memset(&data, 0, sizeof(sSpisRxInfo));
+	memset(&data, 0, sizeof(data));
+
+	data.page_id = eSpiRxPage0;
+	memcpy(&data.pages.page0, &nrf52_page0, sizeof(nrf52_page0));
 
 	spis_encode_page0(&data, masterTxData);
 

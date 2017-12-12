@@ -38,4 +38,6 @@ MS5637        baro;
 
 Cadence       cad;
 
-sSpisTxInfoPage0 nrf52_data;
+HRM           hrm;
+
+sSpisRxInfoPage0 nrf52_page0;

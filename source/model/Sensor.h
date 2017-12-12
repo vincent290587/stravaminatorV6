@@ -33,6 +33,14 @@ public:
 		m_new_data     = true;
 	}
 
+	void clearIsUpdated(void) {
+		m_new_data     = false;
+	}
+
+	bool isUpdated(void) {
+		return m_new_data;
+	}
+
 	uint32_t getAge() {
 		return (millis() - m_last_updated);
 	}

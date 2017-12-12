@@ -21,8 +21,6 @@
 
 #define SPI_BAUDRATE          5000000
 
-#define TRANSFER_SIZE         64U        /*! Transfer dataSize */
-
 static uint8_t LS027_SpiBuf[1 + LS027_BUFFER_SIZE + (240*2) + 1]; /* buffer for the display */
 
 /* some aspects of the protocol are pretty timing sensitive... */
@@ -39,8 +37,6 @@ static const uint8_t clr[] = { 0xFE, 0xFD, 0xFB, 0xF7, 0xEF, 0xDF, 0xBF, 0x7F };
  * Variables
  ******************************************************************************/
 
-static uint8_t masterTxData[TRANSFER_SIZE] = {0U};
-
 static uint8_t LS027_sharpmem_vcom;
 
 static spi_transfer_settings spi_settings;
@@ -50,7 +46,6 @@ static uint8_t m_is_color_inverted = 0;
 static sXferTask m_spi_task;
 
 /* Internal method prototypes */
-static void WriteData(uint8_t data);
 static void CE_SetVal ();
 static void CE_ClrVal ();
 /*
@@ -78,12 +73,6 @@ static uint8_t LS027_RevertBits(uint8_t data) {
 	}
 	return tmp;
 }
-
-static inline void WriteData(uint8_t data)
-{
-	masterTxData[spi_settings.spi_tx_data_length++] = data;
-}
-
 
 /**
  * Starts a SPI transfer
@@ -115,7 +104,7 @@ static void ls027_spi_init() {
 	// fill settings
 	spi_settings.configFlags        = kDSPI_MasterCtar0 | LS027_CE_PIN;
 	spi_settings.masterRxData       = 0;
-	spi_settings.masterTxData       = masterTxData;
+	spi_settings.masterTxData       = 0;
 	spi_settings.spi_tx_data_length = 0;
 
 }
@@ -180,43 +169,6 @@ static int ls027_update_full(void* context)
 
 	return 0;
 }
-
-
-/*
- ** ===================================================================
- **     Method      :  ls027_update_line (component SharpMemDisplay)
- **     Description :
- **         Updates a single line on the LCD
- **     Parameters  :
- **         NAME            - DESCRIPTION
- **         line            - Line number to update, range 0-93
- **       * dataP           - Pointer to data, must be array
- **
- **     Returns     : Nothing
- ** ===================================================================
- */
-static void ls027_update_line(uint8_t line, uint8_t *dataP)
-{
-	int i;
-
-	/* Send the write command */
-	CE_SetVal();
-	WriteData(LS027_BIT_WRITECMD | LS027_sharpmem_vcom);
-	LS027_TOGGLE_VCOM;
-
-	/* Send the address for line */
-	WriteData(line+1);
-
-	/* Send data byte for selected line */
-	for (i=0; i<(LS027_HW_WIDTH/8); i++) {
-		WriteData(LS027_RevertBits(dataP[i]));
-	}
-	/* Send trailing 16 bits  */
-	WriteData(0x00);
-	WriteData(0x00);
-	CE_ClrVal();
-}
-
 
 /**
  *

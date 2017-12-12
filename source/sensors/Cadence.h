@@ -8,18 +8,11 @@
 #ifndef SOURCE_MODEL_CADENCE_H_
 #define SOURCE_MODEL_CADENCE_H_
 
-#include "UData.h"
 #include "stdint.h"
 
-class Cadence {
-public:
-	Cadence() {}
-
-	UData<uint16_t> cadence;
-	NData<float>    speed;
-
-private:
-};
-
+typedef struct {
+	uint16_t cadence;
+	float    speed;
+} sCadenceData;
 
 #endif /* SOURCE_MODEL_CADENCE_H_ */

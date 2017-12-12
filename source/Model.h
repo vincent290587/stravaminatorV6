@@ -8,7 +8,7 @@
 #ifndef SOURCE_MODEL_H_
 #define SOURCE_MODEL_H_
 
-#include "UData.h"
+#include "Sensor.h"
 #include "ListePoints.h"
 #include "mk64f_parser.h"
 #include "Segment.h"
@@ -16,7 +16,6 @@
 #include "Nordic.h"
 #include "Locator.h"
 #include "Cadence.h"
-#include "HRM.h"
 #include "BoucleCRS.h"
 #include "PowerManager.h"
 #include "DebugDisplay.h"
@@ -72,12 +71,14 @@ extern VEML6075      veml;
 
 extern MS5637        baro;
 
-extern Cadence       cad;
-
-extern HRM           hrm;
-
 extern sFecControl   fec_control;
 
-extern sSpisRxInfoPage0 nrf52_page0;
+extern Sensor<sCadenceData> cad;
+
+extern Sensor<sHrmInfo>     hrm;
+
+extern Sensor<sFecInfo>     fec_info;
+
+extern sSpisRxInfoPage0     nrf52_page0;
 
 #endif /* SOURCE_MODEL_H_ */

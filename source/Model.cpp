@@ -36,8 +36,10 @@ VEML6075      veml;
 
 MS5637        baro;
 
-Cadence       cad;
+Sensor<sCadenceData> cad;
 
-HRM           hrm;
+Sensor<sHrmInfo>     hrm;
 
-sSpisRxInfoPage0 nrf52_page0;
+Sensor<sFecInfo>     fec_info;
+
+sSpisRxInfoPage0     nrf52_page0;

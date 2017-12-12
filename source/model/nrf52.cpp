@@ -70,13 +70,17 @@ static void _post_transfer(void* p_context) {
 	}
 
 	if (spis_decode_hrm(masterRxData, &nrf52_data.hrm_info)) {
-		hrm.bpm = nrf52_data.hrm_info.bpm;
-		hrm.rr  = nrf52_data.hrm_info.rr;
+		hrm.data.bpm = nrf52_data.hrm_info.bpm;
+		hrm.data.rr  = nrf52_data.hrm_info.rr;
+
+		hrm.setIsUpdated();
 	}
 
 	if (spis_decode_bsc(masterRxData, &nrf52_data.bsc_info)) {
-		cad.cadence = (uint16_t) nrf52_data.bsc_info.cadence;
-		cad.speed   = ((float) nrf52_data.bsc_info.speed) / 10.;
+		cad.data.cadence = (uint16_t) nrf52_data.bsc_info.cadence;
+		cad.data.speed   = ((float) nrf52_data.bsc_info.speed) / 10.;
+
+		cad.setIsUpdated();
 	}
 
 	if (spis_decode_fec(masterRxData, &nrf52_data.fec_info)) {

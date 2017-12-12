@@ -6,6 +6,7 @@
  */
 
 #include <nrf52.h>
+#include "assert.h"
 #include "dma_spi0.h"
 #include "segger_wrapper.h"
 #include "spi_scheduler.h"
@@ -97,6 +98,8 @@ void nrf52_init(void) {
 	spi_settings.masterTxData       = masterTxData;
 	spi_settings.spi_tx_data_length = 0;
 
+	assert(TRANSFER_SIZE < RX_BUFF_TOT_SIZE);
+	assert(TRANSFER_SIZE < TX_BUFF_TOT_SIZE);
 }
 
 void nrf52_refresh(void) {

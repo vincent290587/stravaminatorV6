@@ -9,10 +9,11 @@
 #define __BUTTON_H__
 
 typedef enum {
-	k_Buttons_no_event,
-	k_Buttons_press_left,
-	k_Buttons_press_right,
-	k_Buttons_press_center,
+	k_Buttons_no_event     = 0U,
+	k_Buttons_interrupt    = 1U,
+	k_Buttons_press_left   = 2U,
+	k_Buttons_press_right  = 3U,
+	k_Buttons_press_center = 4U,
 } e_buttons_event;
 
 

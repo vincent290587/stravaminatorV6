@@ -73,21 +73,9 @@ e_buttons_event buttons_tasks(void) {
 	e_buttons_event res = k_Buttons_no_event;
 
 	if (g_ButtonPress_instant &&
-			(millis() - g_ButtonPress_instant > 50)) {
+			(millis() - g_ButtonPress_instant > 2)) {
 
-		switch (g_ButtonPress) {
-		case 1:
-			res = k_Buttons_press_left;
-			break;
-		case 2:
-			res = k_Buttons_press_right;
-			break;
-		case 3:
-			res = k_Buttons_press_center;
-			break;
-		default:
-			break;
-		}
+		res = g_ButtonPress;
 
 		g_ButtonPress         = 0;
 		g_ButtonPress_instant = 0;

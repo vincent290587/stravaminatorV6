@@ -13,11 +13,11 @@
 #include "composite.h"
 #include "power_manager.h"
 #include "Model.h"
+#include "spi_scheduler.h"
+#include "i2c_scheduler.h"
 
 #include "int_i2c0.h"
-#include "fxos.h"
 #include "dma_spi0.h"
-#include "spi_scheduler.h"
 #include "uart0.h"
 #include "uart2.h"
 
@@ -44,8 +44,7 @@ int main(void) {
 	// LCD driver
 	lcd.begin();
 
-//	fxos_handle_t fxos_handle;
-//	FXOS_Init(&fxos_handle);
+	i2c_scheduling_init();
 
 	boucle_crs.init();
 
@@ -99,7 +98,6 @@ int main(void) {
 
 			dma_spi0_mngr_tasks_start();
 
-
 //          // test rapidite math
 //			W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
 //			for (int i = 0; i < 1000; i++) {
@@ -125,8 +123,6 @@ int main(void) {
 //					i2c_buff[0], i2c_buff[1],
 //					i2c_buff[2], i2c_buff[3]);
 
-//			fxos_tasks(&fxos_handle);
-
 			W_SYSVIEW_OnIdle();
 		}
 
@@ -135,6 +131,8 @@ int main(void) {
 		locator.tasks();
 
 		uaparser.tasks();
+
+		i2c_scheduling_tasks();
 
 	}
 

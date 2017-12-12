@@ -77,7 +77,7 @@
 #define LCD_TASK                       (TASK_BASE + 7u)
 #define SD_ACCESS_TASK                 (TASK_BASE + 8u)
 #define SEG_PERF_TASK                  (TASK_BASE + 9u)
-#define DISPLAY_TASK1                  (TASK_BASE + 10u)
+#define NRF52_TASK                     (TASK_BASE + 10u)
 #define DISPLAY_TASK2                  (TASK_BASE + 11u)
 #define DISPLAY_TASK3                  (TASK_BASE + 12u)
 #define DISPLAY_TASK4                  (TASK_BASE + 13u)

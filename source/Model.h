@@ -10,16 +10,21 @@
 
 #include "UData.h"
 #include "ListePoints.h"
+#include "mk64f_parser.h"
 #include "Segment.h"
 #include "Parcours.h"
 #include "Nordic.h"
 #include "Locator.h"
+#include "Cadence.h"
 #include "BoucleCRS.h"
 #include "PowerManager.h"
 #include "DebugDisplay.h"
 #include "TSharpMem.h"
 #include "TinyGPS++.h"
 #include "UAParser.h"
+#include "STC3100.h"
+#include "VEML6075.h"
+#include "MS5637.h"
 
 typedef struct {
 	float lat;
@@ -59,5 +64,15 @@ extern DebugDisplay  sdisplay;
 extern TSharpMem     lcd;
 
 extern UAParser      uaparser;
+
+extern STC3100       stc;
+
+extern VEML6075      veml;
+
+extern MS5637        baro;
+
+extern Cadence       cad;
+
+extern sSpisTxInfoPage0 nrf52_data;
 
 #endif /* SOURCE_MODEL_H_ */

@@ -29,3 +29,13 @@ DebugDisplay  sdisplay;
 TSharpMem     lcd;
 
 UAParser      uaparser;
+
+STC3100       stc;
+
+VEML6075      veml;
+
+MS5637        baro;
+
+Cadence       cad;
+
+sSpisTxInfoPage0 nrf52_data;

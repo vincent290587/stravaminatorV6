@@ -223,3 +223,29 @@ float percentageBatt(float tensionValue, float current) {
     return fp_;
 }
 
+
+void encode_uint16 (uint8_t* dest, uint16_t input) {
+	dest[0] = (uint8_t) (input & 0xFF);
+	dest[1] = (uint8_t) ((input & 0xFF00) >> 8);
+}
+
+void encode_uint32 (uint8_t* dest, uint32_t input) {
+	dest[0] = (uint8_t) (input & 0xFF);
+	dest[1] = (uint8_t) ((input & 0xFF00) >> 8);
+	dest[2] = (uint8_t) ((input & 0xFF0000) >> 16);
+	dest[3] = (uint8_t) ((input & 0xFF000000) >> 24);
+}
+
+uint16_t decode_uint16 (uint8_t* dest) {
+	uint16_t res = dest[0];
+	res |=  dest[1] << 8;
+	return res;
+}
+
+uint32_t decode_uint32 (uint8_t* dest) {
+	uint32_t res = dest[0];
+	res |=  dest[1] << 8;
+	res |=  dest[2] << 16;
+	res |=  dest[3] << 24;
+	return res;
+}

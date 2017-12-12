@@ -10,4 +10,6 @@
 
 #define LNS_OVER_GPS_DTIME_MS     8000
 
+#define SENSORS_READING_DELAY     100
+
 #endif /* SOURCE_PARAMETERS_H_ */

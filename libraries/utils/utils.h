@@ -41,6 +41,14 @@ float compute2Complement(uint8_t msb, uint8_t lsb);
 
 float percentageBatt(float tensionValue, float current);
 
+void encode_uint16 (uint8_t* dest, uint16_t input);
+
+void encode_uint32 (uint8_t* dest, uint32_t input);
+
+uint16_t decode_uint16 (uint8_t* dest);
+
+uint32_t decode_uint32 (uint8_t* dest);
+
 #ifdef	__cplusplus
 }
 #endif

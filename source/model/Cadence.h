@@ -15,9 +15,10 @@ class Cadence {
 public:
 	Cadence() {}
 
-private:
-	NData<uint16_t> cadence;
+	UData<uint16_t> cadence;
 	NData<float>    speed;
+
+private:
 };
 
 

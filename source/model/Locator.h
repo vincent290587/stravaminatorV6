@@ -48,6 +48,8 @@ public:
 
 	UData<float> nrf_lat;
 	NData<float> nrf_lon;
+	NData<float> nrf_alt;
+	NData<float> nrf_utc_s;
 
 private:
 

@@ -256,4 +256,18 @@ uint32_t decode_uint32 (uint8_t* dest) {
 	return res;
 }
 
+void const_char_to_buffer(const char *str_, uint8_t *buff_, uint16_t max_size) {
 
+	memset(buff_, 0, max_size);
+
+	for (uint8_t i=0; i < strlen(str_); i++) {
+
+		if (i==max_size) {
+			return;
+		}
+
+		buff_[i] = str_[i];
+
+	}
+
+}

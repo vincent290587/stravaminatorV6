@@ -13,6 +13,7 @@
 #include "segger_wrapper.h"
 #include "spi_scheduler.h"
 
+
 /**
  *
  */
@@ -37,7 +38,8 @@ bool BoucleCRS::isTime() {
  */
 void BoucleCRS::init() {
 
-	// TODO turn GPS ON
+	// turn GPS ON
+	gps_mgmt.awake();
 
 	init_liste_segments();
 

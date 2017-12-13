@@ -51,6 +51,8 @@ uint16_t decode_uint16 (uint8_t* dest);
 
 uint32_t decode_uint32 (uint8_t* dest);
 
+void const_char_to_buffer(const char *str_, uint8_t *buff_, uint16_t max_size);
+
 #ifdef	__cplusplus
 }
 #endif

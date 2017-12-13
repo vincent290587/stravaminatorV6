@@ -6,9 +6,9 @@
  */
 
 #include "segger_wrapper.h"
-#include "TinyGPS++.h"
 #include "parameters.h"
 #include "utils.h"
+#include "TinyGPS++.h"
 #include <Locator.h>
 
 
@@ -27,8 +27,6 @@ TinyGPSCustom snr[4];
  * @return
  */
 uint32_t locator_encode_char(char c) {
-
-	//LOG_INFO("%c", c);
 
 	if (gps.encode(c)) {
 

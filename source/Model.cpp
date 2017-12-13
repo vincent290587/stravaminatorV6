@@ -35,6 +35,8 @@ VEML6075      veml;
 
 MS5637        baro;
 
+GPS_MGMT           gps_mgmt;
+
 Sensor<sCadenceData> cad;
 
 Sensor<sHrmInfo>     hrm;

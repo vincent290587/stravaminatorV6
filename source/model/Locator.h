@@ -37,6 +37,7 @@ uint32_t locator_encode_char(char c);
 
 #include "Sensor.h"
 
+
 /**
  *
  */

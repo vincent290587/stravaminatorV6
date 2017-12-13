@@ -13,6 +13,7 @@
 #include "spi_scheduler.h"
 #include "parameters.h"
 #include "nrf52.h"
+#include "Locator.h"
 
 
 /**
@@ -40,8 +41,8 @@ bool BoucleFEC::isTime() {
  */
 void BoucleFEC::init() {
 
-	// TODO turn GPS OFF
-	uart2_send(uint8_t* data, size_t length);
+	// turn GPS OFF
+	gps_mgmt.standby();
 
 	m_needs_init = false;
 }

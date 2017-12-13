@@ -20,6 +20,7 @@
 #include "PowerManager.h"
 #include "DebugDisplay.h"
 #include "Vue.h"
+#include "GPSMGMT.h"
 #include "TinyGPS++.h"
 #include "UAParser.h"
 #include "STC3100.h"
@@ -71,6 +72,8 @@ extern STC3100       stc;
 extern VEML6075      veml;
 
 extern MS5637        baro;
+
+extern GPS_MGMT      gps_mgmt;
 
 extern sFecControl   fec_control;
 

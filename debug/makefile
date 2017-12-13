@@ -10,6 +10,7 @@ RM := rm -rf
 -include sources.mk
 -include utilities/subdir.mk
 -include startup/subdir.mk
+-include source/vue/subdir.mk
 -include source/usb/subdir.mk
 -include source/sensors/subdir.mk
 -include source/sd/subdir.mk

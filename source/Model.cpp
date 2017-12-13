@@ -22,11 +22,15 @@ Locator       locator;
 
 BoucleCRS     boucle_crs;
 
+BoucleFEC     boucle_fec;
+
 PowerManager  pwManager;
 
 DebugDisplay  sdisplay;
 
 TSharpMem     lcd;
+
+Vue           vue;
 
 UAParser      uaparser;
 

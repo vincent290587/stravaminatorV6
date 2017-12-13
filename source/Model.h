@@ -17,9 +17,11 @@
 #include "Locator.h"
 #include "Cadence.h"
 #include "BoucleCRS.h"
+#include "BoucleFEC.h"
 #include "PowerManager.h"
 #include "DebugDisplay.h"
 #include "TSharpMem.h"
+#include "Vue.h"
 #include "TinyGPS++.h"
 #include "UAParser.h"
 #include "STC3100.h"
@@ -57,11 +59,15 @@ extern Locator       locator;
 
 extern BoucleCRS     boucle_crs;
 
+extern BoucleFEC     boucle_fec;
+
 extern PowerManager  pwManager;
 
 extern DebugDisplay  sdisplay;
 
 extern TSharpMem     lcd;
+
+extern Vue           vue;
 
 extern UAParser      uaparser;
 

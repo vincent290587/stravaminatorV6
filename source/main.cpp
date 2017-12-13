@@ -15,6 +15,7 @@
 #include "Model.h"
 #include "spi_scheduler.h"
 #include "i2c_scheduler.h"
+#include "nrf52.h"
 
 #include "int_i2c0.h"
 #include "dma_spi0.h"
@@ -42,11 +43,14 @@ int main(void) {
 	uaparser.init();
 
 	// LCD driver
-	lcd.begin();
+	vue.init();
+
+	nrf52_init();
 
 	i2c_scheduling_init();
 
-	boucle_crs.init();
+//	boucle_crs.init();
+	boucle_fec.init();
 
 	for(;;) { /* Infinite loop to avoid leaving the main function */
 
@@ -54,7 +58,8 @@ int main(void) {
 		if (pwManager.isUsbConnected()) CompositeTask();
 
 		// segments tasks
-		boucle_crs.tasks();
+//		boucle_crs.tasks();
+		boucle_fec.tasks();
 
 		// debug LED
 		if (led_state.getAge() > 1000) {

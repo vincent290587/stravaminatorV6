@@ -106,6 +106,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/display}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/sensors}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/scheduling}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/vue}&quot;"/>
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
 									<listOptionValue builtIn="false" value="../startup"/>
@@ -149,6 +150,7 @@
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/display}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/sensors}&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/scheduling}&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${workspace_loc:/${ProjName}/source/vue}&quot;"/>
 									<listOptionValue builtIn="false" value="../board"/>
 									<listOptionValue builtIn="false" value="../drivers"/>
 									<listOptionValue builtIn="false" value="../startup"/>

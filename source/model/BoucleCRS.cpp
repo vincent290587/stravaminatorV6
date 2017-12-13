@@ -16,7 +16,7 @@
 /**
  *
  */
-BoucleCRS::BoucleCRS() : Boucle() {
+BoucleCRS::BoucleCRS() : BoucleInterface() {
 }
 
 /**

@@ -10,10 +10,10 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include "Boucle.h"
+#include "BoucleInterface.h"
 
 
-class BoucleCRS : public Boucle {
+class BoucleCRS : virtual public BoucleInterface {
 public:
 	BoucleCRS();
 	void init();

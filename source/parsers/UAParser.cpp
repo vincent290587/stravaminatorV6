@@ -25,18 +25,24 @@ void UAParser::init(void) {
  */
 void UAParser::tasks(void) {
 
-	switch (buttons_tasks()) {
-		case k_Buttons_press_left:
-			// TODO
-			break;
-		case k_Buttons_press_right:
-			// TODO
-			break;
-		case k_Buttons_press_center:
-			// TODO
-			break;
-		default:
-			break;
-		}
+	e_buttons_event event = buttons_tasks();
+
+	// propagate to the view
+	vue.tasks(event);
+
+	// potentially propagate to the model
+	switch (event) {
+	case k_Buttons_press_left:
+		// TODO
+		break;
+	case k_Buttons_press_right:
+		// TODO
+		break;
+	case k_Buttons_press_center:
+		// TODO
+		break;
+	default:
+		break;
+	}
 
 }

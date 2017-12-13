@@ -11,6 +11,8 @@
 
 extern "C" void __cxa_pure_virtual(void);
 
+#define adagfxswap(a, b) { int16_t t = a; a = b; b = t; }
+
 #include "gfxfont.h"
 
 class Adafruit_GFX : public Print {

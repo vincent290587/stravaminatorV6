@@ -32,9 +32,16 @@ static sXferTask m_spi_task;
 
 static void _pre_transfer(void* p_context) {
 
-	nrf52_prepare_buffer();
+	sSpisRxInfo data;
 
-    return;
+	memset(&data, 0, sizeof(data));
+
+	data.page_id = eSpiRxPage0;
+	memcpy(&data.pages.page0, &nrf52_page0, sizeof(nrf52_page0));
+
+	spis_encode_page0(&data, masterTxData);
+
+	return;
 }
 
 static int _start_transfer(void* p_context) {
@@ -115,15 +122,4 @@ void nrf52_refresh(void) {
 
 }
 
-void nrf52_prepare_buffer(void) {
 
-	sSpisRxInfo data;
-
-	memset(&data, 0, sizeof(data));
-
-	data.page_id = eSpiRxPage0;
-	memcpy(&data.pages.page0, &nrf52_page0, sizeof(nrf52_page0));
-
-	spis_encode_page0(&data, masterTxData);
-
-}

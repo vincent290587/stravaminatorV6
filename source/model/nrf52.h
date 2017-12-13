@@ -12,6 +12,4 @@ void nrf52_init(void);
 
 void nrf52_refresh(void);
 
-void nrf52_prepare_buffer(void);
-
 #endif /* SOURCE_MODEL_NRF52_H_ */

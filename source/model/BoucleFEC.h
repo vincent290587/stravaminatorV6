@@ -8,7 +8,7 @@
 #ifndef SOURCE_MODEL_BOUCLEFEC_H_
 #define SOURCE_MODEL_BOUCLEFEC_H_
 
-#include <Boucle.h>
+#include <model/BoucleInterface.h>
 
 class BoucleFEC: virtual public BoucleInterface {
 public:

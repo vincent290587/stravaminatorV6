@@ -35,7 +35,7 @@ uint32_t locator_encode_char(char c);
 #if defined(__cplusplus)
 }
 
-#include "UData.h"
+#include "Sensor.h"
 
 /**
  *
@@ -52,9 +52,9 @@ public:
 
 	bool isUpdated();
 
-	NData<sLocationData> nrf_loc;
-	NData<sLocationData> sim_loc;
-	NData<sLocationData> gps_loc;
+	Sensor<sLocationData> nrf_loc;
+	Sensor<sLocationData> sim_loc;
+	Sensor<sLocationData> gps_loc;
 
 private:
 

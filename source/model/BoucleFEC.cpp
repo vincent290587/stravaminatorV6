@@ -19,7 +19,6 @@
  *
  */
 BoucleFEC::BoucleFEC() {
-	// TODO Auto-generated constructor stub
 
 }
 
@@ -41,6 +40,10 @@ bool BoucleFEC::isTime() {
  */
 void BoucleFEC::init() {
 
+	// TODO turn GPS OFF
+	uart2_send(uint8_t* data, size_t length);
+
+	m_needs_init = false;
 }
 
 /**
@@ -48,16 +51,22 @@ void BoucleFEC::init() {
  */
 void BoucleFEC::run() {
 
-	pwManager.switchToRun120();
+	// CPU reduced speed
+	pwManager.switchToRun24();
+
+	if (m_needs_init) this->init();
 
 	nrf52_refresh();
 
 	dma_spi0_mngr_tasks_start();
-
 	dma_spi0_mngr_finish();
 
 	vue.refresh();
 
-	// go back to low power
+	dma_spi0_mngr_tasks_start();
+	dma_spi0_mngr_finish();
+
+	// go back to very low power
 	pwManager.switchToVlpr();
+
 }

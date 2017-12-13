@@ -13,6 +13,7 @@
 #include "composite.h"
 #include "power_manager.h"
 #include "Model.h"
+#include "UData.h"
 #include "spi_scheduler.h"
 #include "i2c_scheduler.h"
 #include "nrf52.h"
@@ -49,18 +50,9 @@ int main(void) {
 
 	i2c_scheduling_init();
 
-//	boucle_crs.init();
-	boucle_fec.init();
-
 	for(;;) { /* Infinite loop to avoid leaving the main function */
 
-		// USB tasks
-		if (pwManager.isUsbConnected()) CompositeTask();
-
-		// segments tasks
-//		boucle_crs.tasks();
-		boucle_fec.tasks();
-
+#ifdef DEBUG
 		// debug LED
 		if (led_state.getAge() > 1000) {
 
@@ -91,17 +83,17 @@ int main(void) {
 //			lcd.clearDisplay();
 //
 //			dma_spi0_mngr_tasks_start();
-			dma_spi0_mngr_finish();
-
-			lcd.setCursor(10,10);
-			lcd.setTextSize(4);
-			lcd.print(millis());
-
-			LS027_InvertColors();
-
-			lcd.writeWhole();
-
-			dma_spi0_mngr_tasks_start();
+//			dma_spi0_mngr_finish();
+//
+//			lcd.setCursor(10,10);
+//			lcd.setTextSize(4);
+//			lcd.print(millis());
+//
+//			LS027_InvertColors();
+//
+//			lcd.writeWhole();
+//
+//			dma_spi0_mngr_tasks_start();
 
 //          // test rapidite math
 //			W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
@@ -130,6 +122,13 @@ int main(void) {
 
 			W_SYSVIEW_OnIdle();
 		}
+#endif
+		// tasks
+
+		// USB
+		if (pwManager.isUsbConnected()) CompositeTask();
+
+		boucle.tasks();
 
 		dma_spi0_mngr_run();
 

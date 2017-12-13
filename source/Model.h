@@ -16,17 +16,16 @@
 #include "Nordic.h"
 #include "Locator.h"
 #include "Cadence.h"
-#include "BoucleCRS.h"
-#include "BoucleFEC.h"
+#include "Boucle.h"
 #include "PowerManager.h"
 #include "DebugDisplay.h"
-#include "TSharpMem.h"
 #include "Vue.h"
 #include "TinyGPS++.h"
 #include "UAParser.h"
 #include "STC3100.h"
 #include "VEML6075.h"
 #include "MS5637.h"
+#include "parameters.h"
 
 typedef struct {
 	float lat;
@@ -57,15 +56,11 @@ extern Nordic        nordic;
 
 extern Locator       locator;
 
-extern BoucleCRS     boucle_crs;
-
-extern BoucleFEC     boucle_fec;
+extern Boucle        boucle;
 
 extern PowerManager  pwManager;
 
 extern DebugDisplay  sdisplay;
-
-extern TSharpMem     lcd;
 
 extern Vue           vue;
 
@@ -86,5 +81,9 @@ extern Sensor<sHrmInfo>     hrm;
 extern Sensor<sFecInfo>     fec_info;
 
 extern sSpisRxInfoPage0     nrf52_page0;
+
+
+
+void model_dispatch_sensors_update(void);
 
 #endif /* SOURCE_MODEL_H_ */

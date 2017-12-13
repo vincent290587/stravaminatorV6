@@ -49,6 +49,11 @@ public:
 		return m_last_updated;
 	}
 
+	T& getData() {
+		m_new_data = false;
+		return data;
+	}
+
 	Sensor& operator=(const T& data_) {
 		memcpy(&data, &data_, sizeof(T));
 		this->setIsUpdated();

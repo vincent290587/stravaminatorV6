@@ -17,7 +17,7 @@ fxos_handle_t fxos_handle;
 static uint32_t m_last_polled_time = 0;
 
 
-void i2c_scheduling_init(void) {
+static void _i2c_scheduling_sensors_init(void) {
 
 	FXOS_Init(&fxos_handle);
 
@@ -29,10 +29,27 @@ void i2c_scheduling_init(void) {
 
 }
 
+void i2c_scheduling_init(void) {
+
+	m_last_polled_time = 0;
+
+}
+
 void i2c_scheduling_tasks(void) {
 
-	if (kAPP_PowerModeVlpr == pwManager.getMode() &&
-			millis() - m_last_polled_time >= SENSORS_READING_DELAY) {
+	if (!pwManager.isUsbConnected() &&
+			kAPP_PowerModeVlpr != pwManager.getMode()) {
+		// if USB is not connected we perform these operations
+		// only  when in VLPR
+		return;
+	}
+
+	if (m_last_polled_time == 0) {
+		_i2c_scheduling_sensors_init();
+		m_last_polled_time = 1;
+	}
+
+	if (millis() - m_last_polled_time >= SENSORS_READING_DELAY) {
 
 		m_last_polled_time = millis();
 
@@ -41,6 +58,8 @@ void i2c_scheduling_tasks(void) {
 		stc.refresh();
 
 		veml.poll();
+
+		model_dispatch_sensors_update();
 
 	}
 

@@ -11,7 +11,7 @@
 #include "stdint.h"
 
 typedef struct {
-	uint16_t cadence;
+	uint16_t rpm;
 	float    speed;
 } sCadenceData;
 

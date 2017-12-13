@@ -14,15 +14,21 @@
 
 class BoucleInterface {
 public:
-	BoucleInterface() {}
+	BoucleInterface() {
+		m_needs_init = true;
+	}
 
 	void tasks() { if (this->isTime()) this->run(); }
 
 	virtual bool isTime() {return false;}
 	virtual void run() {}
 
-protected:
+	void invalidate(void) {
+		m_needs_init = true;
+	}
 
+protected:
+	bool m_needs_init;
 
 };
 

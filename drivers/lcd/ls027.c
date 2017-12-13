@@ -243,7 +243,6 @@ void LS027_Clear(void)
  */
 void LS027_Init(void)
 {
-
 	m_is_color_inverted = 0;
 
 	ls027_spi_buffer_clear(NULL);

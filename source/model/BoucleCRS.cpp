@@ -11,7 +11,7 @@
 #include "Model.h"
 #include "sd_functions.h"
 #include "segger_wrapper.h"
-#include "dma_spi0.h"
+#include "spi_scheduler.h"
 
 /**
  *
@@ -37,10 +37,13 @@ bool BoucleCRS::isTime() {
  */
 void BoucleCRS::init() {
 
+	// TODO turn GPS ON
+
 	init_liste_segments();
 
 	memset(&att, 0, sizeof(SAtt));
 
+	m_needs_init = false;
 }
 
 /**
@@ -53,6 +56,8 @@ void BoucleCRS::run() {
 
 	pwManager.switchToRun120();
 
+	if (m_needs_init) this->init();
+
 	// update position
 	att.nbact = 0;
 	att.alt = 0;
@@ -64,7 +69,7 @@ void BoucleCRS::run() {
 //	sdisplay.print("No Seg");
 //	sdisplay.drawRect(40, 15, 20, 10, BLACK);
 
-	lcd.resetSegments();
+//	lcd.resetSegments();
 
 	mes_points.ajouteFinIso(att.lat, att.lon, 0., millis(), 8);
 
@@ -106,7 +111,7 @@ void BoucleCRS::run() {
 
 				}
 
-				lcd.registerSegment(seg);
+//				lcd.registerSegment(seg);
 
 //				sdisplay.clear();
 //				sdisplay.printSeg(0, seg, 0);
@@ -118,7 +123,7 @@ void BoucleCRS::run() {
 				seg.majPerformance(mes_points);
 				W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
 
-				lcd.registerSegment(seg);
+//				lcd.registerSegment(seg);
 
 				// TODO just display the segment
 //				LOG_INFO("Segment preview\r\n");
@@ -133,14 +138,17 @@ void BoucleCRS::run() {
 
 	att.next = min_dist_seg;
 
-	lcd.afficheSegments();
+//	lcd.afficheSegments();
 
 	//LOG_INFO("Next segment: %u\r\n", att.next);
 
 	pwManager.switchToRun24();
 
 	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
-	lcd.writeWhole();
+	vue.refresh();
+
+	dma_spi0_mngr_tasks_start();
+	dma_spi0_mngr_finish();
 	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 
 //	sdisplay.displayRTT();

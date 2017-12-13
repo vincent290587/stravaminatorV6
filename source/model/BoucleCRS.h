@@ -8,9 +8,7 @@
 #ifndef SOURCE_MODEL_BOUCLECRS_H_
 #define SOURCE_MODEL_BOUCLECRS_H_
 
-#include <stdint.h>
-#include <stdbool.h>
-#include "BoucleInterface.h"
+#include <model/BoucleInterface.h>
 
 
 class BoucleCRS : virtual public BoucleInterface {

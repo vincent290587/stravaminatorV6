@@ -201,6 +201,12 @@ float compute2Complement(uint8_t msb, uint8_t lsb) {
 	return ret;
 }
 
+/**
+ *
+ * @param tensionValue in Volts
+ * @param current
+ * @return Percentage between 0 and 100
+ */
 float percentageBatt(float tensionValue, float current) {
 
     float fp_ = 0.;
@@ -249,3 +255,5 @@ uint32_t decode_uint32 (uint8_t* dest) {
 	res |=  dest[3] << 24;
 	return res;
 }
+
+

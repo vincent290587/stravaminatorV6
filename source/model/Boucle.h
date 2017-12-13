@@ -8,8 +8,9 @@
 #ifndef SOURCE_MODEL_BOUCLE_H_
 #define SOURCE_MODEL_BOUCLE_H_
 
-#include <BoucleCRS.h>
-#include <BoucleFEC.h>
+#include <model/BoucleInterface.h>
+#include <model/BoucleCRS.h>
+#include <model/BoucleFEC.h>
 
 typedef enum {
 	eBoucleGlobalModesInit,
@@ -18,6 +19,27 @@ typedef enum {
 	eBoucleGlobalModesPRC,
 } eBoucleGlobalModes;
 
+#define BOUCLE_DEFAULT_MODE    eBoucleGlobalModesFEC
 
+
+extern BoucleCRS     boucle_crs;
+
+extern BoucleFEC     boucle_fec;
+
+
+class Boucle : virtual public BoucleInterface {
+public:
+	Boucle();
+
+	void init(void);
+
+	bool isTime();
+
+	void changeMode(eBoucleGlobalModes new_mode);
+	void run(void);
+
+protected:
+	eBoucleGlobalModes m_global_mode;
+};
 
 #endif /* SOURCE_MODEL_BOUCLE_H_ */

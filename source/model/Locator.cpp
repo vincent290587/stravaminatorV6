@@ -57,17 +57,17 @@ Locator::Locator() {
  */
 eLocationSource Locator::getUpdateSource() {
 
-	if (sim_loc.hasNewData()) {
+	if (sim_loc.isUpdated()) {
 		return eLocationSourceSimu;
 	}
 
-	if (gps_loc.hasNewData()) {
+	if (gps_loc.isUpdated()) {
 		return eLocationSourceGPS;
 	}
 
 	// NRF has newer data than GPS
-	if (nrf_loc.hasNewData() &&
-			nrf_loc.m_data.utc_time > gps_loc.m_data.utc_time + LNS_OVER_GPS_DTIME_S) {
+	if (nrf_loc.isUpdated() &&
+			nrf_loc.data.utc_time > gps_loc.data.utc_time + LNS_OVER_GPS_DTIME_S) {
 		return eLocationSourceNRF;
 	}
 
@@ -139,15 +139,15 @@ void Locator::tasks() {
 		m_is_updated = false;
 
 		if (gps.time.isUpdated()) {
-			gps_loc.m_data.utc_time = get_sec_jour(gps.time.hour(), gps.time.minute(), gps.time.second());
+			gps_loc.data.utc_time = get_sec_jour(gps.time.hour(), gps.time.minute(), gps.time.second());
 		}
 
 		if (gps.location.isValid()) {
 
-			gps_loc.m_data.speed  = gps.speed.kmph();
-			gps_loc.m_data.alt    = gps.altitude.meters();
-			gps_loc.m_data.lat    = gps.location.lat();
-			gps_loc.m_data.lon    = gps.location.lng();
+			gps_loc.data.speed  = gps.speed.kmph();
+			gps_loc.data.alt    = gps.altitude.meters();
+			gps_loc.data.lat    = gps.location.lat();
+			gps_loc.data.lon    = gps.location.lng();
 
 			gps_loc.setIsUpdated();
 

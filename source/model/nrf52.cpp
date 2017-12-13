@@ -69,10 +69,10 @@ static void _post_transfer(void* p_context) {
 	nrf52_data.flags = masterRxData[TX_BUFF_FLAGS_POS];
 
 	if (spis_decode_lns(masterRxData, &nrf52_data.lns_info)) {
-		locator.nrf_loc.m_data.lat = nrf52_data.lns_info.lat;
-		locator.nrf_loc.m_data.lon = nrf52_data.lns_info.lon;
-		locator.nrf_loc.m_data.alt = nrf52_data.lns_info.ele;
-		locator.nrf_loc.m_data.utc_time = nrf52_data.lns_info.secj;
+		locator.nrf_loc.data.lat = nrf52_data.lns_info.lat;
+		locator.nrf_loc.data.lon = nrf52_data.lns_info.lon;
+		locator.nrf_loc.data.alt = nrf52_data.lns_info.ele;
+		locator.nrf_loc.data.utc_time = nrf52_data.lns_info.secj;
 
 		locator.nrf_loc.setIsUpdated();
 	}
@@ -82,7 +82,7 @@ static void _post_transfer(void* p_context) {
 	}
 
 	if (spis_decode_bsc(masterRxData, &nrf52_data.bsc_info)) {
-		cad.data.cadence = (uint16_t) nrf52_data.bsc_info.cadence;
+		cad.data.rpm     = (uint16_t) nrf52_data.bsc_info.cadence;
 		cad.data.speed   = ((float) nrf52_data.bsc_info.speed) / 10.;
 
 		cad.setIsUpdated();

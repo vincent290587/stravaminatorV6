@@ -19,13 +19,13 @@ class VueFEC: virtual public Adafruit_GFX {
 public:
 	VueFEC();
 
-	eVueFECScreenModes tasksFEC() const;
-
 	virtual void cadranH(uint8_t p_lig, uint8_t nb_lig, const char *champ, String  affi, const char *p_unite)=0;
 	virtual void cadran(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, const char *champ, String  affi, const char *p_unite)=0;
 
 protected:
 	eVueFECScreenModes m_fec_screen_mode;
+
+	eVueFECScreenModes tasksFEC();
 };
 
 #endif /* SOURCE_VUE_VUEFEC_H_ */

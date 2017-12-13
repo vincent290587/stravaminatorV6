@@ -23,6 +23,10 @@ public:
 	void switchToRun120();
 	void switchToVlpr();
 
+	app_power_mode_t getMode(void) const {
+		return m_cur_mode;
+	}
+
 private:
 	app_power_mode_t m_cur_mode;
 	bool m_is_usb_init;

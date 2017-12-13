@@ -31,7 +31,8 @@ void i2c_scheduling_init(void) {
 
 void i2c_scheduling_tasks(void) {
 
-	if (millis() - m_last_polled_time >= SENSORS_READING_DELAY) {
+	if (kAPP_PowerModeVlpr == pwManager.getMode() &&
+			millis() - m_last_polled_time >= SENSORS_READING_DELAY) {
 
 		m_last_polled_time = millis();
 

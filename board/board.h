@@ -48,7 +48,7 @@
 #define BOARD_LED_BLUE_GPIO_PORT PORTB
 #define BOARD_LED_BLUE_GPIO_PIN 21U
 
-#ifdef DEBUG
+#ifdef DEBUG_CONFIG
 #define ON_BOARD_LED
 #endif
 

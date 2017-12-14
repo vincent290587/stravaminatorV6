@@ -49,7 +49,7 @@ void i2c_scheduling_tasks(void) {
 		m_last_polled_time = 1;
 	}
 
-	if (millis() - m_last_polled_time >= SENSORS_READING_DELAY) {
+	if (millis() - m_last_polled_time >= SENSORS_READING_DELAY_MS) {
 
 		m_last_polled_time = millis();
 

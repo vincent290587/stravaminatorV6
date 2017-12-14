@@ -66,11 +66,26 @@ void BOARD_InitBootPins(void);
 #define BOARD_INITPINS_PPS_DIRECTION                     kPIN_MUX_DirectionInput   /*!< Direction */
 
 /* PORTC3 (number 73), CS_NRF */
-#define BOARD_INITPINS_CS_NRF_PERIPHERAL                                    SPI0   /*!< Device name: SPI0 */
-#define BOARD_INITPINS_CS_NRF_SIGNAL                                        PCS1   /*!< SPI0 signal: PCS1 */
-#define BOARD_INITPINS_CS_NRF_PIN_NAME                                 SPI0_PCS1   /*!< Pin name */
-#define BOARD_INITPINS_CS_NRF_LABEL                                     "CS_NRF"   /*!< Label */
-#define BOARD_INITPINS_CS_NRF_NAME                                      "CS_NRF"   /*!< Identifier name */
+//#define BOARD_INITPINS_CS_NRF_PERIPHERAL                                    SPI0   /*!< Device name: SPI0 */
+//#define BOARD_INITPINS_CS_NRF_SIGNAL                                        PCS1   /*!< SPI0 signal: PCS1 */
+//#define BOARD_INITPINS_CS_NRF_PIN_NAME                                 SPI0_PCS1   /*!< Pin name */
+//#define BOARD_INITPINS_CS_NRF_LABEL                                     "CS_NRF"   /*!< Label */
+//#define BOARD_INITPINS_CS_NRF_NAME                                      "CS_NRF"   /*!< Identifier name */
+
+/*! @name PORTC3 (number 73), NRF_CS
+  @{ */
+#define BOARD_INITPINS_CS_NRF_PERIPHERAL GPIOC                   /*!<@brief Device name: GPIOC */
+#define BOARD_INITPINS_CS_NRF_SIGNAL GPIO                        /*!<@brief GPIOC signal: GPIO */
+#define BOARD_INITPINS_CS_NRF_GPIO GPIOC                         /*!<@brief GPIO device name: GPIOC */
+#define BOARD_INITPINS_CS_NRF_GPIO_PIN 3U                        /*!<@brief PORTC pin index: 3 */
+#define BOARD_INITPINS_CS_NRF_PORT PORTC                         /*!<@brief PORT device name: PORTC */
+#define BOARD_INITPINS_CS_NRF_PIN 3U                             /*!<@brief PORTC pin index: 3 */
+#define BOARD_INITPINS_CS_NRF_CHANNEL 3                          /*!<@brief GPIOC GPIO channel: 3 */
+#define BOARD_INITPINS_CS_NRF_PIN_NAME PTC3                      /*!<@brief Pin name */
+#define BOARD_INITPINS_CS_NRF_LABEL "NRF_CS"                     /*!<@brief Label */
+#define BOARD_INITPINS_CS_NRF_NAME "CS_NRF"                      /*!<@brief Identifier name */
+#define BOARD_INITPINS_CS_NRF_DIRECTION kPIN_MUX_DirectionOutput /*!<@brief Direction */
+
 
 /* PORTC1 (number 71), SST_CS */
 #define BOARD_INITPINS_SST_CS_PERIPHERAL                                    SPI0   /*!< Device name: SPI0 */

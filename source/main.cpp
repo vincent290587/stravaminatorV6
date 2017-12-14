@@ -47,12 +47,13 @@ int main(void) {
 	vue.init();
 
 	nrf52_init();
+	gps_mgmt.init();
 
 	i2c_scheduling_init();
 
 	for(;;) { /* Infinite loop to avoid leaving the main function */
 
-#ifdef DEBUG
+#ifdef DEBUG_CONFIG
 		// debug LED
 		if (led_state.getAge() > 1000) {
 
@@ -122,21 +123,24 @@ int main(void) {
 
 			W_SYSVIEW_OnIdle();
 		}
-#endif
 		// tasks
+
+#else
+
+		i2c_scheduling_tasks();
+
+#endif
 
 		// USB
 		if (pwManager.isUsbConnected()) CompositeTask();
 
 		boucle.tasks();
 
-		dma_spi0_mngr_run();
-
 		locator.tasks();
 
 		uaparser.tasks();
 
-		i2c_scheduling_tasks();
+		dma_spi0_mngr_run();
 
 	}
 

@@ -12,7 +12,7 @@
 #include <math.h>
 #include <millis.h>
 
-#ifdef DEBUG
+#ifdef DEBUG_CONFIG
 #define FXOS_7BIT_ADDRESS      0x1D
 #else
 #define FXOS_7BIT_ADDRESS      0x1E

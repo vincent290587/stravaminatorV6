@@ -10,6 +10,7 @@
 #include "segger_wrapper.h"
 #include "composite.h"
 #include "board.h"
+#include "pin_mux.h"
 #include "fsl_gpio.h"
 
 PowerManager::PowerManager() {
@@ -24,6 +25,13 @@ PowerManager::PowerManager() {
  */
 void PowerManager::init() {
 	power_manager_init();
+
+    /* Define the init structure for the output LED pin*/
+	gpio_pin_config_t pin_config;
+	pin_config.outputLogic  = 0;
+	pin_config.pinDirection = kGPIO_DigitalInput;
+    GPIO_PinInit(BOARD_INITPINS_USB_PRES_GPIO, BOARD_INITPINS_USB_PRES_GPIO_PIN, &pin_config);
+
 }
 
 /**
@@ -32,7 +40,13 @@ void PowerManager::init() {
  */
 bool PowerManager::isUsbConnected() {
 	// TODO
+#ifdef DEBUG_CONFIG
 	return true;
+#else
+
+	return GPIO_PinRead(BOARD_INITPINS_USB_PRES_GPIO, BOARD_INITPINS_USB_PRES_GPIO_PIN);
+
+#endif
 }
 
 /**

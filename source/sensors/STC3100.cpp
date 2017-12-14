@@ -196,7 +196,7 @@ float STC3100::getAverageCurrent(void) {
 
 	float el_time_h = millis() / (3600 * 1000);
 	float res = _charge / el_time_h;
-
+	return res;
 }
 
 /***************************************************************************

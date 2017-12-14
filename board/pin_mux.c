@@ -151,7 +151,7 @@ void BOARD_InitPins(void) {
 	);
 	PORT_SetPinMux(PORTB, PIN17_IDX, kPORT_MuxAlt3);           /* PORTB17 (pin 63) is configured as UART0_TX */
 
-#ifndef DEBUG
+#ifndef DEBUG_CONFIG
 
 	const port_pin_config_t porte2_pin55_config = {
 			kPORT_PullUp,                                            /* Internal pull-up resistor is enabled */
@@ -206,7 +206,10 @@ void BOARD_InitPins(void) {
 	PORT_SetPinMux(PORTC, PIN0_IDX, kPORT_MuxAlt2);            /* PORTC0 (pin 70) is configured as SPI0_PCS4 */
 	PORT_SetPinMux(PORTC, PIN1_IDX, kPORT_MuxAlt2);            /* PORTC1 (pin 71) is configured as SPI0_PCS3 */
 	PORT_SetPinMux(PORTC, PIN2_IDX, kPORT_MuxAlt2);            /* PORTC2 (pin 72) is configured as SPI0_PCS2 */
-	PORT_SetPinMux(PORTC, PIN3_IDX, kPORT_MuxAlt2);            /* PORTC3 (pin 73) is configured as SPI0_PCS1 */
+
+//	PORT_SetPinMux(PORTC, PIN3_IDX, kPORT_MuxAlt2);            /* PORTC3 (pin 73) is configured as SPI0_PCS1 */
+    PORT_SetPinMux(BOARD_INITPINS_CS_NRF_PORT, BOARD_INITPINS_CS_NRF_PIN, kPORT_MuxAsGpio); /* PORTC3 (pin 73) is configured as PTC3 */
+
 	PORT_SetPinMux(PORTC, PIN5_IDX, kPORT_MuxAlt2);            /* PORTC5 (pin 77) is configured as SPI0_SCK */
 	PORT_SetPinMux(PORTC, PIN6_IDX, kPORT_MuxAlt2);            /* PORTC6 (pin 78) is configured as SPI0_SOUT */
 	PORT_SetPinMux(PORTC, PIN7_IDX, kPORT_MuxAlt2);            /* PORTC7 (pin 79) is configured as SPI0_SIN */

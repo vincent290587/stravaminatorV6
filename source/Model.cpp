@@ -6,6 +6,7 @@
  */
 
 #include "Model.h"
+#include "segger_wrapper.h"
 
 SAtt att;
 
@@ -53,7 +54,9 @@ void model_dispatch_sensors_update(void) {
 	// check if backlighting is used for notifying
 	if (nrf52_page0.back_info.freq == 0) {
 		// setup backlight
-		if (veml.getRawVisComp() < BACKLIGHT_AUTO_START_RAW_VIS) {
+		uint16_t light_level = veml.getRawVisComp();
+		LOG_INFO("Light level: %u\r\n", light_level);
+		if (light_level < BACKLIGHT_AUTO_START_RAW_VIS) {
 			// il fait tout noir: TG
 			nrf52_page0.back_info.freq = 0;
 			nrf52_page0.back_info.state = 1;

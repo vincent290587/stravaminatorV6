@@ -27,6 +27,7 @@
 
 #define EMPTY_MACRO                    do {} while (0)
 
+
 #if USE_RTT
 #define LOG_INFO(...)                  SEGGER_RTT_printf(RTT_LOG_CHANNEL, __VA_ARGS__)
 #define LOG_ERROR(...)                 LOG_INFO(__VA_ARGS__)
@@ -42,6 +43,7 @@
 #define LOG_SET_TERM(X)                EMPTY_MACRO
 #else
 #define LOG_INFO(...)                  EMPTY_MACRO
+#define LOG_ERROR(...)                 EMPTY_MACRO
 #define LOG_GRAPH(...)                 EMPTY_MACRO
 #define LOG_FLUSH(...)                 EMPTY_MACRO
 #define LOG_SET_TERM(X)                EMPTY_MACRO
@@ -65,6 +67,7 @@
 #define W_SYSVIEW_OnTaskStopExec(X)    EMPTY_MACRO
 #define W_SYSVIEW_OnTaskCreate(X)      EMPTY_MACRO
 #endif
+
 
 #define SYSVIEW_MAX_NOF_TASKS          30
 

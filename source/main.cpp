@@ -46,6 +46,8 @@ int main(void) {
 	// LCD driver
 	vue.init();
 
+	gps_mgmt.awake();
+
 	nrf52_init();
 	gps_mgmt.init();
 

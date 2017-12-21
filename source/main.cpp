@@ -55,7 +55,7 @@ int main(void) {
 
 #ifdef DEBUG_CONFIG
 		// debug LED
-		if (led_state.getAge() > 1000) {
+		if (led_state.getAge() >= 1000) {
 
 			if (led_state == true) {
 				led_state = false;
@@ -129,18 +129,20 @@ int main(void) {
 
 		i2c_scheduling_tasks();
 
+		boucle.tasks();
+
 #endif
 
 		// USB
-		if (pwManager.isUsbConnected()) CompositeTask();
-
-		boucle.tasks();
+//		if (pwManager.isUsbConnected()) CompositeTask();
 
 		locator.tasks();
 
 		uaparser.tasks();
 
 		dma_spi0_mngr_run();
+
+		uart0_tasks();
 
 	}
 

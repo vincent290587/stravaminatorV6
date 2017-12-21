@@ -134,6 +134,7 @@ static void _post_transfer(void* p_context) {
 	}
 
 	memset(&masterRxData, 0, sizeof(masterRxData));
+	memset(&nrf52_page0.neo_info, 0, sizeof(nrf52_page0.neo_info));
 
     return;
 }

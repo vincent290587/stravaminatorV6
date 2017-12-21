@@ -6,6 +6,7 @@
  */
 
 #include <Boucle.h>
+#include "segger_wrapper.h"
 
 BoucleCRS boucle_crs;
 
@@ -20,6 +21,8 @@ Boucle::Boucle() {
 void Boucle::init(void) {
 
 	m_global_mode = eBoucleGlobalModesInit;
+
+	LOG_INFO("Boucle init\r\n");
 
 }
 
@@ -60,8 +63,8 @@ void Boucle::run(void) {
 	switch (m_global_mode) {
 	case eBoucleGlobalModesInit:
 	{
-		m_global_mode = BOUCLE_DEFAULT_MODE;
 		this->init();
+		m_global_mode = BOUCLE_DEFAULT_MODE;
 	}
 	break;
 	case eBoucleGlobalModesCRS:

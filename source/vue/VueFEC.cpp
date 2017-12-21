@@ -8,6 +8,7 @@
 #include "Model.h"
 #include <vue/VueFEC.h>
 #include <vue/Screenutils.h>
+#include "segger_wrapper.h"
 
 #define VUE_FEC_NB_LINES            5
 
@@ -19,16 +20,41 @@ eVueFECScreenModes VueFEC::tasksFEC() {
 
 	eVueFECScreenModes res = m_fec_screen_mode;
 
+//	if (m_el_time >= 60) {
+	if (m_el_time >= 60*4 && !pwManager.isUsbConnected()) {
+		nrf52_page0.power_info.state = 1;
+
+		this->setCursor(100,50);
+		this->setTextSize(3);
+		this->print(String("OFF"));
+
+		this->cadran(4, VUE_FEC_NB_LINES, 1, "Avg", _imkstr((int)stc.getAverageCurrent()), "mA");
+		this->cadran(4, VUE_FEC_NB_LINES, 2, "Chrg", _fmkstr(stc.getCharge(), 1U), "mAh");
+
+		this->cadran(5, VUE_FEC_NB_LINES, 1, "STC", _imkstr((int)stc.getCurrent()), "mA");
+		this->cadran(5, VUE_FEC_NB_LINES, 2, "SOC", _imkstr(percentageBatt(stc.getVoltage(), stc.getCurrent())), "%");
+
+		stc.shutdown();
+
+		return eVueFECScreenDataFull;
+	}
+
 	if (m_fec_screen_mode == eVueFECScreenInit) {
 
 		// Init with welcome text
-		this->setCursor(40,40);
-		this->setTextSize(4);
-		this->print(String("Connecting..."));
+		this->setCursor(10,50);
+		this->setTextSize(3);
+		this->print(String("Connecting"));
+
+		LOG_INFO("VueFEC waiting for sensors\r\n");
+
+		m_el_time++;
 
 		if (fec_info.data.el_time) {
 			// FEC just became active
 			m_fec_screen_mode = eVueFECScreenDataFull;
+
+			m_el_time = 0;
 
 			// blink neopixel
 			if (fec_info.data.power > 200) {
@@ -42,18 +68,24 @@ eVueFECScreenModes VueFEC::tasksFEC() {
 
 	} else if (m_fec_screen_mode == eVueFECScreenDataFull) {
 
-		this->cadranH(1, VUE_FEC_NB_LINES, "Time", _timemkstr(fec_info.data.el_time), NULL);
+		LOG_INFO("VueFEC update full data\r\n");
+
+		this->cadranH(1, VUE_FEC_NB_LINES, "Time", _timemkstr(++m_el_time), NULL);
 
 		this->cadran(2, VUE_FEC_NB_LINES, 1, "CAD", _imkstr(cad.data.rpm), "rpm");
 		this->cadran(2, VUE_FEC_NB_LINES, 2, "HRM", _imkstr(hrm.data.bpm), "bpm");
 
-		this->cadranH(3, VUE_FEC_NB_LINES, "Speed", _fmkstr(fec_info.data.speed / 10., 1U), "km/h");
+		this->cadranH(3, VUE_FEC_NB_LINES, "Speed", _fmkstr((float)fec_info.data.speed / 10., 1U), "km/h");
 
 		this->cadranH(4, VUE_FEC_NB_LINES, "Pwr", _imkstr(fec_info.data.power), "W");
 
-		this->cadran(5, VUE_FEC_NB_LINES, 1, "STC", _fmkstr(stc.getAverageCurrent(), 1U), "mA");
-		this->cadran(5, VUE_FEC_NB_LINES, 2, "SOC", _imkstr(percentageBatt(stc.getVoltage(), 0.)), "%");
 	}
+
+	this->cadran(4, VUE_FEC_NB_LINES, 1, "Avg", _imkstr((int)stc.getAverageCurrent()), "mA");
+	this->cadran(4, VUE_FEC_NB_LINES, 2, "Chrg", _fmkstr(stc.getCharge(), 1U), "mAh");
+
+	this->cadran(5, VUE_FEC_NB_LINES, 1, "STC", _imkstr((int)stc.getCurrent()), "mA");
+	this->cadran(5, VUE_FEC_NB_LINES, 2, "SOC", _imkstr(percentageBatt(stc.getVoltage(), stc.getCurrent())), "%");
 
 	return res;
 }

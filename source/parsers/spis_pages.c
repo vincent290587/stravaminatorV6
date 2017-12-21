@@ -113,6 +113,8 @@ void spis_encode_page0(sSpisRxInfo *input, uint8_t *rx_buf) {
 
 	rx_buf[RX_BUFF_BACK_START]      = input->pages.page0.back_info.freq;
 	rx_buf[RX_BUFF_BACK_START + 1U] = input->pages.page0.back_info.state;
+
+	rx_buf[RX_BUFF_SWITCH_START]    = input->pages.page0.power_info.state;
 }
 
 /**

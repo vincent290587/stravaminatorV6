@@ -9,6 +9,8 @@
 #include <button.h>
 #include <UAParser.h>
 
+//#include "mk64f_parser.h"
+
 UAParser::UAParser() {
 
 }
@@ -33,12 +35,33 @@ void UAParser::tasks(void) {
 	// potentially propagate to the model
 	switch (event) {
 	case k_Buttons_press_left:
+
+		nrf52_page0.neo_info.event_type = 1;
+		nrf52_page0.neo_info.on_time = 5;
+		nrf52_page0.neo_info.rgb[0] = 0xFF;
+		nrf52_page0.neo_info.rgb[1] = 0x00;
+		nrf52_page0.neo_info.rgb[2] = 0x00;
+
 		// TODO
 		break;
 	case k_Buttons_press_right:
+
+		nrf52_page0.neo_info.event_type = 1;
+		nrf52_page0.neo_info.on_time = 5;
+		nrf52_page0.neo_info.rgb[0] = 0x00;
+		nrf52_page0.neo_info.rgb[1] = 0xFF;
+		nrf52_page0.neo_info.rgb[2] = 0x00;
+
 		// TODO
 		break;
 	case k_Buttons_press_center:
+
+		nrf52_page0.neo_info.event_type = 1;
+		nrf52_page0.neo_info.on_time = 5;
+		nrf52_page0.neo_info.rgb[0] = 0x00;
+		nrf52_page0.neo_info.rgb[1] = 0x00;
+		nrf52_page0.neo_info.rgb[2] = 0xFF;
+
 		// TODO
 		break;
 	default:

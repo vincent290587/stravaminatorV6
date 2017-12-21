@@ -120,7 +120,7 @@ static void ls027_spi_buffer_clear(void* context)
 
 static int ls027_spi_clear(void* context)
 {
-	/* send clear command */
+	/* TODO send clear command */
 	CE_SetVal();
 	WriteData(LS027_sharpmem_vcom | LS027_BIT_CLEAR);
 	WriteData(0x00);
@@ -243,7 +243,7 @@ void LS027_Clear(void)
  */
 void LS027_Init(void)
 {
-	m_is_color_inverted = 0;
+	m_is_color_inverted = 1;
 
 	ls027_spi_buffer_clear(NULL);
 

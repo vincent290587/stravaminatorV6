@@ -20,7 +20,7 @@
  *
  */
 BoucleFEC::BoucleFEC() {
-
+	m_last_run_time = 0;
 }
 
 /**
@@ -29,7 +29,8 @@ BoucleFEC::BoucleFEC() {
  */
 bool BoucleFEC::isTime() {
 
-	if (fec_info.getAge() >= BOUCLE_FEC_UPDATE_RATE_MS) {
+	if (millis() - m_last_run_time >= BOUCLE_FEC_UPDATE_RATE_MS) {
+		m_last_run_time = millis();
 		return true;
 	}
 
@@ -40,6 +41,8 @@ bool BoucleFEC::isTime() {
  *
  */
 void BoucleFEC::init() {
+
+	LOG_INFO("Boucle FEC init\r\n");
 
 	// turn GPS OFF
 	gps_mgmt.standby();
@@ -56,6 +59,11 @@ void BoucleFEC::run() {
 	pwManager.switchToRun24();
 
 	if (m_needs_init) this->init();
+
+	LOG_INFO("Boucle FEC run\r\n");
+
+	nrf52_page0.fec_info.type = eFecControlTargetPower;
+	nrf52_page0.fec_info.data.power_control.target_power_w = 200;
 
 	nrf52_refresh();
 

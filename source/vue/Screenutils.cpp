@@ -14,14 +14,15 @@
 
 String _fmkstr(float value, unsigned int nb_digits) {
 
-	String res = "---";
+	String res;
 
 	if (fabs(value) > 100000) {
+		res = "---";
 		return res;
 	}
 
 	int ent_val = (int) value;
-	res = ent_val;
+	res = String(ent_val);
 
 	if (nb_digits > 0) {
 		res += ".";

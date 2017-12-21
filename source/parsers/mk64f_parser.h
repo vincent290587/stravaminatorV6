@@ -64,6 +64,10 @@ typedef struct {
 	uint8_t  freq;
 } sBacklightOrders;
 
+typedef struct {
+	uint8_t  state;
+} sPowerOrders;
+
 ////////////// TX SPIS
 
 typedef enum {
@@ -112,6 +116,7 @@ typedef struct {
 	sNeopixelOrders neo_info;
 	sFecControl     fec_info;
 	sBacklightOrders back_info;
+	sPowerOrders     power_info;
 } sSpisRxInfoPage0;
 
 typedef struct {

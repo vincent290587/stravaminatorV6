@@ -40,14 +40,14 @@ public:
 	void invertDisplay(void) {
 		LS027_InvertColors();
 	}
-
-private:
-	eVueGlobalScreenModes m_global_mode;
-
 	void writeWhole(void)
 	{
 		LS027_UpdateFull();
 	}
+private:
+	eVueGlobalScreenModes m_global_mode;
+
+
 };
 
 #endif /* SOURCE_VUE_VUE_H_ */

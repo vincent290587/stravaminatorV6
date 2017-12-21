@@ -17,7 +17,7 @@ Vue::Vue() : Adafruit_GFX(LS027_HW_WIDTH, LS027_HW_HEIGHT) {
 
 
 void Vue::init(void) {
-	this->setRotation(1);
+	this->setRotation(3);
 	LS027_Init();
 }
 
@@ -77,8 +77,8 @@ void Vue::drawPixel(int16_t x, int16_t y, uint16_t color) {
 void Vue::cadranH(uint8_t p_lig, uint8_t nb_lig, const char *champ, String  affi, const char *p_unite) {
 
 	int decal = 0;
-	int x = WIDTH / 2 * 0.5;
-	int y = HEIGHT / nb_lig * (p_lig - 1);
+	int x = _width / 2 * 0.5;
+	int y = _height / nb_lig * (p_lig - 1);
 
 	setTextColor(1,0); // 'inverted' text
 	setCursor(5, y + 5);
@@ -86,33 +86,33 @@ void Vue::cadranH(uint8_t p_lig, uint8_t nb_lig, const char *champ, String  affi
 
 	if (champ) print(champ);
 
-	if (affi.length() < 4) {
-		decal = (4 - affi.length()) * 20;
-	} else if (affi.length() > 6) {
+	if (affi.length() > 9) {
 		affi = "-----";
+	} else {
+		decal = (4 - affi.length()) * 6;
 	}
 
-	setCursor(x + 20 + decal, y + 20);
+	setCursor(x + 20 + decal, y - 10 + (_height / (nb_lig*2)));
 	setTextSize(3);
 	print(affi);
 
 	setTextSize(1);
-	x = WIDTH / 2;
+	x = _width / 2;
 	setCursor(x + 105, y + 5);// y + 42
 
 	if (p_unite) print(p_unite);
 
 	// print delimiters
-	if (p_lig > 1) drawFastHLine(0, HEIGHT / nb_lig * (p_lig - 1), WIDTH, 1);
-	if (p_lig < nb_lig) drawFastHLine(0, HEIGHT / nb_lig * (p_lig), WIDTH, 1);
+	if (p_lig > 1) drawFastHLine(0, _height / nb_lig * (p_lig - 1), _width, 1);
+	if (p_lig < nb_lig) drawFastHLine(0, _height / nb_lig * (p_lig), _width, 1);
 }
 
 
 void Vue::cadran(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, const char *champ, String  affi, const char *p_unite) {
 
 	int decal = 0;
-	int x = WIDTH / 2 * (p_col - 1);
-	int y = HEIGHT / nb_lig * (p_lig - 1);
+	int x = _width / 2 * (p_col - 1);
+	int y = _height / nb_lig * (p_lig - 1);
 
 	setTextColor(1,0); // 'inverted' text
 	setCursor(x + 5, y + 5);
@@ -120,12 +120,12 @@ void Vue::cadran(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, const char *champ
 
 	if (champ) print(champ);
 
-	if (affi.length() < 6) {
+	if (affi.length() <= 6) {
 		decal = (4 - affi.length()) * 14;
 	} else {
 		affi = "---";
 	}
-	setCursor(x + 25 + decal, y + 23);
+	setCursor(x + 25 + decal, y - 10 + (_height / (nb_lig*2)));
 	setTextSize(3);
 
 	print(affi);
@@ -136,9 +136,9 @@ void Vue::cadran(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, const char *champ
 	if (p_unite) print(p_unite);
 
 	// print delimiters
-	drawFastVLine(WIDTH / 2, HEIGHT / nb_lig * (p_lig - 1), HEIGHT / nb_lig, 1);
+	drawFastVLine(_width / 2, _height / nb_lig * (p_lig - 1), _height / nb_lig, 1);
 
-	if (p_lig > 1) drawFastHLine(WIDTH * (p_col - 1) / 2, HEIGHT / nb_lig * (p_lig - 1), WIDTH / 2, 1);
-	if (p_lig < nb_lig) drawFastHLine(WIDTH * (p_col - 1) / 2, HEIGHT / nb_lig * p_lig, WIDTH / 2, 1);
+	if (p_lig > 1) drawFastHLine(_width * (p_col - 1) / 2, _height / nb_lig * (p_lig - 1), _width / 2, 1);
+	if (p_lig < nb_lig) drawFastHLine(_width * (p_col - 1) / 2, _height / nb_lig * p_lig, _width / 2, 1);
 }
 

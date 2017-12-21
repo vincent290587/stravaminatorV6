@@ -9,6 +9,7 @@
 #include <stdint.h>
 #include "clock_config.h"
 #include "fsl_lptmr.h"
+#include "fsl_smc.h"
 #include "segger_wrapper.h"
 
 /*******************************************************************************

@@ -10,6 +10,7 @@
 #include "millis.h"
 #include "segger_wrapper.h"
 #include "spi_scheduler.h"
+#include "power_manager.h"
 
 static sXferTask m_tasks[SPI_SCHEDULER_MAX_NB_TASKS];
 static uint8_t m_tasks_nb;
@@ -148,16 +149,17 @@ void dma_spi0_mngr_finish() {
 
 	if (m_state != E_XFER_MNGR_RUN) return;
 
-	// TODO
-//	sleep();
-
 	while (m_state == E_XFER_MNGR_RUN) {
 
 		dma_spi0_mngr_run();
 
+		while (m_state == E_XFER_MNGR_RUN && !isXferDone && isXferStarted) {
+
+			sleep();
+
+		}
+
 	}
 
-	// TODO
-//	run();
 
 }

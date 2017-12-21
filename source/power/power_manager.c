@@ -47,49 +47,58 @@ static app_power_mode_t  curAppMode;
  * Code
  ******************************************************************************/
 
+void sleep(void) {
+	SMC_SetPowerModeWait(SMC);
+}
 
 void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode)
 {
-//	if ((kSMC_PowerStateVlpr == originPowerState) && (kSMC_PowerStateRun == SMC_GetPowerModeState(SMC)))
-//	{
-//
-//	}
+	// if the clocks were changed, peripherals must be re-init
+	if ((targetMode != kAPP_PowerModeWait &&
+			curAppMode != kAPP_PowerModeWait) ||
+			(targetMode != kAPP_PowerModeStop &&
+					curAppMode != kAPP_PowerModeStop)) {
 
-	uart0_uninit();
-	i2c0_uninit();
-//	uart2_uninit();
+		uart0_uninit();
+		i2c0_uninit();
 
-	dma_spi0_uninit();
+		//	dma_spi0_uninit();
+		DSPI_Enable(SPI0, false);
+
+	}
 }
 
 void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_t targetMode)
 {
-    // update segger
-    segger_update_clocks();
 
 	// if the clocks were changed, peripherals must be re-init
-	if (targetMode != kAPP_PowerModeWait &&
-			curAppMode != kAPP_PowerModeWait) {
+	if ((targetMode != kAPP_PowerModeWait &&
+			curAppMode != kAPP_PowerModeWait) ||
+			(targetMode != kAPP_PowerModeStop &&
+						curAppMode != kAPP_PowerModeStop)) {
+
+	    // update segger
+	    segger_update_clocks();
 
 		// Re-init the UART.
 		uart_config_t uartConfig;
 		UART_GetDefaultConfig(&uartConfig);
 
 		uartConfig.enableTx = true;
-		uartConfig.enableRx = true; // TODO
+		uartConfig.enableRx = true;
 		uartConfig.baudRate_Bps = 9600U;
 		uart0_init(&uartConfig);
-
-//		uartConfig.enableRx = false; // TODO
-//		uartConfig.baudRate_Bps = 115200U;
-//		uart2_init(&uartConfig);
 
 		i2c0_init();
 
 		// only init SPI if not going to VLP modes
 		if (kAPP_PowerModeVlpr != targetMode &&
 				kAPP_PowerModeVlpw != targetMode) {
-			dma_spi0_init();
+//			dma_spi0_init();
+
+			dma_spi0_update_clocks();
+
+			DSPI_Enable(SPI0, true);
 		}
 	}
 
@@ -102,13 +111,13 @@ void APP_ShowPowerMode(void)
 	switch (SMC_GetPowerModeState(SMC))
 	{
 	case kSMC_PowerStateRun:
-		LOG_INFO("-Power mode: RUN %u MHz\r\n", CORE_CLK_FREQ / 1000000);
+		LOG_INFO("Power mode: RUN %u MHz\r\n", CORE_CLK_FREQ / 1000000);
 		break;
 	case kSMC_PowerStateVlpr:
-		LOG_INFO("-Power mode: VLPR %u MHz\r\n", CORE_CLK_FREQ / 1000000);
+		LOG_INFO("Power mode: VLPR %u MHz\r\n", CORE_CLK_FREQ / 1000000);
 		break;
 	default:
-		LOG_INFO("-Power mode wrong\r\n");
+		LOG_INFO("Power mode wrong\r\n");
 		break;
 	}
 }
@@ -306,4 +315,8 @@ int power_manager_run(app_power_mode_t targetPowerMode) {
 }
 
 
+app_power_mode_t power_manager_get_mode(void) {
 
+	return curAppMode;
+
+}

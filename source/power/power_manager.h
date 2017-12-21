@@ -45,9 +45,13 @@ typedef enum _app_wakeup_source
 extern "C" {
 #endif /* __cplusplus*/
 
+void sleep(void);
+
 int power_manager_init(void);
 
 int power_manager_run(app_power_mode_t targetPowerMode);
+
+app_power_mode_t power_manager_get_mode(void);
 
 void APP_ShowPowerMode(void);
 

@@ -183,9 +183,9 @@ static void setBufferPixel(uint16_t x, uint16_t y, uint16_t color) {
 
 	// fill buffer
 	if (color && !m_is_color_inverted) {
-		LS027_SpiBuf[1 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] |= set[x & 7];
+		LS027_SpiBuf[2 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] |= set[x & 7];
 	} else {
-		LS027_SpiBuf[1 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] &= clr[x & 7];
+		LS027_SpiBuf[2 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] &= clr[x & 7];
 	}
 
 }

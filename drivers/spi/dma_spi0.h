@@ -8,7 +8,15 @@
 #ifndef DRIVERS_SPI_DMA_SPI0_H_
 #define DRIVERS_SPI_DMA_SPI0_H_
 
-#include "spi.h"
+#include <stdint.h>
+#include "fsl_dspi.h"
+
+typedef struct {
+	uint8_t* masterTxData;
+	uint8_t* masterRxData;
+	uint16_t spi_tx_data_length;
+	uint32_t configFlags;
+} spi_transfer_settings;
 
 #define SPI0_TX_DMA_CHANNEL 0U
 #define SPI0_IN_DMA_CHANNEL 1U
@@ -22,6 +30,8 @@ extern "C" {
 // DMA SPI driver
 
 void dma_spi0_init(void);
+
+void dma_spi0_update_clocks(void);
 
 void dma_spi0_uninit(void);
 

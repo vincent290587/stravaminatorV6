@@ -20,9 +20,7 @@
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
-#define SPI_BAUDRATE          5000000
-
-#define DSPI_MASTER_CLK_FREQ CLOCK_GetFreq(DSPI0_CLK_SRC)
+#define SPI_BAUDRATE          2000000
 
 /*******************************************************************************
  * Prototypes
@@ -44,6 +42,8 @@ edma_handle_t dspiEdmaMasterTxDataToIntermediaryHandle;
 edma_handle_t dspiEdmaMasterIntermediaryToTxRegHandle;
 
 dspi_transfer_t masterXfer;
+
+dspi_master_config_t masterConfig;
 
 volatile bool isSpiTransferCompleted = true;
 
@@ -70,12 +70,32 @@ void DSPI_MasterUserCallback(SPI_Type *base, dspi_master_edma_handle_t *handle, 
 
 void dma_spi0_uninit(void)
 {
+	DSPI_MasterTransferAbortEDMA(SPI0, &g_dspi_edma_m_handle);
 
 	DSPI_Deinit(SPI0);
 
-	DMAMUX_DisableChannel(DMAMUX0, SPI0_RX_DMA_CHANNEL);
-	DMAMUX_DisableChannel(DMAMUX0, SPI0_RX_DMA_CHANNEL);
+	delay_ms(1);
 
+	DMAMGR_ReleaseChannel(&dmamanager_handle, &dspiEdmaMasterRxRegToRxDataHandle);
+	DMAMGR_ReleaseChannel(&dmamanager_handle, &dspiEdmaMasterTxDataToIntermediaryHandle);
+	DMAMGR_ReleaseChannel(&dmamanager_handle, &dspiEdmaMasterIntermediaryToTxRegHandle);
+}
+
+
+void dma_spi0_update_clocks(void)
+{
+    if (0 == DSPI_MasterSetBaudRate(SPI0, masterConfig.whichCtar, masterConfig.ctarConfig.baudRate, CLOCK_GetFreq(DSPI0_CLK_SRC)))
+    {
+    	LOG_ERROR("DSPI_MasterSetBaudRate error");
+        assert(false);
+    }
+
+    DSPI_MasterSetDelayTimes(SPI0, masterConfig.whichCtar, kDSPI_PcsToSck, CLOCK_GetFreq(DSPI0_CLK_SRC),
+                             masterConfig.ctarConfig.pcsToSckDelayInNanoSec);
+    DSPI_MasterSetDelayTimes(SPI0, masterConfig.whichCtar, kDSPI_LastSckToPcs, CLOCK_GetFreq(DSPI0_CLK_SRC),
+                             masterConfig.ctarConfig.lastSckToPcsDelayInNanoSec);
+    DSPI_MasterSetDelayTimes(SPI0, masterConfig.whichCtar, kDSPI_BetweenTransfer, CLOCK_GetFreq(DSPI0_CLK_SRC),
+                             masterConfig.ctarConfig.betweenTransferDelayInNanoSec);
 }
 
 
@@ -105,9 +125,6 @@ void dma_spi0_init(void)
 		LOG_ERROR("DMA channel %u occupied", SPI0_IN_DMA_CHANNEL);
 	}
 
-	/*DSPI init*/
-	uint32_t srcClock_Hz;
-	dspi_master_config_t masterConfig;
 
 	/*Master config*/
 	masterConfig.whichCtar                                = kDSPI_Ctar0;
@@ -116,9 +133,9 @@ void dma_spi0_init(void)
 	masterConfig.ctarConfig.cpol                          = kDSPI_ClockPolarityActiveHigh;
 	masterConfig.ctarConfig.cpha                          = kDSPI_ClockPhaseFirstEdge;
 	masterConfig.ctarConfig.direction                     = kDSPI_LsbFirst;
-	masterConfig.ctarConfig.pcsToSckDelayInNanoSec        = 1000000000 / SPI_BAUDRATE ;
-	masterConfig.ctarConfig.lastSckToPcsDelayInNanoSec    = 1000000000 / SPI_BAUDRATE ;
-	masterConfig.ctarConfig.betweenTransferDelayInNanoSec = 1000000000 / SPI_BAUDRATE ;
+	masterConfig.ctarConfig.pcsToSckDelayInNanoSec        = 300 ;
+	masterConfig.ctarConfig.lastSckToPcsDelayInNanoSec    = 300 ;
+	masterConfig.ctarConfig.betweenTransferDelayInNanoSec = 300 ;
 	masterConfig.whichPcs                                 = kDSPI_Pcs2;
 	masterConfig.pcsActiveHighOrLow                       = kDSPI_PcsActiveHigh;
 	masterConfig.enableContinuousSCK                      = false;
@@ -126,17 +143,16 @@ void dma_spi0_init(void)
 	masterConfig.enableModifiedTimingFormat               = false;
 	masterConfig.samplePoint                              = kDSPI_SckToSin0Clock;
 
-	srcClock_Hz = DSPI_MASTER_CLK_FREQ;
-	DSPI_MasterInit(SPI0, &masterConfig, srcClock_Hz);
+	DSPI_MasterInit(SPI0, &masterConfig, CLOCK_GetFreq(DSPI0_CLK_SRC));
 
-//	DSPI_SetAllPcsPolarity(base, kDSPI_Pcs0ActiveLow | kDSPI_Pcs1ActiveLow);
+//	DSPI_SetAllPcsPolarity(SPI0, kDSPI_Pcs1ActiveLow);
 
 	DSPI_MasterTransferCreateHandleEDMA(SPI0, &g_dspi_edma_m_handle, DSPI_MasterUserCallback,
 			NULL, &dspiEdmaMasterRxRegToRxDataHandle,
 			&dspiEdmaMasterTxDataToIntermediaryHandle,
 			&dspiEdmaMasterIntermediaryToTxRegHandle);
 
-	LOG_INFO("DMA SPI Init :-)\r\n ");
+	LOG_INFO("DMA SPI Init\r\n");
 }
 
 
@@ -164,7 +180,8 @@ void dma_spi0_transfer(spi_transfer_settings* spi_settings) {
 void dma_spi0_finish_transfer(void) {
 
 	while (!isSpiTransferCompleted) {
-		// TODO sleep
+		// sleep
+		sleep();
 	}
 
 }

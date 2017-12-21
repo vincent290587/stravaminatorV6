@@ -17,7 +17,10 @@
 
 /////////    PARAMETERS
 
+#ifndef USE_RTT
 #define USE_RTT           1
+#endif
+
 #define USE_SVIEW         0
 
 #define RTT_LOG_CHANNEL   0

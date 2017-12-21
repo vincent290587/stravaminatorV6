@@ -5,6 +5,8 @@
  *      Author: Vincent
  */
 
+#define USE_RTT 0
+
 
 #include "fsl_common.h"
 #include "millis.h"
@@ -68,7 +70,7 @@ bool STC3100::init(uint32_t r_sens, stc3100_res_t res) {
 	_r_sens = r_sens;
 
     // reset
-	this->writeCommand(REG_CONTROL, STC_RESET);
+//	this->writeCommand(REG_CONTROL, STC_RESET);
 	delay_ms(1);
 
 	// read device ID
@@ -88,6 +90,21 @@ bool STC3100::init(uint32_t r_sens, stc3100_res_t res) {
 }
 
 
+void STC3100::shutdown(void) {
+
+	// reset
+	this->writeCommand(REG_CONTROL, STC_RESET);
+	delay_ms(1);
+
+	/* Set the mode indicator */
+	_stc3100Mode  = 0;
+	_stc3100Mode |= MODE_RUN;
+	_stc3100Mode |= STC3100_MODE_HIGHRES;
+
+	// set mode
+	this->writeCommand(REG_MODE, _stc3100Mode);
+
+}
 
 /**************************************************************************/
 /*!
@@ -194,8 +211,9 @@ float STC3100::getCorrectedVoltage(float int_res) {
  */
 float STC3100::getAverageCurrent(void) {
 
-	float el_time_h = millis() / (3600 * 1000);
-	float res = _charge / el_time_h;
+	if (!millis()) return 0.;
+
+	float res = _charge * 3600 * 1000 / millis();
 	return res;
 }
 

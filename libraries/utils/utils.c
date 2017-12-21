@@ -10,6 +10,7 @@
 #include <math.h>
 #include <string.h>
 #include "utils.h"
+#include "parameters.h"
 
 
 #define FACTOR 100000.
@@ -210,6 +211,8 @@ float compute2Complement(uint8_t msb, uint8_t lsb) {
 float percentageBatt(float tensionValue, float current) {
 
     float fp_ = 0.;
+
+    tensionValue += current * BATT_INT_RES / 1000.;
 
     if (tensionValue > 4.2) {
 			fp_ = 100.;

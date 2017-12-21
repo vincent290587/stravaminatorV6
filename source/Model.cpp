@@ -34,7 +34,7 @@ STC3100       stc;
 
 VEML6075      veml;
 
-MS5637        baro;
+MS5637        ms5637;
 
 GPS_MGMT           gps_mgmt;
 

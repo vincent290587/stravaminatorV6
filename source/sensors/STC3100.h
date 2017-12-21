@@ -70,8 +70,10 @@ class STC3100 {
 public:
 	STC3100(int32_t sensorID = -1);
 
-	bool init(uint32_t r_sens = 20,
-			stc3100_res_t res = STC3100_MODE_ULTRAHIGHRES);
+	bool init(uint32_t r_sens = 100,
+			stc3100_res_t res = STC3100_MODE_HIGHRES);
+
+	void shutdown(void);
 
 	bool refresh();
 

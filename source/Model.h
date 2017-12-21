@@ -71,7 +71,7 @@ extern STC3100       stc;
 
 extern VEML6075      veml;
 
-extern MS5637        baro;
+extern MS5637        ms5637;
 
 extern GPS_MGMT      gps_mgmt;
 

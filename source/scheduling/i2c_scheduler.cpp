@@ -21,11 +21,11 @@ static void _i2c_scheduling_sensors_init(void) {
 
 	FXOS_Init(&fxos_handle);
 
-	stc.init();
+	stc.init(STC3100_CUR_SENS_RES_MO, STC3100_MODE_STANDARD);
 
 	veml.init();
 
-	baro.init();
+	ms5637.init();
 
 }
 
@@ -53,11 +53,14 @@ void i2c_scheduling_tasks(void) {
 
 		m_last_polled_time = millis();
 
+		//LOG_INFO("Reading sensors t=%u ms\r\n", millis());
 		fxos_tasks(&fxos_handle);
 
 		stc.refresh();
 
 		veml.poll();
+
+		ms5637.getPressure(OSR_8192);
 
 		model_dispatch_sensors_update();
 

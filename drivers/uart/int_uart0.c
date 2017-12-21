@@ -36,6 +36,8 @@
  * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
+#define USE_RTT 0
+
 #include "board.h"
 #include "fsl_uart.h"
 #include "segger_wrapper.h"
@@ -46,11 +48,12 @@
 /* UART clock */
 #define UART_CLK_FREQ CLOCK_GetFreq(UART0_CLK_SRC)
 
+#define UART0_RB_SIZE         256
 
 /*******************************************************************************
  * Variables
  ******************************************************************************/
-
+uint8_t uart0_rb[UART0_RB_SIZE];
 volatile uint16_t txIndex; /* Index of the data to send out. */
 volatile uint16_t rxIndex; /* Index of the memory to save new arrived data. */
 
@@ -72,7 +75,13 @@ void UART0_RX_TX_IRQHandler(void)
     {
         data = UART_ReadByte(UART0);
 
-        locator_encode_char(data);
+        /* If ring buffer is not full, add data to ring buffer. */
+        if (((rxIndex + 1) % UART0_RB_SIZE) != txIndex)
+        {
+        	uart0_rb[rxIndex] = data;
+            rxIndex++;
+            rxIndex %= UART0_RB_SIZE;
+        }
     }
 
     W_SYSVIEW_RecordExitISR();
@@ -90,5 +99,38 @@ void uart0_init(uart_config_t* config)
     /* Enable RX interrupt. */
     UART_EnableInterrupts(UART0, kUART_RxDataRegFullInterruptEnable | kUART_RxOverrunInterruptEnable);
     EnableIRQ(UART0_RX_TX_IRQn);
+
+    txIndex = 0;
+    rxIndex = 0;
+
+}
+
+
+void uart0_uninit(void)
+{
+    /* Disable RX interrupt. */
+	UART_DisableInterrupts(UART0, kUART_RxDataRegFullInterruptEnable | kUART_RxOverrunInterruptEnable);
+	DisableIRQ(UART0_RX_TX_IRQn);
+
+	UART_Deinit(UART0);
+}
+
+void uart0_send(uint8_t* data, size_t length) {
+
+	UART_WriteBlocking(UART0, data, length);
+
+}
+
+
+void uart0_tasks() {
+
+    /* If ring buffer is not empty, parse data. */
+    while (((txIndex + 0) % UART0_RB_SIZE) != rxIndex)
+    {
+    	locator_encode_char(uart0_rb[txIndex]);
+
+    	txIndex++;
+    	txIndex %= UART0_RB_SIZE;
+    }
 
 }

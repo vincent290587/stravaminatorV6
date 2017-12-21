@@ -11,8 +11,8 @@
 #include "fsl_uart.h"
 #include "fsl_uart_edma.h"
 
-#define UART0_TX_DMA_CHANNEL 0U
-#define UART0_RX_DMA_CHANNEL 1U
+#define UART0_TX_DMA_CHANNEL 3U
+#define UART0_RX_DMA_CHANNEL 4U
 
 #if defined(__cplusplus)
 extern "C" {
@@ -27,7 +27,7 @@ void uart0_tasks(void);
 
 void uart0_send(uint8_t* data, size_t length);
 
-void uart0_wait_for_transfer();
+void uart0_wait_for_transfer_();
 
 
 #if defined(__cplusplus)

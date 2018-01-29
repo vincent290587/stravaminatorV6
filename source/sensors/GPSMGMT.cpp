@@ -184,7 +184,7 @@ void GPS_MGMT::tasks(void) {
 			// set transport to binary
 			SEND_TO_GPS(GPS_BIN_CMD);
 
-			delay_ms(5);
+			delay_ms(500);
 
 			m_trans_type = eGPSMgmtTransBIN;
 		}
@@ -193,52 +193,55 @@ void GPS_MGMT::tasks(void) {
 
 	case eGPSMgmtEPORunning:
 	{
-		sEpoPacketBinData epo_data;
-		memset(&epo_data, 0, sizeof(epo_data));
-
 		// fill the packet
-		for (int i=0; i < MTK_EPO_MAX_SAT_DATA; i++) {
-			// read file
-			int ret_code = epo_file_read(&epo_data.sat_data[epo_data.nb_sat]);
+		if (m_epo_packet_ind < 0xFFFF) {
 
-			if (ret_code < 0) {
-				// error
-			} else if (ret_code == 1) {
-				// end
-			} else {
-				epo_data.nb_sat  += 1;
+			sEpoPacketBinData epo_data;
+			memset(&epo_data, 0, sizeof(epo_data));
+
+			for (int i=0; i < MTK_EPO_MAX_SAT_DATA; i++) {
+				// read file
+				int ret_code = epo_file_read(&epo_data.sat_data[epo_data.nb_sat]);
+
+				if (ret_code < 0) {
+					// error
+				} else if (ret_code == 1) {
+					// end
+				} else {
+					epo_data.nb_sat  += 1;
+				}
 			}
-		}
 
-		if (epo_data.nb_sat > 0) {
-			epo_data.epo_seq = m_epo_packet_ind++;
+			// prepare the packet to be sent
+			if (epo_data.nb_sat > 0) {
+				epo_data.epo_seq = m_epo_packet_ind++;
 
-			LOG_INFO("EPO sending packet #%u - %u sats\r\n",
-					epo_data.epo_seq, epo_data.nb_sat);
+				LOG_INFO("EPO sending packet #%u - %u sats\r\n",
+						epo_data.epo_seq, epo_data.nb_sat);
 
-			LOG_DEBUG("Sat data 1: %X %X\r\n",
-					epo_data.sat_data[0].sat[0],
-					epo_data.sat_data[0].sat[1]);
+				LOG_DEBUG("Sat data 1: %X %X\r\n",
+						epo_data.sat_data[0].sat[0],
+						epo_data.sat_data[0].sat[1]);
 
-			MTK tmp_mtk(&epo_data);
-			tmp_mtk.toBuffer(buffer, sizeof(buffer));
+				MTK tmp_mtk(&epo_data);
+				tmp_mtk.toBuffer(buffer, sizeof(buffer));
 
-			GPS_UART_SEND(buffer, tmp_mtk.getPacketLength());
+				GPS_UART_SEND(buffer, tmp_mtk.getPacketLength());
+			} else {
+				// process is finished
+				m_epo_packet_ind = 0xFFFF;
+
+				epo_data.epo_seq = m_epo_packet_ind;
+
+				LOG_INFO("EPO last packet\r\n");
+
+				MTK tmp_mtk(&epo_data);
+				tmp_mtk.toBuffer(buffer, sizeof(buffer));
+
+				GPS_UART_SEND(buffer, tmp_mtk.getPacketLength());
+			}
 
 			m_epo_state = eGPSMgmtEPOWaitForEvent;
-		} else {
-			// process is finished
-
-			epo_data.epo_seq = 0xFFFF;
-
-			LOG_INFO("EPO last packet\r\n");
-
-			MTK tmp_mtk(&epo_data);
-			tmp_mtk.toBuffer(buffer, sizeof(buffer));
-
-			GPS_UART_SEND(buffer, tmp_mtk.getPacketLength());
-
-			m_epo_state = eGPSMgmtEPOEnd;
 		}
 	}
 	break;
@@ -302,8 +305,12 @@ uint32_t gps_encode_char(char c) {
 					if (m_rec_packet.m_packet.raw_packet.data[2] == 0x01) {
 						LOG_INFO("Packet ack recv\r\n");
 
+						uint16_t epo_seq = decode_uint16(m_rec_packet.m_packet.raw_packet.data);
+
 						// resume sending packets
-						m_epo_state = eGPSMgmtEPORunning;
+						if (epo_seq < 0xFFFF) m_epo_state = eGPSMgmtEPORunning;
+						else                  m_epo_state = eGPSMgmtEPOEnd;
+
 					} else {
 						LOG_ERROR("Packet ack recv with error %X\r\n",
 								m_rec_packet.m_packet.raw_packet.data[2]);

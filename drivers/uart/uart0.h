@@ -27,6 +27,8 @@ void uart0_tasks(void);
 
 void uart0_send(uint8_t* data, size_t length);
 
+uint32_t uart0_get_last_rx_age(void);
+
 void uart0_wait_for_transfer_();
 
 

@@ -8,6 +8,8 @@
 #ifndef SOURCE_PARAMETERS_H_
 #define SOURCE_PARAMETERS_H_
 
+#define GPS_USE_COLD_START             0
+
 #define LNS_OVER_GPS_DTIME_S           6
 
 #define SENSORS_READING_DELAY_MS       250

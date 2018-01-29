@@ -11,7 +11,9 @@
 #include "diskio.h"
 #include "segger_wrapper.h"
 #include "fsl_sysmpu.h"
+#include "sd_functions.h"
 #include "fsl_debug_console.h"
+#include "fsl_common.h"
 #include "composite_public.h"
 #include "sdcard_fatfs.h"
 #include "board.h"
@@ -35,6 +37,7 @@
 static TCHAR g_bufferRead[BUFFER_SIZE];  /* Read buffer */
 
 static FIL g_fileObject;   /* File object */
+static FIL g_EpoFileObject;   /* File object */
 
 extern const TCHAR driverNumberBuffer[];
 
@@ -308,4 +311,101 @@ float segment_allocator(Segment& mon_seg, float lat1, float long1) {
 	}
 
 	return ret_val;
+}
+
+/**
+ *
+ * @return The size of the EPO file
+ */
+int epo_file_size(void) {
+
+	FRESULT error;
+	const char* fname = "/MTK14.EPO";
+
+	FILINFO file_info;
+	error = f_stat (fname, &file_info);
+
+	if (error) {
+		LOG_INFO("Stat file failed.\r\n");
+		return -1;
+	}
+
+	return file_info.fsize;
+}
+
+/**
+ *
+ * @return
+ */
+int epo_file_start(void) {
+
+	FRESULT error;
+	const char* fname = "/MTK14.EPO";
+
+	error = f_open(&g_EpoFileObject, fname, FA_READ);
+	if (error)
+	{
+		LOG_INFO("Open file failed.\r\n");
+		return  -1;
+	}
+
+	return 0;
+}
+
+/**
+ *
+ * @param epo_data
+ * @return The number of sat_data read, or -1 if error
+ */
+int epo_file_read(sEpoPacketSatData* sat_data) {
+
+	memset(g_bufferRead, 0U, sizeof(g_bufferRead));
+
+	assert(sat_data);
+
+	UINT size_read = 0;
+	FRESULT error = f_read (
+			&g_EpoFileObject, 	/* Pointer to the file object */
+			g_bufferRead,	    /* Pointer to data buffer */
+			MTK_EPO_SAT_DATA_SIZE,/* Number of bytes to read */
+			&size_read	        /* Pointer to number of bytes read */
+	);
+
+	if (error)
+	{
+		LOG_INFO("Read EPO file failed.\r\n");
+		return -1;
+	}
+
+	if (size_read != 60) {
+		LOG_INFO("End of EPO file\r\n");
+		return 1;
+	} else {
+		memcpy(sat_data->sat, g_bufferRead, MTK_EPO_SAT_DATA_SIZE);
+	}
+
+	return 0;
+}
+
+/**
+ *
+ * @return
+ */
+int epo_file_stop(void) {
+
+	FRESULT error = f_close (&g_EpoFileObject);
+	if (error)
+	{
+		LOG_INFO("Close file failed.\r\n");
+		return -1;
+	}
+
+	error = f_unlink("/MTK14.EPO");
+	if (error)
+	{
+		LOG_INFO("Unlink file failed.\r\n");
+		return -2;
+	}
+
+	return 0;
 }

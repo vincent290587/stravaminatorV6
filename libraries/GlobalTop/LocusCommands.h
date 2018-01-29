@@ -24,6 +24,11 @@
 #define PMTK_API_SET_FIX_CTL_5HZ  "$PMTK300,200,0,0,0,0*2F\r\n"
 // Can't fix position faster than 5 times a second!
 
+#define PMTK_SET_NMEA_BAUD_115200 "$PMTK253,0,115200*01\r\n"
+#define PMTK_SET_BIN_BAUD_115200  "$PMTK253,1,115200*00\r\n"
+
+#define PMTK_SET_NMEA_BAUD_9600 "$PMTK253,0,9600*09\r\n"
+#define PMTK_SET_BIN_BAUD_9600  "$PMTK253,1,9600*08\r\n"
 
 #define PMTK_SET_BAUD_57600 "$PMTK251,57600*2C\r\n"
 #define PMTK_SET_BAUD_9600 "$PMTK251,9600*17\r\n"
@@ -55,6 +60,9 @@
 #define PMTK_STANDBY "$PMTK161,0*28\r\n"
 #define PMTK_STANDBY_SUCCESS "$PMTK001,161,3*36"  // Not needed currently
 #define PMTK_AWAKE "$PMTK010,002*2D\r\n"
+
+#define PMTK_FULL_COLD "$PMTK104*37\r\n" // full cold start
+#define PMTK_COLD      "$PMTK103*30\r\n" // cold start
 
 // ask for the release and version
 #define PMTK_Q_RELEASE "$PMTK605*31\r\n"

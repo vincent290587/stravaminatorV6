@@ -9,7 +9,7 @@
 #include "segger_wrapper.h"
 #include "uart0.h"
 #include "fsl_dma_manager.h"
-#include "locator.h"
+#include "GPSMGMT.h"
 
 /*******************************************************************************
  * Definitions
@@ -171,7 +171,7 @@ void uart0_tasks_() {
 
 		uint16_t ind = 0;
 		while(g_rxBuffer[ind] != 0 && ind < UART0_BUFFER_LENGTH) {
-			locator_encode_char(g_rxBuffer[ind++]);
+			gps_encode_char(g_rxBuffer[ind++]);
 		}
 
 		memset (g_rxBuffer, 0, sizeof(g_rxBuffer));

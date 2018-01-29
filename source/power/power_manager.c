@@ -17,10 +17,11 @@
 #include "power_manager.h"
 #include "clock_config.h"
 #include "composite.h"
-#include "uart0.h"
 #include "uart2.h"
-#include "int_i2c0.h"
 #include "dma_spi0.h"
+#include "int_i2c0.h"
+#include "uart0.h"
+#include "GPSMGMT.h"
 
 #include "pin_mux.h"
 #include "fsl_pmc.h"
@@ -59,7 +60,8 @@ void APP_PowerPreSwitchHook(smc_power_state_t originPowerState, app_power_mode_t
 			(targetMode != kAPP_PowerModeStop &&
 					curAppMode != kAPP_PowerModeStop)) {
 
-		uart0_uninit();
+		gps_uart_stop();
+
 		i2c0_uninit();
 
 		//	dma_spi0_uninit();
@@ -81,13 +83,7 @@ void APP_PowerPostSwitchHook(smc_power_state_t originPowerState, app_power_mode_
 	    segger_update_clocks();
 
 		// Re-init the UART.
-		uart_config_t uartConfig;
-		UART_GetDefaultConfig(&uartConfig);
-
-		uartConfig.enableTx = true;
-		uartConfig.enableRx = true;
-		uartConfig.baudRate_Bps = 9600U;
-		uart0_init(&uartConfig);
+	    gps_uart_resume();
 
 		i2c0_init();
 
@@ -282,26 +278,18 @@ int power_manager_init(void)
  */
 int power_manager_run(app_power_mode_t targetPowerMode) {
 
-	if (kRCM_SourceWakeup & RCM_GetPreviousResetSources(RCM)) /* Wakeup from VLLS. */
-	{
-//		LOG_INFO("\r\nMCU wakeup from VLLS modes...\r\n");
-	}
-
 	curPowerState = SMC_GetPowerModeState(SMC);
-
-//	LOG_INFO("\r\n####################  Power Mode Switch  ####################\n\r\n");
-//	LOG_INFO("    Core Clock = %dHz \r\n", CLOCK_GetFreq(kCLOCK_CoreSysClk));
-
-	APP_ShowPowerMode();
 
 	/* If could not set the target power mode, loop continue. */
 	if (!APP_CheckPowerMode(targetPowerMode))
 	{
-//		LOG_INFO("\r\n\r\nMode not set\r\n\r\n");
 		return 1;
 	}
 
-	/* If target mode is RUN/VLPR/HSRUN, don't need to set wakeup source. */
+	// wait for finishing UART0 RX transmission
+	while (uart0_get_last_rx_age() < 5) {
+		sleep();
+	}
 
 	APP_PowerPreSwitchHook(curPowerState, targetPowerMode);
 

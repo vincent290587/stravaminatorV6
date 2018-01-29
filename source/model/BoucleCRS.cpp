@@ -9,6 +9,8 @@
 #include "BoucleCRS.h"
 #include "Segment.h"
 #include "Model.h"
+#include "uart0.h"
+#include "nrf52.h"
 #include "sd_functions.h"
 #include "segger_wrapper.h"
 #include "spi_scheduler.h"
@@ -18,6 +20,7 @@
  *
  */
 BoucleCRS::BoucleCRS() : BoucleInterface() {
+	m_dist_next_seg = 5000;
 }
 
 /**
@@ -40,6 +43,7 @@ void BoucleCRS::init() {
 
 	// turn GPS ON
 	gps_mgmt.awake();
+ 	gps_mgmt.startEpoUpdate();
 
 	init_liste_segments();
 

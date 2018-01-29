@@ -31,9 +31,9 @@ RM := rm -rf
 -include libraries/sysview/subdir.mk
 -include libraries/rtt/subdir.mk
 -include libraries/TinyGPSPlus/subdir.mk
--include libraries/TSharpMem/subdir.mk
 -include libraries/Nordic/subdir.mk
 -include libraries/IntelliScreen/subdir.mk
+-include libraries/GlobalTop/subdir.mk
 -include libraries/AdafruitGFX/subdir.mk
 -include drivers/uart/subdir.mk
 -include drivers/spi/subdir.mk

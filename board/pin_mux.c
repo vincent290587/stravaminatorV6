@@ -143,15 +143,18 @@ void BOARD_InitPins(void) {
 	PORT_SetPinMux(PORTA, PIN2_IDX, kPORT_MuxAlt7);            /* PORTA2 (pin 36) is configured as JTAG_TDO */
 	PORT_SetPinMux(PORTA, PIN3_IDX, kPORT_MuxAlt7);            /* PORTA3 (pin 37) is configured as JTAG_TMS */
 	PORT_SetPinMux(PORTA, PIN5_IDX, kPORT_MuxAlt7);            /* PORTA5 (pin 39) is configured as JTAG_TRST_b */
+
+#ifndef DEBUG_CONFIG
+
 	PORT_SetPinMux(PORTB, PIN16_IDX, kPORT_MuxAlt3);           /* PORTB16 (pin 62) is configured as UART0_RX */
+
 	PORTB->PCR[16] = ((PORTB->PCR[16] &
 			(~(PORT_PCR_PS_MASK | PORT_PCR_PE_MASK | PORT_PCR_ISF_MASK))) /* Mask bits to zero which are setting */
 			| PORT_PCR_PS(PCR_PS_UP)                               /* Pull Select: Internal pullup resistor is enabled on the corresponding pin, if the corresponding PE field is set. */
 			| PORT_PCR_PE(PCR_PE_ENABLED)                          /* Pull Enable: Internal pullup or pulldown resistor is enabled on the corresponding pin, if the pin is configured as a digital input. */
 	);
-	PORT_SetPinMux(PORTB, PIN17_IDX, kPORT_MuxAlt3);           /* PORTB17 (pin 63) is configured as UART0_TX */
 
-#ifndef DEBUG_CONFIG
+	PORT_SetPinMux(PORTB, PIN17_IDX, kPORT_MuxAlt3);           /* PORTB17 (pin 63) is configured as UART0_TX */
 
 	const port_pin_config_t porte2_pin55_config = {
 			kPORT_PullUp,                                            /* Internal pull-up resistor is enabled */
@@ -176,6 +179,12 @@ void BOARD_InitPins(void) {
 	PORT_SetPinConfig(PORTB, PIN3_IDX, &porte2_pin56_config); /* PORTE25 (pin 32) is configured as I2C0_SDA */
 #else
 
+    /* PORTD6 (pin 99) is configured as UART0_RX */
+    PORT_SetPinMux(PORTD, 6U, kPORT_MuxAlt3);
+
+    /* PORTD7 (pin 100) is configured as UART0_TX */
+    PORT_SetPinMux(PORTD, 7U, kPORT_MuxAlt3);
+
 	const port_pin_config_t porte24_pin31_config = {
 			kPORT_PullUp,                                            /* Internal pull-up resistor is enabled */
 			kPORT_FastSlewRate,                                      /* Fast slew rate is configured */
@@ -197,10 +206,11 @@ void BOARD_InitPins(void) {
 	};
 	PORT_SetPinConfig(PORTE, PIN25_IDX, &porte25_pin32_config); /* PORTE25 (pin 32) is configured as I2C0_SDA */
 
+
 #endif
 
 	PORT_SetPinMux(PORTB, PIN20_IDX, kPORT_MuxAsGpio);         /* PORTB20 (pin 66) is configured as PTB20 */
-        PORT_SetPinMux(PORTB, PIN21_IDX, kPORT_MuxAsGpio);         /* PORTB21 (pin 67) is configured as PTB21 */
+    PORT_SetPinMux(PORTB, PIN21_IDX, kPORT_MuxAsGpio);         /* PORTB21 (pin 67) is configured as PTB21 */
 	PORT_SetPinMux(PORTB, PIN22_IDX, kPORT_MuxAsGpio);         /* PORTB22 (pin 68) is configured as PTB22 */
 	PORT_SetPinMux(PORTB, PIN23_IDX, kPORT_MuxAsGpio);         /* PORTB23 (pin 69) is configured as PTB23 */
 	PORT_SetPinMux(PORTC, PIN0_IDX, kPORT_MuxAlt2);            /* PORTC0 (pin 70) is configured as SPI0_PCS4 */

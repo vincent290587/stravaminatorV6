@@ -11,6 +11,19 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define MAX_SATELLITES     40
+#define ACTIVE_VAL         10
+
+typedef struct
+{
+	int active;
+	int elevation;
+	int azimuth;
+	int snr;
+} sSatellite;
+
+extern sSatellite sats[MAX_SATELLITES];
+
 typedef enum {
 	eLocationSourceNone,
 	eLocationSourceSimu,
@@ -24,6 +37,7 @@ typedef struct {
 	float alt;
 	float speed;
 	uint32_t utc_time;
+	uint32_t date;
 } sLocationData;
 
 #if defined(__cplusplus)
@@ -36,7 +50,7 @@ uint32_t locator_encode_char(char c);
 }
 
 #include "Sensor.h"
-
+#include "Attitude.h"
 
 /**
  *
@@ -47,19 +61,22 @@ public:
 
 	void tasks();
 
-	eLocationSource getPosition(float& lat, float& lon, uint32_t& sec_);
+	void displayGPS2(void);
+
+	eLocationSource getPosition(SLoc& loc_);
 
 	eLocationSource getUpdateSource();
 
 	bool isUpdated();
+
+	uint32_t getLastUpdateAge();
 
 	Sensor<sLocationData> nrf_loc;
 	Sensor<sLocationData> sim_loc;
 	Sensor<sLocationData> gps_loc;
 
 private:
-
-
+	bool anyChanges;
 };
 
 #endif /* _cplusplus */

@@ -7,11 +7,10 @@
 #include "fsl_dma_manager.h"
 
 #include "segger_wrapper.h"
-#include "composite.h"
 #include "power_manager.h"
 #include "millis.h"
 #include "sdcard_fatfs.h"
-#include "uart0.h"
+#include "GPSMGMT.h"
 #include "uart2.h"
 #include "dma_spi0.h"
 #include "int_i2c0.h"
@@ -46,21 +45,8 @@ void BOARD_InitHardware(void) {
 	/* Init code */
 	millis_init();
 
-	// USB driver
-	usb_comp_init();
-	CompositeTask();
-
 	// Initialize the UART.
-	uart_config_t uartConfig;
-	UART_GetDefaultConfig(&uartConfig);
-	uartConfig.enableTx = true;
-	uartConfig.enableRx = true; // TODO
-	uartConfig.baudRate_Bps = 9600U;
-
-	uart0_init(&uartConfig);
-
-//	uartConfig.baudRate_Bps = 115200U;
-//	uartConfig.enableRx = false; // TODO
+	gps_uart_start();
 
 	//uart2_init(&uartConfig);
 

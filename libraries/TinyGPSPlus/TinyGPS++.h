@@ -209,6 +209,8 @@ private:
    TinyGPSCustom *next;
 };
 
+enum {GPS_SENTENCE_GPGGA, GPS_SENTENCE_GPRMC, GPS_SENTENCE_OTHER};
+
 class TinyGPSPlus
 {
 public:
@@ -225,6 +227,8 @@ public:
   TinyGPSInteger satellites;
   TinyGPSDecimal hdop;
 
+  uint8_t curSentenceType;
+
   static const char *libraryVersion() { return _GPS_VERSION; }
 
   static double distanceBetween(double lat1, double long1, double lat2, double long2);
@@ -240,13 +244,11 @@ public:
   uint32_t passedChecksum()   const { return passedChecksumCount; }
 
 private:
-  enum {GPS_SENTENCE_GPGGA, GPS_SENTENCE_GPRMC, GPS_SENTENCE_OTHER};
 
   // parsing state variables
   uint8_t parity;
   bool isChecksumTerm;
   char term[_GPS_MAX_FIELD_SIZE];
-  uint8_t curSentenceType;
   uint8_t curTermNumber;
   uint8_t curTermOffset;
   bool sentenceHasFix;

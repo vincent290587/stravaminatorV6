@@ -40,8 +40,9 @@
 
 #include "board.h"
 #include "fsl_uart.h"
+#include "millis.h"
 #include "segger_wrapper.h"
-#include "locator.h"
+#include "GPSMGMT.h"
 /*******************************************************************************
  * Definitions
  ******************************************************************************/
@@ -56,6 +57,7 @@
 uint8_t uart0_rb[UART0_RB_SIZE];
 volatile uint16_t txIndex; /* Index of the data to send out. */
 volatile uint16_t rxIndex; /* Index of the memory to save new arrived data. */
+volatile uint32_t m_last_rx; /* Index of the memory to save new arrived data. */
 
 /*******************************************************************************
  * Code
@@ -74,6 +76,8 @@ void UART0_RX_TX_IRQHandler(void)
     if ((kUART_RxDataRegFullFlag | kUART_RxOverrunFlag) & UART_GetStatusFlags(UART0))
     {
         data = UART_ReadByte(UART0);
+
+        m_last_rx = millis();
 
         /* If ring buffer is not full, add data to ring buffer. */
         if (((rxIndex + 1) % UART0_RB_SIZE) != txIndex)
@@ -103,6 +107,7 @@ void uart0_init(uart_config_t* config)
     txIndex = 0;
     rxIndex = 0;
 
+    m_last_rx = 0;
 }
 
 
@@ -117,6 +122,16 @@ void uart0_uninit(void)
 
 void uart0_send(uint8_t* data, size_t length) {
 
+	if (!length) {
+		LOG_ERROR("UART empty packet\r\n");
+		return;
+	}
+
+	if (length >= 6) LOG_DEBUG("UART0 send %X %X %X %X %X %X\r\n",
+			data[0], data[1],
+			data[2], data[3],
+			data[4], data[5]);
+
 	UART_WriteBlocking(UART0, data, length);
 
 }
@@ -127,10 +142,17 @@ void uart0_tasks() {
     /* If ring buffer is not empty, parse data. */
     while (((txIndex + 0) % UART0_RB_SIZE) != rxIndex)
     {
-    	locator_encode_char(uart0_rb[txIndex]);
+    	gps_encode_char(uart0_rb[txIndex]);
 
     	txIndex++;
     	txIndex %= UART0_RB_SIZE;
     }
+
+}
+
+
+uint32_t uart0_get_last_rx_age(void) {
+
+	return (millis() - m_last_rx);
 
 }

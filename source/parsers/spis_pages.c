@@ -7,6 +7,7 @@
 
 #include "utils.h"
 #include "spis_pages.h"
+#include "segger_wrapper.h"
 #include "mk64f_parser.h"
 
 
@@ -18,10 +19,12 @@ bool spis_decode_lns(uint8_t* p_rx_buf, sLnsInfo* info) {
 
 	if (p_rx_buf[TX_BUFF_FLAGS_POS] & (1 << TX_BUFF_FLAGS_LNS_BIT)) {
 
-		info->lat = decode_uint32 (p_rx_buf + TX_BUFF_LNS_START +  0);
-		info->lon = decode_uint32 (p_rx_buf + TX_BUFF_LNS_START +  4);
-		info->ele = decode_uint32 (p_rx_buf + TX_BUFF_LNS_START +  8);
-		info->secj = decode_uint32 (p_rx_buf + TX_BUFF_LNS_START +  12);
+		info->lat = (int32_t)decode_uint32 (p_rx_buf + TX_BUFF_LNS_START +  0);
+		info->lon = (int32_t)decode_uint32 (p_rx_buf + TX_BUFF_LNS_START +  4);
+		info->ele = (int32_t)decode_uint32 (p_rx_buf + TX_BUFF_LNS_START +  8);
+		info->speed = (int16_t)decode_uint16 (p_rx_buf + TX_BUFF_LNS_START +  12);
+		info->secj = decode_uint32 (p_rx_buf + TX_BUFF_LNS_START +  14);
+		info->date = decode_uint32 (p_rx_buf + TX_BUFF_LNS_START +  18);
 
 		return true;
 	}

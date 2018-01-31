@@ -6,6 +6,8 @@
  */
 
 #include <vue/Vue.h>
+#include "fsl_common.h"
+#include "usb_parser.h"
 #include "WString.h"
 
 
@@ -15,16 +17,22 @@ Vue::Vue() : Adafruit_GFX(LS027_HW_WIDTH, LS027_HW_HEIGHT) {
 
 }
 
-
 void Vue::init(void) {
 	this->setRotation(3);
 	LS027_Init();
+	this->initMenu();
 }
 
 void Vue::tasks(e_buttons_event event) {
 
 	// propagate to the inner menu
 	this->propagateEvent(event);
+
+}
+
+void Vue::setCurrentMode(eVueGlobalScreenModes mode_) {
+
+	m_global_mode = mode_;
 
 }
 
@@ -46,6 +54,29 @@ void Vue::refresh(void) {
 
 		default:
 			break;
+		}
+	}
+
+	// Notifications tasks
+	if (m_notifs.size()) {
+
+		Notif& notif = m_notifs.front();
+
+		// TODO this->fillRect(0, 0, _width, 60, LS027_PIXEL_WHITE);
+		this->drawFastHLine(0, 60, _width, 1);
+
+		this->setCursor(5, 5);
+		this->setTextSize(2);
+
+		if (eNotificationTypeComplete == notif.m_type) {
+			this->print(notif.m_title);
+			this->println(":");
+		}
+		this->print(notif.m_msg);
+
+		notif.m_persist--;
+		if (notif.m_persist == 0) {
+			m_notifs.pop_front();
 		}
 	}
 
@@ -80,7 +111,7 @@ void Vue::cadranH(uint8_t p_lig, uint8_t nb_lig, const char *champ, String  affi
 	int x = _width / 2 * 0.5;
 	int y = _height / nb_lig * (p_lig - 1);
 
-	setTextColor(1,0); // 'inverted' text
+	setTextColor(CLR_NRM); // 'inverted' text
 	setCursor(5, y + 5);
 	setTextSize(1);
 
@@ -114,7 +145,7 @@ void Vue::cadran(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, const char *champ
 	int x = _width / 2 * (p_col - 1);
 	int y = _height / nb_lig * (p_lig - 1);
 
-	setTextColor(1,0); // 'inverted' text
+	setTextColor(CLR_NRM); // 'inverted' text
 	setCursor(x + 5, y + 5);
 	setTextSize(1);
 
@@ -138,7 +169,71 @@ void Vue::cadran(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, const char *champ
 	// print delimiters
 	drawFastVLine(_width / 2, _height / nb_lig * (p_lig - 1), _height / nb_lig, 1);
 
-	if (p_lig > 1) drawFastHLine(_width * (p_col - 1) / 2, _height / nb_lig * (p_lig - 1), _width / 2, 1);
+	if (p_lig > 1)      drawFastHLine(_width * (p_col - 1) / 2, _height / nb_lig * (p_lig - 1), _width / 2, 1);
 	if (p_lig < nb_lig) drawFastHLine(_width * (p_col - 1) / 2, _height / nb_lig * p_lig, _width / 2, 1);
 }
 
+void Vue::HistoH(uint8_t p_lig, uint8_t nb_lig, sVueHistoConfiguration& h_config_) {
+
+	int y_base = _height / nb_lig * (p_lig);
+
+	if (h_config_.cur_elem_nb) {
+
+		assert(h_config_.p_f_read);
+		assert(h_config_.nb_elem_tot);
+
+		int dx = _width / h_config_.nb_elem_tot;
+
+		// iterate in buffer
+		for (int i=0; i < h_config_.cur_elem_nb; i++) {
+
+			int x_base0 = i * dx;
+
+			tHistoValue elem   = (h_config_.p_f_read)(i);
+			tHistoValue height = elem * _height / (nb_lig * h_config_.max_value);
+
+//			// rectangle complet
+//			this->fillRect(x_base0, y_base-height, dx, height, 2);
+			// petite barre
+			this->fillRect(x_base0, y_base-height, dx, 4, 1);
+		}
+	}
+
+	// print delimiters
+	if (p_lig > 1)      drawFastHLine(0, _height / nb_lig * (p_lig - 1), _width, 1);
+	if (p_lig < nb_lig) drawFastHLine(0, _height / nb_lig * (p_lig), _width, 1);
+}
+
+void Vue::Histo(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, sVueHistoConfiguration& h_config_) {
+
+	int x_base = _width / 2 * (p_col - 1);
+	int y_base = _height / nb_lig * (p_lig);
+
+	if (h_config_.cur_elem_nb) {
+
+		assert(h_config_.p_f_read);
+		assert(h_config_.nb_elem_tot);
+
+		int dx = _width / (2 * h_config_.nb_elem_tot);
+
+		// iterate in buffer
+		for (int i=0; i < h_config_.cur_elem_nb; i++) {
+
+			int x_base0 = x_base + i * dx;
+
+			tHistoValue elem   = (h_config_.p_f_read)(i);
+			tHistoValue height = elem * _height / (nb_lig * h_config_.max_value);
+
+//			// rectangle complet
+//			this->fillRect(x_base0, y_base-height, dx, height, 2);
+			// petite barre
+			this->fillRect(x_base0, y_base-height, dx, 4, 1);
+		}
+	}
+
+	// print delimiters
+	drawFastVLine(_width / 2, _height / nb_lig * (p_lig - 1), _height / nb_lig, 1);
+
+	if (p_lig > 1)      drawFastHLine(_width * (p_col - 1) / 2, _height / nb_lig * (p_lig - 1), _width / 2, 1);
+	if (p_lig < nb_lig) drawFastHLine(_width * (p_col - 1) / 2, _height / nb_lig * p_lig, _width / 2, 1);
+}

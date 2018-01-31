@@ -18,7 +18,8 @@
 #include "sd_functions.h"
 #include "LocusCommands.h"
 #include "segger_wrapper.h"
-#include "locator.h"
+#include "Locator.h"
+#include "Model.h"
 #include "parameters.h"
 
 #define GPS_DEFAULT_SPEED_BAUD     9600U
@@ -184,6 +185,8 @@ void GPS_MGMT::tasks(void) {
 			// set transport to binary
 			SEND_TO_GPS(GPS_BIN_CMD);
 
+			vue.addNotif("GPSMGMT: ", "EPO update started", 4, eNotificationTypeComplete);
+
 			delay_ms(500);
 
 			m_trans_type = eGPSMgmtTransBIN;
@@ -254,6 +257,8 @@ void GPS_MGMT::tasks(void) {
 	case eGPSMgmtEPOEnd:
 	{
 		LOG_INFO("EPO update end\r\n");
+
+		vue.addNotif("GPSMGMT: ", "EPO update success", 5, eNotificationTypeComplete);
 
 		(void)epo_file_stop();
 

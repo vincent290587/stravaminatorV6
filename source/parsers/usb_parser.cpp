@@ -11,6 +11,9 @@
 #include "usb_parser.h"
 #include "segger_wrapper.h"
 
+
+static char m_usb_char_buffer[128];
+
 /**
  * Decodes chars un the VCOM line
  * @param c
@@ -45,5 +48,24 @@ void usb_parser_decode(char c) {
 void usb_send_chars(const char *buffer) {
 
 	USB_DeviceCdcVcomSend((uint8_t*)buffer, strlen(buffer));
+
+}
+
+/**
+ * Prints a char* to VCOM printf style
+ * @param format
+ */
+void usb_printf(const char *format, ...) {
+
+	va_list args;
+	va_start(args, format);
+
+	memset(m_usb_char_buffer, 0, sizeof(m_usb_char_buffer));
+
+	vsnprintf(m_usb_char_buffer,
+			sizeof(m_usb_char_buffer),
+			format, args);
+
+	USB_DeviceCdcVcomSend((uint8_t*)m_usb_char_buffer, strlen(m_usb_char_buffer));
 
 }

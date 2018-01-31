@@ -70,7 +70,7 @@ bool STC3100::init(uint32_t r_sens, stc3100_res_t res) {
 	_r_sens = r_sens;
 
     // reset
-//	this->writeCommand(REG_CONTROL, STC_RESET);
+	this->writeCommand(REG_CONTROL, STC_RESET);
 	delay_ms(1);
 
 	// read device ID

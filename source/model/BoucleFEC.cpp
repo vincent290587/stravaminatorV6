@@ -16,10 +16,13 @@
 #include "Locator.h"
 
 
+static tHistoValue m_st_buffer[FEC_PW_BUFFER_NB_ELEM];
+
+
 /**
  *
  */
-BoucleFEC::BoucleFEC() {
+BoucleFEC::BoucleFEC() : m_pw_buffer(FEC_PW_BUFFER_NB_ELEM, m_st_buffer) {
 	m_last_run_time = 0;
 }
 
@@ -62,13 +65,21 @@ void BoucleFEC::run() {
 
 	LOG_INFO("Boucle FEC run\r\n");
 
-	nrf52_page0.fec_info.type = eFecControlTargetPower;
-	nrf52_page0.fec_info.data.power_control.target_power_w = 200;
+	nrf52_page0.fec_info.type = eFecControlNone;
+	nrf52_page0.fec_info.data.power_control.target_power_w = 150;
 
 	nrf52_refresh();
 
 	dma_spi0_mngr_tasks_start();
 	dma_spi0_mngr_finish();
+
+	// TODO add FEC point to record
+//	attitude.addNewFECPoint();
+
+	if (m_pw_buffer.isFull()) {
+		m_pw_buffer.popLast();
+	}
+	m_pw_buffer.add(&fec_info.data.power);
 
 	vue.refresh();
 

@@ -26,24 +26,13 @@
 #include "STC3100.h"
 #include "VEML6075.h"
 #include "MS5637.h"
+#include "Attitude.h"
 #include "parameters.h"
 
-typedef struct {
-	float lat;
-	float lon;
-	float alt;
-	float climb;
-	float vit_asc;
-	int16_t pwr;
-	uint16_t nbpts;
-	uint8_t nbact;
-	uint16_t nbsec_act;
-	uint16_t next;
-	uint32_t secj;
-	float dist;
-} SAtt;
 
 extern SAtt att;
+
+extern Attitude      attitude;
 
 extern ListeSegments mes_segments;
 

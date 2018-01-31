@@ -10,6 +10,8 @@
 
 SAtt att;
 
+Attitude      attitude;
+
 ListeSegments mes_segments;
 
 ListeParcours mes_parcours;

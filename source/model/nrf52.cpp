@@ -100,10 +100,12 @@ static void _post_transfer(void* p_context) {
 	} else {
 
 		if (spis_decode_lns(masterRxData, &nrf52_data.lns_info)) {
-			locator.nrf_loc.data.lat = nrf52_data.lns_info.lat;
-			locator.nrf_loc.data.lon = nrf52_data.lns_info.lon;
-			locator.nrf_loc.data.alt = nrf52_data.lns_info.ele;
+			locator.nrf_loc.data.lat = (float)(nrf52_data.lns_info.lat / 10000000.);
+			locator.nrf_loc.data.lon = (float)(nrf52_data.lns_info.lon / 10000000.);
+			locator.nrf_loc.data.alt = (float)(nrf52_data.lns_info.ele / 100.);
+			locator.nrf_loc.data.speed = (float)(nrf52_data.lns_info.speed / 10.);
 			locator.nrf_loc.data.utc_time = nrf52_data.lns_info.secj;
+			locator.nrf_loc.data.date = nrf52_data.lns_info.date;
 
 			LOG_INFO("LNS updated\r\n");
 

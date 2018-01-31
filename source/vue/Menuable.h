@@ -10,6 +10,7 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <Adafruit_GFX.h>
 #include "WString.h"
 #include "button.h"
 
@@ -31,21 +32,37 @@ typedef struct {
 typedef struct {
 	uint16_t  nb_elem;
 	sMenuItem item[MENU_MAX_ITEMS_NB];
-} sMenuItemList;
+} sMenuPage;
 
+typedef struct {
+	uint16_t  cur_page;
+	sMenuPage menu_page[MENU_MAX_ITEMS_NB];
+} sMenus;
 
+void menu_init_page(sMenuPage *page);
 
-class Menuable {
+void menu_add_item(sMenuPage *page, const char *name, f_menu_callback callback);
+
+class Menuable: virtual public Adafruit_GFX {
 public:
 	Menuable();
 	virtual ~Menuable();
+
+	void initMenu(void);
+
+	void refreshMenu(void);
 
 	void propagateEvent(e_buttons_event event);
 
 	void tasksMenu(void);
 
-protected:
+	virtual void refresh(void)=0;
+
 	bool m_is_menu_selected;
+	sMenus m_menus;
+protected:
+	uint8_t m_ind_selec;
+
 };
 
 #endif /* SOURCE_VUE_MENUABLE_H_ */

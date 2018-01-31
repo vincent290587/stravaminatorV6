@@ -12,7 +12,6 @@
 #include "Zoom.h"
 
 #define VH_RATIO               0.8
-#define SEG_OFF_NB_POINTS      10
 
 #define BLACK                  1
 #define WHITE                  0

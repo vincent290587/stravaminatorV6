@@ -8,6 +8,8 @@
 #ifndef LIBRARIES_UTILS_MILLIS_H_
 #define LIBRARIES_UTILS_MILLIS_H_
 
+#include <stdint.h>
+
 #ifdef	__cplusplus
 extern "C" {
 #endif
@@ -17,6 +19,8 @@ void millis_init(void);
 uint32_t millis(void);
 
 void delay_ms(uint32_t delay_);
+
+void delay_us(uint32_t delay_);
 
 void sleep(void);
 

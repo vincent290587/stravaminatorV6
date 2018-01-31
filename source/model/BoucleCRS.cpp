@@ -33,6 +33,12 @@ bool BoucleCRS::isTime() {
 		return true;
 	}
 
+	if (m_needs_init ||
+			m_last_refresh.getAge() > 1200) {
+		LOG_INFO("Auto refresh\r\n");
+		return true;
+	}
+
 	return false;
 }
 
@@ -50,6 +56,10 @@ void BoucleCRS::init() {
 	memset(&att, 0, sizeof(SAtt));
 
 	m_needs_init = false;
+
+	m_last_refresh = 0;
+
+	m_dist_next_seg = 5000;
 }
 
 /**
@@ -57,107 +67,97 @@ void BoucleCRS::init() {
  */
 void BoucleCRS::run() {
 
-	float min_dist_seg = 50000;
+	m_dist_next_seg = 50000;
 	float tmp_dist;
 
 	pwManager.switchToRun120();
 
 	if (m_needs_init) this->init();
 
-	// update position
-	att.nbact = 0;
-	att.alt = 0;
-	locator.getPosition(att.lat, att.lon, att.secj);
+	nrf52_refresh();
 
-//	sdisplay.clear();
-//	sdisplay.setCursor(5,5);
-//	sdisplay.setTextSize(1);
-//	sdisplay.print("No Seg");
-//	sdisplay.drawRect(40, 15, 20, 10, BLACK);
+	dma_spi0_mngr_tasks_start();
+	dma_spi0_mngr_finish();
 
-//	lcd.resetSegments();
+	if (locator.isUpdated()) {
 
-	mes_points.ajouteFinIso(att.lat, att.lon, 0., millis(), 8);
+		LOG_INFO("Locator is updated (%u)\r\n", millis());
 
-	for (auto& seg : mes_segments._segs) {
+		att.nbact = 0;
 
-		if (seg.isValid() && mes_points.size() > 2) {
+		// update position
+		SLoc loc;
+		SDate dat;
+		memset(&loc, 0, sizeof(loc));
+		locator.getPosition(loc, dat);
 
-			tmp_dist = segment_allocator(seg, att.lat, att.lon);
+		attitude.addNewLocation(loc, dat);
 
-			// calculate distance to closes segment
-			if (tmp_dist < min_dist_seg) min_dist_seg = tmp_dist;
+		// update sements
+		for (auto& seg : mes_segments._segs) {
 
-			if (seg.getStatus() != SEG_OFF) {
+			if (seg.isValid() && mes_points.size() > 2) {
 
-				W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
-				seg.majPerformance(mes_points);
-				W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
-				att.nbact += 1;
+				tmp_dist = segment_allocator(seg, att.loc.lat, att.loc.lon);
 
-				if (seg.getStatus() == SEG_START) {
+				// calculate distance to closes segment
+				if (tmp_dist < m_dist_next_seg) m_dist_next_seg = tmp_dist;
 
-					LOG_INFO("Segment START %s\r\n", seg.getName());
+				if (seg.getStatus() != SEG_OFF) {
 
-				} else if (seg.getStatus() == SEG_FIN) {
+					W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
+					seg.majPerformance(mes_points);
+					W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
+					att.nbact += 1;
 
-					LOG_INFO("Segment FIN %s\r\n", seg.getName());
-
-
-					if (seg.getAvance() > 0.) {
-						//						att.nbpr++;
-						//						att.nbkom++;
-						//						victoryTone ();
+					if (seg.getStatus() < SEG_OFF) {
+						vue.addSegmentPrio(&seg);
+					} else if (seg.getStatus() > SEG_OFF) {
+						vue.addSegment(&seg);
 					}
 
-				} else if (seg.getStatus() == SEG_ON) {
-					//					Serial3.println(Nordic::encodeOrder(seg.getAvance(), seg.getCur()));
-					//					order_glasses = 1;
-					LOG_INFO("Avance: %d\r\n", (int)(seg.getAvance() / 1000));
+					if (seg.getStatus() == SEG_FIN) {
+
+						LOG_INFO("Segment FIN %s\r\n", seg.getName());
+
+						if (seg.getAvance() > 0.) {
+							ua_send_notification_blue(2);
+						} else {
+							ua_send_notification_red (2);
+						}
+
+					}
+
+				} else if (tmp_dist < 250) {
+
+					W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
+					seg.majPerformance(mes_points);
+					W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
+
+					vue.addSegment(&seg);
 
 				}
 
-//				lcd.registerSegment(seg);
+			} // fin isValid
 
-//				sdisplay.clear();
-//				sdisplay.printSeg(0, seg, 0);
-				break;
+		} // fin for
 
-			} else if (tmp_dist < 250) {
+		att.next = m_dist_next_seg;
 
-				W_SYSVIEW_OnTaskStartExec(SEG_PERF_TASK);
-				seg.majPerformance(mes_points);
-				W_SYSVIEW_OnTaskStopExec(SEG_PERF_TASK);
-
-//				lcd.registerSegment(seg);
-
-				// TODO just display the segment
-//				LOG_INFO("Segment preview\r\n");
-//				sdisplay.clear();
-//				sdisplay.printSeg(0, seg, 0);
-				break;
-			}
-
-		} // fin isValid
-
-	} // fin for
-
-	att.next = min_dist_seg;
-
-//	lcd.afficheSegments();
-
-	//LOG_INFO("Next segment: %u\r\n", att.next);
+		LOG_INFO("Next segment: %u\r\n", att.next);
+	}
 
 	pwManager.switchToRun24();
 
 	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
 	vue.refresh();
+	m_last_refresh = 0;
+	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 
 	dma_spi0_mngr_tasks_start();
 	dma_spi0_mngr_finish();
-	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 
-//	sdisplay.displayRTT();
+	//	sdisplay.displayRTT();
 
 	// go back to low power
 	pwManager.switchToVlpr();

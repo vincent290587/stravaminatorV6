@@ -10,6 +10,7 @@
 #include "segger_wrapper.h"
 #include "composite.h"
 #include "board.h"
+#include "Model.h"
 #include "pin_mux.h"
 #include "fsl_gpio.h"
 
@@ -43,6 +44,8 @@ bool PowerManager::isUsbConnected() {
 #ifdef DEBUG_CONFIG
 	return true;
 #else
+
+	if (millis() < MIN_TIME_COMP_STOP_MS) return true;
 
 	return GPIO_PinRead(BOARD_INITPINS_USB_PRES_GPIO, BOARD_INITPINS_USB_PRES_GPIO_PIN);
 
@@ -108,4 +111,12 @@ void PowerManager::switchToVlpr() {
 
 	}
 	W_SYSVIEW_OnIdle();
+}
+
+
+/**
+ *
+ */
+void PowerManager::shutdown() {
+	nrf52_page0.power_info.state = 1;
 }

@@ -8,8 +8,33 @@
 #include <Model.h>
 #include <button.h>
 #include <UAParser.h>
+#include "segger_wrapper.h"
 
 //#include "mk64f_parser.h"
+
+void ua_send_notification_green (uint8_t on_time_) {
+	nrf52_page0.neo_info.event_type = 1;
+	nrf52_page0.neo_info.on_time = on_time_;
+	nrf52_page0.neo_info.rgb[0] = 0x00;
+	nrf52_page0.neo_info.rgb[1] = 0xFF;
+	nrf52_page0.neo_info.rgb[2] = 0x00;
+}
+
+void ua_send_notification_blue (uint8_t on_time_) {
+	nrf52_page0.neo_info.event_type = 1;
+	nrf52_page0.neo_info.on_time = on_time_;
+	nrf52_page0.neo_info.rgb[0] = 0x00;
+	nrf52_page0.neo_info.rgb[1] = 0x00;
+	nrf52_page0.neo_info.rgb[2] = 0xFF;
+}
+
+void ua_send_notification_red (uint8_t on_time_) {
+	nrf52_page0.neo_info.event_type = 1;
+	nrf52_page0.neo_info.on_time = on_time_;
+	nrf52_page0.neo_info.rgb[0] = 0xFF;
+	nrf52_page0.neo_info.rgb[1] = 0x00;
+	nrf52_page0.neo_info.rgb[2] = 0x00;
+}
 
 UAParser::UAParser() {
 
@@ -36,31 +61,13 @@ void UAParser::tasks(void) {
 	switch (event) {
 	case k_Buttons_press_left:
 
-		nrf52_page0.neo_info.event_type = 1;
-		nrf52_page0.neo_info.on_time = 5;
-		nrf52_page0.neo_info.rgb[0] = 0xFF;
-		nrf52_page0.neo_info.rgb[1] = 0x00;
-		nrf52_page0.neo_info.rgb[2] = 0x00;
-
-		// TODO
-		break;
-	case k_Buttons_press_right:
-
-		nrf52_page0.neo_info.event_type = 1;
-		nrf52_page0.neo_info.on_time = 5;
-		nrf52_page0.neo_info.rgb[0] = 0x00;
-		nrf52_page0.neo_info.rgb[1] = 0xFF;
-		nrf52_page0.neo_info.rgb[2] = 0x00;
-
 		// TODO
 		break;
 	case k_Buttons_press_center:
 
-		nrf52_page0.neo_info.event_type = 1;
-		nrf52_page0.neo_info.on_time = 5;
-		nrf52_page0.neo_info.rgb[0] = 0x00;
-		nrf52_page0.neo_info.rgb[1] = 0x00;
-		nrf52_page0.neo_info.rgb[2] = 0xFF;
+		// TODO
+		break;
+	case k_Buttons_press_right:
 
 		// TODO
 		break;

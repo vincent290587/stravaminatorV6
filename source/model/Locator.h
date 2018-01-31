@@ -63,7 +63,7 @@ public:
 
 	void displayGPS2(void);
 
-	eLocationSource getPosition(SLoc& loc_);
+	eLocationSource getPosition(SLoc& loc_, SDate& date_);
 
 	eLocationSource getUpdateSource();
 
@@ -74,6 +74,8 @@ public:
 	Sensor<sLocationData> nrf_loc;
 	Sensor<sLocationData> sim_loc;
 	Sensor<sLocationData> gps_loc;
+
+	Sensor<sLocationData> eme_loc;
 
 private:
 	bool anyChanges;

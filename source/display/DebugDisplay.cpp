@@ -11,6 +11,11 @@
 #include "DebugDisplay.h"
 #include "segger_wrapper.h"
 
+#ifdef SEG_OFF_NB_POINTS
+#undef SEG_OFF_NB_POINTS
+#define SEG_OFF_NB_POINTS      10
+#endif
+
 DebugDisplay::DebugDisplay() : SeggerDisplay() {
 	// TODO Auto-generated constructor stub
 
@@ -80,9 +85,9 @@ void DebugDisplay::printSeg(uint8_t ligne, Segment& seg, uint8_t mode) {
 		if (pSuivant->_lon > maxLon) maxLon = pSuivant->_lon;
 		if (pSuivant->_alt > maxAlt) maxAlt = pSuivant->_alt;
 
-		if (maDist > distance_between(pCourant->_lat, pCourant->_lon, att.lat, att.lon) &&
+		if (maDist > distance_between(pCourant->_lat, pCourant->_lon, att.loc.lat, att.loc.lon) &&
 				seg.getStatus() > SEG_OFF) {
-			maDist = distance_between(pCourant->_lat, pCourant->_lon, att.lat, att.lon) + 0.1;
+			maDist = distance_between(pCourant->_lat, pCourant->_lon, att.loc.lat, att.loc.lon) + 0.1;
 			maPos = pCourant;
 		}
 
@@ -96,22 +101,22 @@ void DebugDisplay::printSeg(uint8_t ligne, Segment& seg, uint8_t mode) {
 	} else if (seg.getStatus() == SEG_OFF) {
 		// first point
 		maPos = liste->getFirstPoint();
-		maDist = distance_between(maPos->_lat, maPos->_lon, att.lat, att.lon) + 0.1;
+		maDist = distance_between(maPos->_lat, maPos->_lon, att.loc.lat, att.loc.lon) + 0.1;
 
 		// notre position doit etre dans le rectangle
-		if (att.lat < minLat) minLat = att.lat;
-		if (att.lon < minLon) minLon = att.lon;
-		if (att.alt < minAlt) minAlt = att.alt;
+		if (att.loc.lat < minLat) minLat = att.loc.lat;
+		if (att.loc.lon < minLon) minLon = att.loc.lon;
+		if (att.loc.alt < minAlt) minAlt = att.loc.alt;
 
-		if (att.lat > maxLat) maxLat = att.lat;
-		if (att.lon > maxLon) maxLon = att.lon;
-		if (att.alt > maxAlt) maxAlt = att.alt;
+		if (att.loc.lat > maxLat) maxLat = att.loc.lat;
+		if (att.loc.lon > maxLon) maxLon = att.loc.lon;
+		if (att.loc.alt > maxAlt) maxAlt = att.loc.alt;
 	}
 
 	// on essaye de rendre l'image carree: ratio 1:1
 	// compute convertion between deg and meters
-	float mdeglon_to_m = distance_between(att.lat, 0., att.lat, 0.001);
-	float mdeglat_to_m = distance_between(att.lat, 0., att.lat + 0.001, 0.);
+	float mdeglon_to_m = distance_between(att.loc.lat, 0., att.loc.lat, 0.001);
+	float mdeglat_to_m = distance_between(att.loc.lat, 0., att.loc.lat + 0.001, 0.);
 
 	float v_span = distance_between(minLat, minLon, maxLat, minLon);
 	float h_span = distance_between(minLat, minLon, minLat, maxLon);
@@ -146,7 +151,7 @@ void DebugDisplay::printSeg(uint8_t ligne, Segment& seg, uint8_t mode) {
 //	LOG_INFO("vspan= %d\r\n", (int)(1000*(maxLat - minLat)));
 //	LOG_INFO("hspan= %d\r\n", (int)(1000*(maxLon - minLon)));
 //	LOG_INFO("point= %d-%d mins:%d-%d\r\n",
-//			(int)(1000*att.lat), (int)(1000*att.lon),
+//			(int)(1000*att.loc.lat), (int)(1000*att.loc.lon),
 //			(int)(1000*minLat), (int)(1000*minLon));
 
 	curDist = 0.;
@@ -206,9 +211,9 @@ void DebugDisplay::printSeg(uint8_t ligne, Segment& seg, uint8_t mode) {
 		_lat = pCourant->_lat;
 		_alt = pCourant->_alt;
 	} else {
-		_lon = att.lon;
-		_lat = att.lat;
-		_alt = att.alt;
+		_lon = att.loc.lon;
+		_lat = att.loc.lat;
+		_alt = att.loc.alt;
 	}
 
 	// ma position

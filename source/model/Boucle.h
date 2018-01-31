@@ -11,6 +11,7 @@
 #include <model/BoucleInterface.h>
 #include <model/BoucleCRS.h>
 #include <model/BoucleFEC.h>
+#include "parameters.h"
 
 typedef enum {
 	eBoucleGlobalModesInit,
@@ -18,8 +19,6 @@ typedef enum {
 	eBoucleGlobalModesFEC,
 	eBoucleGlobalModesPRC,
 } eBoucleGlobalModes;
-
-#define BOUCLE_DEFAULT_MODE    eBoucleGlobalModesFEC
 
 
 extern BoucleCRS     boucle_crs;

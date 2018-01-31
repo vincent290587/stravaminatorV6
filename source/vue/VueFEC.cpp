@@ -9,6 +9,7 @@
 #include <vue/VueFEC.h>
 #include <vue/Screenutils.h>
 #include "segger_wrapper.h"
+#include "usb_parser.h"
 
 #define VUE_FEC_NB_LINES            5
 
@@ -16,28 +17,20 @@ VueFEC::VueFEC() : Adafruit_GFX(0, 0) {
 	m_fec_screen_mode = eVueFECScreenInit;
 }
 
+static tHistoValue _vue_fec_pw_rb_read(uint16_t ind_) {
+
+	tHistoValue *p_ret_val = boucle_fec.m_pw_buffer.get(ind_);
+
+	assert(p_ret_val);
+
+	tHistoValue ret_val = p_ret_val[0];
+
+	return ret_val;
+}
+
 eVueFECScreenModes VueFEC::tasksFEC() {
 
 	eVueFECScreenModes res = m_fec_screen_mode;
-
-//	if (m_el_time >= 60) {
-	if (m_el_time >= 60*4 && !pwManager.isUsbConnected()) {
-		nrf52_page0.power_info.state = 1;
-
-		this->setCursor(100,50);
-		this->setTextSize(3);
-		this->print(String("OFF"));
-
-		this->cadran(4, VUE_FEC_NB_LINES, 1, "Avg", _imkstr((int)stc.getAverageCurrent()), "mA");
-		this->cadran(4, VUE_FEC_NB_LINES, 2, "Chrg", _fmkstr(stc.getCharge(), 1U), "mAh");
-
-		this->cadran(5, VUE_FEC_NB_LINES, 1, "STC", _imkstr((int)stc.getCurrent()), "mA");
-		this->cadran(5, VUE_FEC_NB_LINES, 2, "SOC", _imkstr(percentageBatt(stc.getVoltage(), stc.getCurrent())), "%");
-
-		stc.shutdown();
-
-		return eVueFECScreenDataFull;
-	}
 
 	if (m_fec_screen_mode == eVueFECScreenInit) {
 
@@ -79,12 +72,16 @@ eVueFECScreenModes VueFEC::tasksFEC() {
 
 		this->cadranH(4, VUE_FEC_NB_LINES, "Pwr", _imkstr(fec_info.data.power), "W");
 
+		sVueHistoConfiguration h_config;
+		h_config.cur_elem_nb = boucle_fec.m_pw_buffer.size();
+		h_config.max_value   = (tHistoValue)500;
+		h_config.nb_elem_tot = FEC_PW_BUFFER_NB_ELEM;
+		h_config.p_f_read    = _vue_fec_pw_rb_read;
+
+		this->HistoH(4, VUE_FEC_NB_LINES, h_config);
 	}
 
-	this->cadran(4, VUE_FEC_NB_LINES, 1, "Avg", _imkstr((int)stc.getAverageCurrent()), "mA");
-	this->cadran(4, VUE_FEC_NB_LINES, 2, "Chrg", _fmkstr(stc.getCharge(), 1U), "mAh");
-
-	this->cadran(5, VUE_FEC_NB_LINES, 1, "STC", _imkstr((int)stc.getCurrent()), "mA");
+	this->cadran(5, VUE_FEC_NB_LINES, 1, "Avg", _imkstr((int)stc.getAverageCurrent()), "mA");
 	this->cadran(5, VUE_FEC_NB_LINES, 2, "SOC", _imkstr(percentageBatt(stc.getVoltage(), stc.getCurrent())), "%");
 
 	return res;

@@ -43,6 +43,8 @@ class Segment {
     Segment(void);
     Segment(const char *nom_seg);
 
+    void init(void);
+
     const char* getName();
     void setSegmentName(const char *name_);
     void emptyName();
@@ -86,6 +88,7 @@ class Segment {
     float _monAvance;
     float _monElev0;
     float _monPElev;
+    float _monPDist;
     ListePoints _lpts;
 };
 

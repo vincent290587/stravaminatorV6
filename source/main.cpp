@@ -11,6 +11,7 @@
 #include "segger_wrapper.h"
 
 #include "composite.h"
+#include "sdcard_fatfs.h"
 #include "power_manager.h"
 #include "Model.h"
 #include "UData.h"
@@ -46,6 +47,9 @@ int main(void) {
 	// LCD driver
 	vue.init();
 
+	// USB driver
+	usb_comp_init();
+	CompositeTask();
 
 	nrf52_init();
 	gps_mgmt.init();
@@ -135,7 +139,9 @@ int main(void) {
 #endif
 
 		// USB
-//		if (pwManager.isUsbConnected()) CompositeTask();
+		if (pwManager.isUsbConnected()) CompositeTask();
+
+		gps_mgmt.tasks();
 
 		locator.tasks();
 

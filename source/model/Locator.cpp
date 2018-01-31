@@ -134,7 +134,7 @@ uint32_t Locator::getLastUpdateAge() {
  * @param sec_
  * @return
  */
-eLocationSource Locator::getPosition(SLoc& loc_) {
+eLocationSource Locator::getPosition(SLoc& loc_, SDate& date_) {
 
 	eLocationSource res = this->getUpdateSource();
 
@@ -144,8 +144,8 @@ eLocationSource Locator::getPosition(SLoc& loc_) {
 		loc_.lat = sim_loc.data.lat;
 		loc_.lon = sim_loc.data.lon;
 		loc_.speed = 20.;
-		loc_.secj = sim_loc.data.utc_time;
-		loc_.date = 291217;
+		date_.secj = sim_loc.data.utc_time;
+		date_.date = 291217;
 		sim_loc.clearIsUpdated();
 	}
 	break;
@@ -154,9 +154,13 @@ eLocationSource Locator::getPosition(SLoc& loc_) {
 		loc_.lat = nrf_loc.data.lat;
 		loc_.lon = nrf_loc.data.lon;
 		loc_.speed = nrf_loc.data.speed;
-		loc_.secj = nrf_loc.data.utc_time;
-		loc_.date = nrf_loc.data.date;
+		date_.secj = nrf_loc.data.utc_time;
+		date_.date = nrf_loc.data.date;
 		nrf_loc.clearIsUpdated();
+
+		if (!eme_loc.isUpdated()) {
+			eme_loc = nrf_loc;
+		}
 	}
 	break;
 	case eLocationSourceGPS:
@@ -164,8 +168,8 @@ eLocationSource Locator::getPosition(SLoc& loc_) {
 		loc_.lat = gps_loc.data.lat;
 		loc_.lon = gps_loc.data.lon;
 		loc_.speed = gps_loc.data.speed;
-		loc_.secj = gps_loc.data.utc_time;
-		loc_.date = gps_loc.data.date;
+		date_.secj = gps_loc.data.utc_time;
+		date_.date = gps_loc.data.date;
 		gps_loc.clearIsUpdated();
 	}
 	break;

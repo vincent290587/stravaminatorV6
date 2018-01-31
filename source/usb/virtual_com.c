@@ -36,12 +36,16 @@
 #include "board.h"
 
 #include <stdio.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 #include "usb_parser.h"
 #include "usb_device_config.h"
 #include "usb.h"
 #include "usb_device.h"
+#include "parameters.h"
+#include "segger_wrapper.h"
+#include "millis.h"
 
 #include "usb_device_class.h"
 #include "usb_device_cdc_acm.h"
@@ -86,6 +90,7 @@ USB_DMA_NONINIT_DATA_ALIGN(USB_DATA_ALIGN_SIZE) static uint8_t s_currSendBuf[DAT
 volatile static uint32_t s_recvSize = 0;
 volatile static uint32_t s_sendSize = 0;
 volatile static usb_device_composite_struct_t *g_deviceComposite;
+volatile static bool m_is_packet_sent = true;
 
 /*******************************************************************************
 * Code
@@ -128,6 +133,8 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
                 if ((epCbParam->buffer != NULL) || ((epCbParam->buffer == NULL) && (epCbParam->length == 0)))
                 {
                     /* User: add your own code for send complete event */
+                	m_is_packet_sent = true;
+
                     /* Schedule buffer for next receive event */
                     error = USB_DeviceCdcAcmRecv(handle, USB_CDC_VCOM_DIC_BULK_OUT_ENDPOINT, s_currRecvBuf,
                                                  g_cdcVcomDicEndpoints[0].maxPacketSize);
@@ -350,23 +357,34 @@ usb_status_t USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size) {
 	usb_status_t error = kStatus_USB_Error;
 	if ((1 == g_deviceComposite->cdcVcom.attach) && (1 == g_deviceComposite->cdcVcom.startTransactions))
 	{
-		if (!s_sendSize)
+
+		if (m_is_packet_sent)
 		{
 			memcpy(s_currSendBuf, buffer, size);
 
-			s_sendSize = size;
-
 			error = USB_DeviceCdcAcmSend(g_deviceComposite->cdcVcom.cdcAcmHandle, USB_CDC_VCOM_DIC_BULK_IN_ENDPOINT,
 					s_currSendBuf, size);
-
-			s_sendSize = 0;
-
 			if (error != kStatus_USB_Success)
 			{
-				/* TODO Failure to send Data Handling code here */
+    			LOG_ERROR("USB VCOM send failure\r\n");
+    			return error;
 			}
+
+        	m_is_packet_sent = false;
+
+        	// block
+        	uint32_t millis_ = millis();
+        	while (!m_is_packet_sent) {
+        		sleep();
+
+        		if (millis() - millis_ > USB_TIMEOUT_MS) {
+        			LOG_ERROR("USB VCOM send timeout\r\n");
+        			break;
+        		}
+        	}
+
 		} else {
-			/* TODO Failure to send Data Handling code here */
+			LOG_ERROR("USB VCOM busy\r\n");
 		}
 	}
 

@@ -8,6 +8,7 @@
 #ifndef SOURCE_MODEL_BOUCLECRS_H_
 #define SOURCE_MODEL_BOUCLECRS_H_
 
+#include "UData.h"
 #include <model/BoucleInterface.h>
 
 
@@ -19,8 +20,11 @@ public:
 	bool isTime();
 	void run();
 
+	uint16_t m_dist_next_seg;
+
 protected:
 
+	UData<uint8_t> m_last_refresh;
 };
 
 

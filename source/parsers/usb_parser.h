@@ -17,6 +17,8 @@ void usb_parser_decode(char c);
 
 void usb_send_chars(const char *buffer);
 
+void usb_printf(const char *format, ...);
+
 #if defined(__cplusplus)
 }
 #endif /* _cplusplus */

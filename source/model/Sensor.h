@@ -42,6 +42,7 @@ public:
 	}
 
 	uint32_t getAge() {
+		if (!m_last_updated) return UINT32_MAX;
 		return (millis() - m_last_updated);
 	}
 

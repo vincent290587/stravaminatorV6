@@ -6,6 +6,7 @@
  */
 
 #include "ListePoints.h"
+#include "segger_wrapper.h"
 #include "utils.h"
 #include <math.h>
 
@@ -74,6 +75,9 @@ void ListePoints::removeAll() {
 }
 
 Point *ListePoints::getFirstPoint() {
+
+	if (!m_lpoints.size()) return NULL;
+
     return &m_lpoints.front();
 }
 
@@ -133,6 +137,8 @@ float ListePoints::dist(Point *p_) {
 
 	float maDist = 100000.;
 
+	if (!p_) return maDist;
+
 	// on cherche la distance min
 	for (auto& point : m_lpoints) {
 		if (maDist > point.dist(p_)) {
@@ -177,10 +183,12 @@ void ListePoints::updateDelta() {
 	int indice = 0;
 	Point tmpPT1;
 	float tmp_dist = 0.;
-	float min_lon = 0.;
-	float max_lon = 0.;
-	float min_lat = 0.;
-	float max_lat = 0.;
+	float min_lon = 100;
+	float max_lon = -100;
+	float min_lat = 200;
+	float max_lat = -200;
+
+	if (m_lpoints.size() < 2) return;
 
 	for (auto& tmpPT2 : m_lpoints) {
 
@@ -195,7 +203,7 @@ void ListePoints::updateDelta() {
 
 			// maximaux
 			if (max_lon < tmpPT2._lon) max_lon = tmpPT2._lon;
-			if (max_lat < tmpPT2._lat) max_lon = tmpPT2._lat;
+			if (max_lat < tmpPT2._lat) max_lat = tmpPT2._lat;
 
 		} else {
 			min_lat = tmpPT2._lat;
@@ -224,7 +232,7 @@ void ListePoints::updateDelta() {
  *
  * @param point
  */
-void ListePoints::updateRelativePosition(Point point) {
+void ListePoints::updateRelativePosition(Point& point) {
 
 	Point P1, P2;
 	float tmp_dist, distP1_, distP2_;
@@ -287,6 +295,7 @@ void ListePoints::updateRelativePosition(Point point) {
 		m_pos_r._z = P1._alt;
 		m_pos_r._t = P1._rtime;
 	}
+
 }
 
 /** @gives the relative position as a vector in the referential P1/P2 as x
@@ -364,7 +373,7 @@ Vecteur ListePoints::computePosRelative(Point point) {
  *
  * @return The stored list delta
  */
-Vecteur ListePoints::getDeltaListe() {
+Vecteur& ListePoints::getDeltaListe() {
 	return m_delta_l;
 }
 
@@ -372,7 +381,7 @@ Vecteur ListePoints::getDeltaListe() {
  *
  * @return The stored list center
  */
-Point2D ListePoints::getCenterListe() {
+Point2D& ListePoints::getCenterListe() {
     return m_center_l;
 }
 

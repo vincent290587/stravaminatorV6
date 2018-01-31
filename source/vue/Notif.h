@@ -12,16 +12,22 @@
 #include <stdint.h>
 #include "WString.h"
 
+typedef enum {
+	eNotificationTypePartial,
+	eNotificationTypeComplete,
+} eNotificationType;
+
 class Notif {
 public:
-	Notif(uint8_t type_, const char *title_, const char *msg_) {
-		m_type  = type_;
-		m_title = title_;
-		m_msg   = msg_;
+	Notif(const char *title_, const char *msg_, uint8_t persist = 5, eNotificationType type_ = eNotificationTypePartial) {
+		m_persist = persist;
+		m_type    = type_;
+		m_title   = title_;
+		m_msg     = msg_;
 	}
-	virtual ~Notif();
 
-	uint8_t m_type;
+	uint8_t m_persist;
+	eNotificationType m_type;
 	String m_title;
 	String m_msg;
 };
@@ -29,18 +35,16 @@ public:
 
 class NotifiableDevice {
 public:
-	NotifiableDevice() {m_notif_cnt = 0;}
+	NotifiableDevice() {}
 	~NotifiableDevice() {
 		m_notifs.clear();
 	}
 
-	void addNotif(uint8_t type_, const char *title_, const char *msg_) {
-		m_notifs.push_back(Notif(type_, title_, msg_));
-		m_notif_cnt++;
+	void addNotif(const char *title_, const char *msg_, uint8_t persist_ = 5, eNotificationType type_ = eNotificationTypePartial) {
+		m_notifs.push_back(Notif(title_, msg_, persist_, type_));
 	}
 
 protected:
-	uint8_t          m_notif_cnt;
 	std::list<Notif> m_notifs;
 };
 

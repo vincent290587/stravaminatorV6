@@ -62,6 +62,15 @@ Segment::Segment(const char *nom_seg) : Segment() {
 		_nomFichier = nom_seg;
 }
 
+/**
+ * Init the list delta and center
+ */
+void Segment::init(void) {
+
+	_lpts.updateDelta();
+
+}
+
 Point *Segment::getFirstPoint() {
 	return _lpts.getFirstPoint();
 }
@@ -222,7 +231,6 @@ void Segment::majPerformance(ListePoints& mes_points) {
 	int activable, desactivable;
 	Point pc;
 	Vecteur vect;
-	Vecteur delta;
 
 	if (mes_points.size() < 2) {
 		//    loggerMsg("Historique insuffisant");
@@ -238,7 +246,7 @@ void Segment::majPerformance(ListePoints& mes_points) {
 
 	activable = testActivation(mes_points);
 
-	delta = _lpts.getDeltaListe();
+	Vecteur& delta = _lpts.getDeltaListe();
 
 	// update the relative position of our last point on the segment
 	_lpts.updateRelativePosition(pc);
@@ -268,7 +276,6 @@ void Segment::majPerformance(ListePoints& mes_points) {
 		desactivable = testDesactivation(mes_points);
 
 		if (desactivable == 0) {
-			// on met a jour la perfo
 
 			vect = _lpts.getPosRelative();
 

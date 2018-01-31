@@ -9,6 +9,7 @@
 #define SOURCE_VUE_VUE_H_
 
 #include "ls027.h"
+#include <vue/VueCommon.h>
 #include <vue/Notif.h>
 #include <vue/VueCRS.h>
 #include <vue/VueFEC.h>
@@ -21,7 +22,7 @@ typedef enum {
 	eVueGlobalScreenPRC,
 } eVueGlobalScreenModes;
 
-class Vue: protected VueCRS, protected VueFEC, protected VuePRC, protected NotifiableDevice, protected Menuable {
+class Vue: public VueCRS, public VueFEC, public VuePRC, public NotifiableDevice, public Menuable {
 public:
 	Vue();
 
@@ -29,11 +30,18 @@ public:
 
 	void tasks(e_buttons_event event);
 
+	void setCurrentMode(eVueGlobalScreenModes mode_);
+
 	void refresh(void);
 
 	void drawPixel(int16_t x, int16_t y, uint16_t color);
+
+	void cadran (uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, const char *champ, String  affi, const char *p_unite);
 	void cadranH(uint8_t p_lig, uint8_t nb_lig, const char *champ, String  affi, const char *p_unite);
-	void cadran(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, const char *champ, String  affi, const char *p_unite);
+
+	void Histo(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, sVueHistoConfiguration& h_config_);
+	void HistoH (uint8_t p_lig, uint8_t nb_lig, sVueHistoConfiguration& h_config_);
+
 	void clearDisplay(void) {
 		LS027_Clear();
 	}

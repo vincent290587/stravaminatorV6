@@ -43,10 +43,10 @@ public:
     Vecteur computePosRelative(Point point);
 
     void updateDelta();
-    void updateRelativePosition(Point point);
-    Vecteur getDeltaListe();
+    void updateRelativePosition(Point& point);
+    Vecteur& getDeltaListe();
     Vecteur getPosRelative();
-    Point2D getCenterListe();
+    Point2D& getCenterListe();
 
     float dist(Point *p_);
 	float dist(float lat_, float lon_);
@@ -57,13 +57,15 @@ public:
 
     std::list<Point> *getLPTS() {return &m_lpoints;}
     
+    Point m_P1, m_P2;
+
 protected:
     std::list<Point> m_lpoints;
     Vecteur m_pos_r;
     Vecteur m_delta_l;
     Point2D m_center_l;
     float m_dist;
-    Point m_P1, m_P2;
+    float m_cur_dist;
 };
 
 #endif	/* LISTEPOINTS_H */

@@ -99,8 +99,6 @@ uint32_t millis(void) {
 void delay_ms(uint32_t delay_) {
 	uint32_t start = lptmrCounter;
 
-//	W_SYSVIEW_OnIdle();
-
 	while (lptmrCounter < start + delay_ && lptmrCounter >= start) {
 		//__asm("NOP"); /* delay */
 		__asm("WFI"); /* sleep */
@@ -109,7 +107,25 @@ void delay_ms(uint32_t delay_) {
 
 /**
  *
+ * @param delay_ The delay in us
  */
-void sleep(void) {
-	__asm("WFI"); /* sleep */
+void delay_us(uint32_t delay_) {
+	uint64_t start = COUNT_TO_USEC(LPTMR_GetCurrentTimerCount(LPTMR0), LPTMR_SOURCE_CLOCK);
+
+	uint64_t count = 1;
+	while (count &&
+			count < start + delay_) {
+
+		for (uint16_t i=0; i < 100; i++) {
+			__asm("NOP");
+		}
+		// update counts
+		count = COUNT_TO_USEC(LPTMR_GetCurrentTimerCount(LPTMR0), LPTMR_SOURCE_CLOCK);
+		// handle timer counter overflow
+		if (count < start) {
+			start = count;
+		}
+	}
 }
+
+

@@ -19,9 +19,9 @@
  */
 int chargerPointSeg(char *buffer, Segment& mon_segment, float& time_start) {
 
-	static int isError = 0;
-	static float lon, lat, alt, rtime;
-	static float data[4];
+	int isError = 0;
+	float lon, lat, alt, rtime;
+	float data[4];
 	uint8_t pos = 0;
 	const char *deli = " ; ";
 	char *pch;
@@ -50,12 +50,12 @@ int chargerPointSeg(char *buffer, Segment& mon_segment, float& time_start) {
 		alt   = data[3];
 
 		if (mon_segment.longueur() > 0) {
-			if (time_start) rtime -= time_start;
+			rtime -= time_start;
 			mon_segment.ajouterPointFin(lat, lon, alt, rtime);
 		}
 		else {
 			// on init la liste
-			if (time_start) time_start = rtime;
+			time_start = rtime;
 			mon_segment.ajouterPointFin(lat, lon, alt, 0.);
 		}
 

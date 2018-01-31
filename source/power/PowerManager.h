@@ -23,6 +23,8 @@ public:
 	void switchToRun120();
 	void switchToVlpr();
 
+	void shutdown();
+
 	app_power_mode_t getMode(void) const {
 		return m_cur_mode;
 	}

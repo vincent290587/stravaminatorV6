@@ -127,13 +127,13 @@ int init_liste_segments(void)
 /**
  * Loads a segment from the SD card
  * @param seg The reference of this segment
- * @return
+ * @return -1 if failure, else the number of points loaded
  */
 int load_segment(Segment& seg) {
 
 	int res = 0;
 	FRESULT error;
-	static float time_start = 0.;
+	float time_start = 0.;
 
 	time_start = 0.;
 
@@ -150,7 +150,6 @@ int load_segment(Segment& seg) {
 	}
 
 	memset(g_bufferRead, 0U, sizeof(g_bufferRead));
-	//error = f_read(&g_fileObject, g_bufferRead, sizeof(g_bufferRead), &bytesRead);
 
 	while (f_gets(g_bufferRead, sizeof(g_bufferRead)-1, &g_fileObject)) {
 
@@ -280,8 +279,11 @@ float segment_allocator(Segment& mon_seg, float lat1, float long1) {
 					mon_seg.desallouerPoints();
 				}
 
+
 				int res = load_segment(mon_seg);
-				LOG_INFO("Loading segment %s\r\n", mon_seg.getName(), res);
+				LOG_INFO("-->> Loading segment %s\r\n", mon_seg.getName(), res);
+
+				if (res > 0) mon_seg.init();
 			}
 		}
 
@@ -377,7 +379,7 @@ int epo_file_read(sEpoPacketSatData* sat_data) {
 		return -1;
 	}
 
-	if (size_read != 60) {
+	if (size_read != MTK_EPO_SAT_DATA_SIZE) {
 		LOG_INFO("End of EPO file\r\n");
 		return 1;
 	} else {
@@ -400,12 +402,14 @@ int epo_file_stop(void) {
 		return -1;
 	}
 
+#ifndef DEBUG_CONFIG
 	error = f_unlink("/MTK14.EPO");
 	if (error)
 	{
 		LOG_INFO("Unlink file failed.\r\n");
 		return -2;
 	}
+#endif
 
 	return 0;
 }

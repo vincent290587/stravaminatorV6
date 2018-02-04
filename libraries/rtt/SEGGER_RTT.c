@@ -84,7 +84,7 @@ Additional information:
 */
 
 #include "SEGGER_RTT.h"
-
+#include "segger_wrapper.h"
 #include <string.h>                 // for memcpy
 
 /*********************************************************************
@@ -93,6 +93,8 @@ Additional information:
 *
 **********************************************************************
 */
+
+#if (USE_RTT != 0)
 
 #ifndef   BUFFER_SIZE_UP
   #define BUFFER_SIZE_UP                                  1024  // Size of the buffer for terminal output of target, up to host
@@ -1760,5 +1762,5 @@ int SEGGER_RTT_TerminalOut (char TerminalId, const char* s) {
   return Status;
 }
 
-
+#endif // USE_RTT
 /*************************** End of file ****************************/

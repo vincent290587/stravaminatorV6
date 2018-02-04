@@ -47,10 +47,6 @@ int main(void) {
 	// LCD driver
 	vue.init();
 
-	// USB driver
-	usb_comp_init();
-	CompositeTask();
-
 	nrf52_init();
 	gps_mgmt.init();
 

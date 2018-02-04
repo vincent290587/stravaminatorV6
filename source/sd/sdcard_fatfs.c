@@ -111,15 +111,15 @@ void usb_comp_init() {
 
     SYSMPU_Enable(SYSMPU, false);
 
-    CompositeInit();
-
     if (f_mount(&g_fileSystem, driverNumberBuffer, 0U))
     {
-        LOG_INFO("Mount volume failed.\r\n");
+        //LOG_INFO("Mount volume failed.\r\n");
     } else {
-    	LOG_INFO("Mount volume success.\r\n");
+    	//LOG_INFO("Mount volume success.\r\n");
     }
 
+    CompositeInit();
+    CompositeTask();
 }
 
 

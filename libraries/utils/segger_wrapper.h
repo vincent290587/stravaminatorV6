@@ -12,10 +12,15 @@
 #include "MK64F12.h"
 #include <stddef.h>
 #include "fsl_common.h"
+#include "usb_parser.h"
 #include "SEGGER_SYSVIEW.h"
 #include "SEGGER_RTT.h"
 
 /////////    PARAMETERS
+
+#ifdef USE_RTT
+#undef USE_RTT
+#endif
 
 #ifndef USE_RTT
 #define USE_RTT           1
@@ -49,7 +54,7 @@
 #else
 #define LOG_INFO(...)                  EMPTY_MACRO
 #define LOG_DEBUG(...)                 EMPTY_MACRO
-#define LOG_ERROR(...)                 EMPTY_MACRO
+#define LOG_ERROR(...)                 usb_printf(__VA_ARGS__)
 #define LOG_GRAPH(...)                 EMPTY_MACRO
 #define LOG_FLUSH(...)                 EMPTY_MACRO
 #define LOG_SET_TERM(X)                EMPTY_MACRO
@@ -90,6 +95,7 @@
 #define DISPLAY_TASK2                  (TASK_BASE + 11u)
 #define DISPLAY_TASK3                  (TASK_BASE + 12u)
 #define DISPLAY_TASK4                  (TASK_BASE + 13u)
+#define USB_VCOM_TASK                  (TASK_BASE + 14u)
 
 
 /////////    FUNCTIONS

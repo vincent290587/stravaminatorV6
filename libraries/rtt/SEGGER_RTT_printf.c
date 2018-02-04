@@ -63,6 +63,7 @@ Revision: $Rev: 4351 $
 */
 #include "SEGGER_RTT.h"
 #include "SEGGER_RTT_Conf.h"
+#include "segger_wrapper.h"
 
 /*********************************************************************
 *
@@ -70,6 +71,8 @@ Revision: $Rev: 4351 $
 *
 **********************************************************************
 */
+
+#if (USE_RTT != 0)
 
 #ifndef SEGGER_RTT_PRINTF_BUFFER_SIZE
   #define SEGGER_RTT_PRINTF_BUFFER_SIZE (64)
@@ -512,4 +515,6 @@ int SEGGER_RTT_printf(unsigned BufferIndex, const char * sFormat, ...) {
   va_end(ParamList);
   return r;
 }
+
+#endif // USE_RTT
 /*************************** End of file ****************************/

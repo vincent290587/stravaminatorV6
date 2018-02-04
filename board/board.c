@@ -11,6 +11,7 @@
 #include "millis.h"
 #include "sdcard_fatfs.h"
 #include "GPSMGMT.h"
+#include "composite.h"
 #include "uart2.h"
 #include "dma_spi0.h"
 #include "int_i2c0.h"
@@ -44,6 +45,9 @@ void BOARD_InitHardware(void) {
 
 	/* Init code */
 	millis_init();
+
+	// USB driver
+	usb_comp_init();
 
 	// Initialize the UART.
 	gps_uart_start();

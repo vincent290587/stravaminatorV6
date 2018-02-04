@@ -62,10 +62,10 @@ void usb_printf(const char *format, ...) {
 
 	memset(m_usb_char_buffer, 0, sizeof(m_usb_char_buffer));
 
-	vsnprintf(m_usb_char_buffer,
+	int length = vsnprintf(m_usb_char_buffer,
 			sizeof(m_usb_char_buffer),
 			format, args);
 
-	USB_DeviceCdcVcomSend((uint8_t*)m_usb_char_buffer, strlen(m_usb_char_buffer));
+	USB_DeviceCdcVcomSend((uint8_t*)m_usb_char_buffer, length);
 
 }

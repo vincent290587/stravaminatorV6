@@ -151,15 +151,14 @@ usb_status_t USB_DeviceCdcVcomCallback(class_handle_t handle, uint32_t event, vo
             {
                 s_recvSize = epCbParam->length;
 
-                // the if makes VCOM crash...
-//                if (!s_recvSize) {
-                /* Schedule buffer for next receive event */
-                error = USB_DeviceCdcAcmRecv(handle, USB_CDC_VCOM_DIC_BULK_OUT_ENDPOINT, s_currRecvBuf,
-                		g_cdcVcomDicEndpoints[0].maxPacketSize);
+                // TODO the if makes VCOM crash...
+                //if (!s_recvSize) {
+                	/* Schedule buffer for next receive event */
+            	error = USB_DeviceCdcAcmRecv(handle, USB_CDC_VCOM_DIC_BULK_OUT_ENDPOINT, s_currRecvBuf,
+            			g_cdcVcomDicEndpoints[0].maxPacketSize);
 
-
-                USB_DeviceCdcVcomOnRecv();
-//                }
+            	USB_DeviceCdcVcomOnRecv();
+               //}
 
 
             }
@@ -354,12 +353,17 @@ void USB_DeviceCdcVcomOnRecv(void)
 
 usb_status_t USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size) {
 
-	usb_status_t error = kStatus_USB_Error;
+	usb_status_t error = kStatus_USB_Success;
+
+	// send only if connected
 	if ((1 == g_deviceComposite->cdcVcom.attach) && (1 == g_deviceComposite->cdcVcom.startTransactions))
 	{
 
 		if (m_is_packet_sent)
 		{
+
+			W_SYSVIEW_OnTaskStartExec(USB_VCOM_TASK);
+
 			memcpy(s_currSendBuf, buffer, size);
 
 			error = USB_DeviceCdcAcmSend(g_deviceComposite->cdcVcom.cdcAcmHandle, USB_CDC_VCOM_DIC_BULK_IN_ENDPOINT,
@@ -372,16 +376,20 @@ usb_status_t USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size) {
 
         	m_is_packet_sent = false;
 
-        	// block
-        	uint32_t millis_ = millis();
-        	while (!m_is_packet_sent) {
-        		sleep();
+    		// block
+    		uint32_t millis_ = millis();
+    		while (!m_is_packet_sent) {
 
-        		if (millis() - millis_ > USB_TIMEOUT_MS) {
-        			LOG_ERROR("USB VCOM send timeout\r\n");
-        			break;
-        		}
-        	}
+    			sleep();
+    			CompositeTask();
+
+    			if (millis() - millis_ > USB_TIMEOUT_MS) {
+    				LOG_ERROR("USB VCOM send timeout\r\n");
+    				break;
+    			}
+    		}
+
+    		W_SYSVIEW_OnTaskStopExec(USB_VCOM_TASK);
 
 		} else {
 			LOG_ERROR("USB VCOM busy\r\n");

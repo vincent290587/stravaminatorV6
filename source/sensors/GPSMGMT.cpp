@@ -6,6 +6,7 @@
  */
 
 #include <GPSMGMT.h>
+#include <stdio.h>
 #include "MTK.h"
 #include "uart0.h"
 #include "utils.h"
@@ -13,10 +14,12 @@
 #include "pin_mux.h"
 #include "fsl_gpio.h"
 #include "fsl_uart.h"
+#include "WString.h"
 #include "uart0.h"
 #include "uart2.h"
 #include "sd_functions.h"
 #include "LocusCommands.h"
+#include "Screenutils.h"
 #include "segger_wrapper.h"
 #include "Locator.h"
 #include "Model.h"
@@ -180,6 +183,8 @@ void GPS_MGMT::tasks(void) {
 		} else {
 			LOG_INFO("EPO size: %ld bytes\r\n", size);
 
+			pwManager.setLockRunMode(true);
+
 			m_epo_state = eGPSMgmtEPORunning;
 
 			// set transport to binary
@@ -258,9 +263,12 @@ void GPS_MGMT::tasks(void) {
 	{
 		LOG_INFO("EPO update end\r\n");
 
+		pwManager.setLockRunMode(false);
+
 		vue.addNotif("GPSMGMT: ", "EPO update success", 5, eNotificationTypeComplete);
 
-		(void)epo_file_stop();
+		// the file should be deleted only upon success
+		(void)epo_file_stop(m_epo_packet_ind == 0xFFFF);
 
 		// NMEA + baud rate default
 		uint8_t cmd[5] = {0x00,0x00,0x00,0x00,0x00};
@@ -353,4 +361,37 @@ uint32_t gps_encode_char(char c) {
 	}
 
 	return 0;
+}
+
+void GPS_MGMT::startHostAidingEPO(sLocationData& loc_data, uint32_t age_) {
+
+	String _lat = _fmkstr(loc_data.lat, 6U);
+	String _lon = _fmkstr(loc_data.lon, 6U);
+
+	uint16_t _year  = 2000 + (loc_data.date % 100);
+	uint16_t _month = (loc_data.date / 100) % 100;
+	uint16_t _day   = (loc_data.date / 10000) % 100;
+
+	String _time = _secjmkstr(loc_data.utc_time + (age_ / 1000), ',');
+
+	String cmd = "$PMTK741," + _lat + "," + _lon;
+	cmd += "," + String((unsigned int)loc_data.alt);
+	cmd += "," + String(_year) + "," + String(_month) + "," + String(_day);
+	cmd += "," + _time;
+
+	memset(buffer, 0, sizeof(buffer));
+
+	cmd.toCharArray((char*)buffer, sizeof(buffer), 0);
+
+	// handle checksum
+	uint8_t ret = 0;
+	for (uint16_t i = 1; i < cmd.length(); i++) {
+		ret ^= buffer[i];
+	}
+
+	snprintf((char*)buffer + cmd.length(), sizeof(buffer) - cmd.length(), "*%02X\r\n", ret);
+
+	GPS_UART_SEND(buffer, cmd.length() + 5);
+
+	vue.addNotif("EPO", "Host aiding sent", 5, eNotificationTypeComplete);
 }

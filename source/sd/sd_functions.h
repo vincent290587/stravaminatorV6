@@ -26,7 +26,7 @@ float segment_allocator(Segment& mon_seg, float lat1, float long1);
 int epo_file_size(void);
 int epo_file_read(sEpoPacketSatData* epo_data);
 int epo_file_start(void);
-int epo_file_stop(void);
+int epo_file_stop(bool toBeDeleted);
 
 
 //#if defined(__cplusplus)

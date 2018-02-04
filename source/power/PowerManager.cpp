@@ -54,8 +54,24 @@ bool PowerManager::isUsbConnected() {
 
 /**
  *
+ * @param lockRunMode
+ */
+void PowerManager::setLockRunMode(bool lockRunMode) {
+
+	m_lock_run_mode = lockRunMode;
+
+	if (m_lock_run_mode) {
+		this->switchToRun24();
+	}
+}
+
+/**
+ *
  */
 void PowerManager::switchToRun120() {
+
+	if (m_lock_run_mode) return;
+
 	if (m_cur_mode != kAPP_PowerModeRun120) {
 
 		LED_RED_OFF();
@@ -71,6 +87,9 @@ void PowerManager::switchToRun120() {
  *
  */
 void PowerManager::switchToRun24() {
+
+	// this is ok to execute in locked state
+
 	if (!this->isUsbConnected() &&
 			m_cur_mode != kAPP_PowerModeRun24) {
 
@@ -95,6 +114,9 @@ void PowerManager::switchToRun24() {
  *
  */
 void PowerManager::switchToVlpr() {
+
+	if (m_lock_run_mode) return;
+
 	if (!this->isUsbConnected() &&
 			(m_cur_mode == kAPP_PowerModeRun24 || m_cur_mode == kAPP_PowerModeRun120)) {
 

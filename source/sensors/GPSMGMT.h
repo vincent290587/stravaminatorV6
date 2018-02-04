@@ -9,6 +9,7 @@
 #define SOURCE_SENSORS_GPSMGMT_H_
 
 #include "stdint.h"
+#include "Locator.h"
 
 typedef enum {
 	eGPSMgmtPowerOn,
@@ -53,8 +54,14 @@ public:
 	void standby(void);
 	void awake(void);
 
+	void startHostAidingEPO(sLocationData& loc_data, uint32_t age_);
+
 	void startEpoUpdate(void);
 	void tasks(void);
+
+	eGPSMgmtPowerState getPowerState() const {
+		return m_power_state;
+	}
 
 private:
 	eGPSMgmtPowerState m_power_state;

@@ -393,7 +393,7 @@ int epo_file_read(sEpoPacketSatData* sat_data) {
  *
  * @return
  */
-int epo_file_stop(void) {
+int epo_file_stop(bool toBeDeleted) {
 
 	FRESULT error = f_close (&g_EpoFileObject);
 	if (error)
@@ -403,11 +403,13 @@ int epo_file_stop(void) {
 	}
 
 #ifndef DEBUG_CONFIG
-	error = f_unlink("/MTK14.EPO");
-	if (error)
-	{
-		LOG_INFO("Unlink file failed.\r\n");
-		return -2;
+	if (toBeDeleted) {
+		error = f_unlink("/MTK14.EPO");
+		if (error)
+		{
+			LOG_INFO("Unlink file failed.\r\n");
+			return -2;
+		}
 	}
 #endif
 

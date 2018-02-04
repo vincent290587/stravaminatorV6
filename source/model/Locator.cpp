@@ -158,8 +158,10 @@ eLocationSource Locator::getPosition(SLoc& loc_, SDate& date_) {
 		date_.date = nrf_loc.data.date;
 		nrf_loc.clearIsUpdated();
 
-		if (!eme_loc.isUpdated()) {
-			eme_loc = nrf_loc;
+		if (5 == ++m_nb_nrf_pos) {
+
+			gps_mgmt.startHostAidingEPO(nrf_loc.data, 500);
+
 		}
 	}
 	break;

@@ -75,10 +75,10 @@ public:
 	Sensor<sLocationData> sim_loc;
 	Sensor<sLocationData> gps_loc;
 
-	Sensor<sLocationData> eme_loc;
-
 private:
 	bool anyChanges;
+
+	uint16_t m_nb_nrf_pos;
 };
 
 #endif /* _cplusplus */

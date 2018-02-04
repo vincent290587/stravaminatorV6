@@ -20,8 +20,13 @@ typedef bool LS027_PixelColor; /* one bit is enough to describe the color as we 
 
 #define LS027_PIXEL_BLACK          1 /* 0 is a black pixel */
 #define LS027_PIXEL_WHITE          0 /* 1 is a white pixel */
+
+#define LS027_PIXEL_GROUP_BLACK          0xFF /* 0 is a black pixel */
+#define LS027_PIXEL_GROUP_WHITE          0x00 /* 1 is a white pixel */
+
 #define LS027_COLOR_PIXEL_SET      LS027_PIXEL_WHITE /* color for a pixel set */
 #define LS027_COLOR_PIXEL_CLR      LS027_PIXEL_BLACK /* color for a pixel cleared */
+
 #define LS027_COLOR_BLACK          LS027_PIXEL_BLACK
 #define LS027_COLOR_WHITE          LS027_PIXEL_WHITE
 

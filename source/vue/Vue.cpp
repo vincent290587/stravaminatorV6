@@ -62,8 +62,8 @@ void Vue::refresh(void) {
 
 		Notif& notif = m_notifs.front();
 
-		// TODO this->fillRect(0, 0, _width, 60, LS027_PIXEL_WHITE);
-		this->drawFastHLine(0, 60, _width, 1);
+		this->fillRect(0, 0, _width, 60, textbgcolor);
+		this->drawFastHLine(0, 60, _width, textcolor);
 
 		this->setCursor(5, 5);
 		this->setTextSize(2);
@@ -111,7 +111,6 @@ void Vue::cadranH(uint8_t p_lig, uint8_t nb_lig, const char *champ, String  affi
 	int x = _width / 2 * 0.5;
 	int y = _height / nb_lig * (p_lig - 1);
 
-	setTextColor(CLR_NRM); // 'inverted' text
 	setCursor(5, y + 5);
 	setTextSize(1);
 
@@ -145,7 +144,6 @@ void Vue::cadran(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, const char *champ
 	int x = _width / 2 * (p_col - 1);
 	int y = _height / nb_lig * (p_lig - 1);
 
-	setTextColor(CLR_NRM); // 'inverted' text
 	setCursor(x + 5, y + 5);
 	setTextSize(1);
 
@@ -182,7 +180,7 @@ void Vue::HistoH(uint8_t p_lig, uint8_t nb_lig, sVueHistoConfiguration& h_config
 		assert(h_config_.p_f_read);
 		assert(h_config_.nb_elem_tot);
 
-		int dx = _width / h_config_.nb_elem_tot;
+		uint16_t dx = _width / h_config_.nb_elem_tot;
 
 		// iterate in buffer
 		for (int i=0; i < h_config_.cur_elem_nb; i++) {
@@ -192,10 +190,22 @@ void Vue::HistoH(uint8_t p_lig, uint8_t nb_lig, sVueHistoConfiguration& h_config
 			tHistoValue elem   = (h_config_.p_f_read)(i);
 			tHistoValue height = elem * _height / (nb_lig * h_config_.max_value);
 
-//			// rectangle complet
-//			this->fillRect(x_base0, y_base-height, dx, height, 2);
-			// petite barre
-			this->fillRect(x_base0, y_base-height, dx, 4, 1);
+			uint16_t dy = 10;
+
+			if (h_config_.ref_value) {
+
+				if (elem <= h_config_.ref_value) height = h_config_.ref_value * _height / (nb_lig * h_config_.max_value);
+				else                             height -= 1;
+
+				dy = abs(elem - h_config_.ref_value) * _height / (nb_lig * h_config_.max_value);
+
+				dy = MAX(dy, 1);
+
+				drawFastPHLine(0, y_base - h_config_.ref_value * _height / (nb_lig * h_config_.max_value), _width, 1);
+			}
+
+			// rectangle complet
+			this->fillRect(x_base0, y_base-height, dx, dy, 1);
 		}
 	}
 

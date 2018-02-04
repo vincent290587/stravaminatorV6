@@ -8,7 +8,9 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <math.h>
+#include <millis.h>
 #include "WString.h"
+#include "segger_wrapper.h"
 #include <Screenutils.h>
 
 
@@ -40,7 +42,7 @@ String _imkstr(int value) {
 	return res;
 }
 
-String _timemkstr(uint32_t value) {
+String _secjmkstr(uint32_t value, char sep) {
 
 	char time_char[10];
 
@@ -52,10 +54,20 @@ String _timemkstr(uint32_t value) {
 	value -= minutes * 60;
 	uint8_t seconds = (uint8_t) (value % 60);
 
-	(void)snprintf(time_char, sizeof(time_char), "%02u:%02u:%02u",
-			hours, minutes, seconds);
+	(void)snprintf(time_char, sizeof(time_char), "%02u%c%02u%c%02u",
+			hours, sep, minutes, sep, seconds);
 
 	String res = time_char;
 
 	return res;
+}
+
+String _timemkstr(SDate& date_, char sep) {
+
+	uint32_t addition = ((millis() - date_.timestamp) / 1000.);
+	uint32_t value = date_.secj;
+
+	LOG_INFO("Addition to time: %lu\r\n", addition);
+
+	return _secjmkstr(value + addition, sep);
 }

@@ -41,7 +41,7 @@ public:
 	}
 
 	void addNotif(const char *title_, const char *msg_, uint8_t persist_ = 5, eNotificationType type_ = eNotificationTypePartial) {
-		m_notifs.push_back(Notif(title_, msg_, persist_, type_));
+		if (m_notifs.size() < 10) m_notifs.push_back(Notif(title_, msg_, persist_, type_));
 	}
 
 protected:

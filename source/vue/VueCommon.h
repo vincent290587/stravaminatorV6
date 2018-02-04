@@ -18,6 +18,7 @@ typedef struct {
 	int16_t nb_elem_tot;
 	int16_t cur_elem_nb;
 	tHistoValue max_value;
+	tHistoValue ref_value;
 	p_f_ringbuffer_read p_f_read;
 } sVueHistoConfiguration;
 

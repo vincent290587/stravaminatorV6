@@ -29,6 +29,7 @@ class Adafruit_GFX : public Print {
   virtual void
     drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color),
     drawFastVLine(int16_t x, int16_t y, int16_t h, uint16_t color),
+    drawFastPHLine(int16_t x, int16_t y, int16_t h, uint16_t color),
     drawFastHLine(int16_t x, int16_t y, int16_t w, uint16_t color),
     drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color),
     fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color),

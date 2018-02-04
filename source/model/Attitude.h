@@ -21,6 +21,7 @@ typedef struct {
 typedef struct {
 	uint32_t secj;
 	uint32_t date;
+	uint32_t timestamp;
 } SDate;
 
 typedef struct {
@@ -45,6 +46,7 @@ class Attitude {
 public:
 	Attitude();
 
+	void addNewDate(SDate &date_);
 	void addNewLocation(SLoc& loc_, SDate &date_);
 	void addNewFECPoint(SFec& fec_);
 

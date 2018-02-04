@@ -105,6 +105,7 @@ static void _post_transfer(void* p_context) {
 			locator.nrf_loc.data.alt = (float)(nrf52_data.lns_info.ele / 100.);
 			locator.nrf_loc.data.speed = (float)(nrf52_data.lns_info.speed / 10.);
 			locator.nrf_loc.data.utc_time = nrf52_data.lns_info.secj;
+			locator.nrf_loc.data.utc_timestamp = millis();
 			locator.nrf_loc.data.date = nrf52_data.lns_info.date;
 
 			LOG_INFO("LNS updated\r\n");

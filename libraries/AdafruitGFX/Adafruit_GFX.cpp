@@ -31,7 +31,7 @@ ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 POSSIBILITY OF SUCH DAMAGE.
  */
 
-
+#include "segger_wrapper.h"
 #include "Adafruit_GFX.h"
 #include "glcdfont.c"
 
@@ -80,7 +80,8 @@ Adafruit_GFX::Adafruit_GFX(int16_t w, int16_t h):
 	rotation  = 0;
 	cursor_y  = cursor_x    = 0;
 	textsize  = 1;
-	textcolor = textbgcolor = 0xFFFF;
+	textcolor = 1;
+	textbgcolor = 0;
 	wrap      = true;
 	_cp437    = true;
 	gfxFont   = NULL;
@@ -260,6 +261,19 @@ void Adafruit_GFX::drawFastHLine(int16_t x, int16_t y,
 
 	for (uint16_t ind = x ; ind < x + w ; ind++) {
 		drawPixel(ind, y, color);
+	}
+
+	// Update in subclasses if desired!
+//	drawLine(x, y, x+w-1, y, color);
+}
+
+void Adafruit_GFX::drawFastPHLine(int16_t x, int16_t y,
+		int16_t w, uint16_t color) {
+
+	for (uint16_t ind = x ; ind < x + w ; ind+=15) {
+		for (uint16_t ind2 = 0 ; ind2 < 9 ; ind2++) {
+			drawPixel(ind+ind2, y, color);
+		}
 	}
 
 	// Update in subclasses if desired!

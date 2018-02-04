@@ -12,7 +12,7 @@
 #include <stdbool.h>
 
 #define MAX_SATELLITES     40
-#define ACTIVE_VAL         10
+#define ACTIVE_VAL         5
 
 typedef struct
 {
@@ -37,6 +37,7 @@ typedef struct {
 	float alt;
 	float speed;
 	uint32_t utc_time;
+	uint32_t utc_timestamp;
 	uint32_t date;
 } sLocationData;
 
@@ -63,6 +64,7 @@ public:
 
 	void displayGPS2(void);
 
+	eLocationSource getDate(SDate& date_);
 	eLocationSource getPosition(SLoc& loc_, SDate& date_);
 
 	eLocationSource getUpdateSource();

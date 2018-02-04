@@ -57,7 +57,9 @@ uint32_t locator_encode_char(char c) {
 Locator::Locator() {
 	m_is_updated = false;
 
-	anyChanges = false;
+	anyChanges   = false;
+
+	m_nb_nrf_pos = 0;
 
 	// Initialize all the uninitialized TinyGPSCustom objects
 	for (int i = 0; i < 4; ++i)
@@ -86,11 +88,11 @@ eLocationSource Locator::getUpdateSource() {
 	}
 
 	// NRF has newer data than GPS
-	if (nrf_loc.isUpdated() &&
+	if (nrf_loc.isUpdated() ||
 			nrf_loc.data.utc_time > gps_loc.data.utc_time + LNS_OVER_GPS_DTIME_S) {
 		return eLocationSourceNRF;
 	} else if (nrf_loc.isUpdated()) {
-		//LOG_INFO("LNS data refused: GPS data too recent\r\n");
+		LOG_INFO("LNS data refused: GPS data too recent\r\n");
 	}
 
 	return eLocationSourceNone;
@@ -146,6 +148,7 @@ eLocationSource Locator::getPosition(SLoc& loc_, SDate& date_) {
 		loc_.speed = 20.;
 		date_.secj = sim_loc.data.utc_time;
 		date_.date = 291217;
+		date_.timestamp = millis();
 		sim_loc.clearIsUpdated();
 	}
 	break;
@@ -156,6 +159,7 @@ eLocationSource Locator::getPosition(SLoc& loc_, SDate& date_) {
 		loc_.speed = nrf_loc.data.speed;
 		date_.secj = nrf_loc.data.utc_time;
 		date_.date = nrf_loc.data.date;
+		date_.timestamp = nrf_loc.data.utc_timestamp;
 		nrf_loc.clearIsUpdated();
 
 		if (5 == ++m_nb_nrf_pos) {
@@ -172,10 +176,66 @@ eLocationSource Locator::getPosition(SLoc& loc_, SDate& date_) {
 		loc_.speed = gps_loc.data.speed;
 		date_.secj = gps_loc.data.utc_time;
 		date_.date = gps_loc.data.date;
+		date_.timestamp = gps_loc.data.utc_timestamp;
 		gps_loc.clearIsUpdated();
+
+		m_nb_nrf_pos = 0;
 	}
 	break;
 	case eLocationSourceNone:
+		date_.secj = gps_loc.data.utc_time;
+		date_.date = gps_loc.data.date;
+		date_.timestamp = gps_loc.data.utc_timestamp;
+	default:
+		break;
+	}
+
+	return res;
+}
+
+
+/**
+ *
+ * @param lat
+ * @param lon
+ * @param sec_
+ * @return
+ */
+eLocationSource Locator::getDate(SDate& date_) {
+
+	eLocationSource res = this->getUpdateSource();
+
+	switch (res) {
+	case eLocationSourceSimu:
+	{
+		date_.secj = sim_loc.data.utc_time;
+		date_.date = 291217;
+
+		date_.timestamp = millis();
+	}
+	break;
+	case eLocationSourceNRF:
+	{
+		date_.secj = nrf_loc.data.utc_time;
+		date_.date = nrf_loc.data.date;
+
+		date_.timestamp = nrf_loc.data.utc_timestamp;
+
+	}
+	break;
+	case eLocationSourceGPS:
+	{
+		date_.secj = gps_loc.data.utc_time;
+		date_.date = gps_loc.data.date;
+
+		date_.timestamp = gps_loc.data.utc_timestamp;
+	}
+	break;
+	case eLocationSourceNone:
+		date_.secj = gps_loc.data.utc_time;
+		date_.date = gps_loc.data.date;
+
+		date_.timestamp = gps_loc.data.utc_timestamp;
 	default:
 		break;
 	}
@@ -193,6 +253,8 @@ void Locator::tasks() {
 
 		if (gps.time.isValid()) {
 			gps_loc.data.utc_time = get_sec_jour(gps.time.hour(), gps.time.minute(), gps.time.second());
+
+			gps_loc.data.utc_timestamp = millis();
 
 			gps_loc.data.date = gps.date.year()   % 100;
 			gps_loc.data.date += gps.date.day()   * 10000;

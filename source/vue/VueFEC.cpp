@@ -63,22 +63,22 @@ eVueFECScreenModes VueFEC::tasksFEC() {
 
 		LOG_INFO("VueFEC update full data\r\n");
 
-		this->cadranH(1, VUE_FEC_NB_LINES, "Time", _timemkstr(++m_el_time), NULL);
+		this->cadranH(1, VUE_FEC_NB_LINES, "Time", _secjmkstr(++m_el_time, ':'), NULL);
 
 		this->cadran(2, VUE_FEC_NB_LINES, 1, "CAD", _imkstr(cad.data.rpm), "rpm");
 		this->cadran(2, VUE_FEC_NB_LINES, 2, "HRM", _imkstr(hrm.data.bpm), "bpm");
 
 		this->cadranH(3, VUE_FEC_NB_LINES, "Speed", _fmkstr((float)fec_info.data.speed / 10., 1U), "km/h");
 
-		this->cadranH(4, VUE_FEC_NB_LINES, "Pwr", _imkstr(fec_info.data.power), "W");
-
 		sVueHistoConfiguration h_config;
 		h_config.cur_elem_nb = boucle_fec.m_pw_buffer.size();
+		h_config.ref_value   = (tHistoValue)210;
 		h_config.max_value   = (tHistoValue)500;
 		h_config.nb_elem_tot = FEC_PW_BUFFER_NB_ELEM;
 		h_config.p_f_read    = _vue_fec_pw_rb_read;
 
 		this->HistoH(4, VUE_FEC_NB_LINES, h_config);
+		this->cadranH(4, VUE_FEC_NB_LINES, "Pwr", _imkstr(fec_info.data.power), "W");
 	}
 
 	this->cadran(5, VUE_FEC_NB_LINES, 1, "Avg", _imkstr((int)stc.getAverageCurrent()), "mA");

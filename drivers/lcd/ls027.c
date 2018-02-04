@@ -41,7 +41,7 @@ static uint8_t LS027_sharpmem_vcom;
 
 static spi_transfer_settings spi_settings;
 
-static uint8_t m_is_color_inverted = 0;
+static bool m_is_color_inverted = true;
 
 static sXferTask m_spi_task;
 
@@ -112,9 +112,9 @@ static void ls027_spi_init() {
 static void ls027_spi_buffer_clear(void* context)
 {
 	if (!m_is_color_inverted) {
-		memset(LS027_SpiBuf, 0x00, sizeof(LS027_SpiBuf));
+		memset(LS027_SpiBuf, LS027_PIXEL_GROUP_WHITE, sizeof(LS027_SpiBuf));
 	} else {
-		memset(LS027_SpiBuf, 0xFF, sizeof(LS027_SpiBuf));
+		memset(LS027_SpiBuf, LS027_PIXEL_GROUP_BLACK, sizeof(LS027_SpiBuf));
 	}
 }
 
@@ -174,15 +174,35 @@ static int ls027_update_full(void* context)
  *
  * @param x Col number:  0..400
  * @param y Line number: 0..240
+ */
+static uint16_t getBufferPixel(uint16_t x, uint16_t y) {
+
+	uint16_t ret_color = 0;
+
+	ret_color = LS027_SpiBuf[2 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] & set[x & 7];
+
+	return ret_color;
+}
+
+/**
+ *
+ * @param x Col number:  0..400
+ * @param y Line number: 0..240
  * @param color Color to be printed
  */
 static void setBufferPixel(uint16_t x, uint16_t y, uint16_t color) {
 
-	// clip
-	if((x < 0) || (x >= LS027_HW_WIDTH) || (y < 0) || (y >= LS027_HW_HEIGHT)) return;
+	bool _is_color_inverted = m_is_color_inverted;
+
+	//we simply invert the pixel's color
+	if (color == 2) {
+		_is_color_inverted = false;
+		color = getBufferPixel(x, y) ? 0:1;
+	}
 
 	// fill buffer
-	if (color && !m_is_color_inverted) {
+	if ((color && !_is_color_inverted) ||
+			(!color && _is_color_inverted)) {
 		LS027_SpiBuf[2 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] |= set[x & 7];
 	} else {
 		LS027_SpiBuf[2 + (y*LS027_HW_WIDTH + x) / 8 + 2 * y] &= clr[x & 7];
@@ -243,8 +263,6 @@ void LS027_Clear(void)
  */
 void LS027_Init(void)
 {
-	m_is_color_inverted = 1;
-
 	ls027_spi_buffer_clear(NULL);
 
 	/* Set the vcom bit to a defined state */

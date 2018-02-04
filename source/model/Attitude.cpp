@@ -16,6 +16,17 @@ Attitude::Attitude() {
 	m_is_init = false;
 }
 
+
+/**
+ *
+ * @param loc_
+ */
+void Attitude::addNewDate(SDate &date_) {
+
+	// update date
+	memcpy(&att.date, &date_, sizeof(SDate));
+}
+
 /**
  *
  * @param loc_
@@ -23,8 +34,7 @@ Attitude::Attitude() {
 void Attitude::addNewLocation(SLoc& loc_, SDate &date_) {
 
 	// small correction to allow time with millisecond precision
-	float cur_time = (int)locator.getLastUpdateAge() / 1000;
-	cur_time += date_.secj;
+	float cur_time = (float)date_.secj + ((millis() - date_.timestamp) / 1000.);
 
 	// add this point to our historic
 	mes_points.ajouteFinIso(loc_.lat, loc_.lon, loc_.alt, cur_time, HISTO_POINT_SIZE);
@@ -45,7 +55,9 @@ void Attitude::addNewLocation(SLoc& loc_, SDate &date_) {
 	}
 
 	// update global location
-	memcpy(&att.loc, &loc_, sizeof(SLoc));
+	memcpy(&att.loc , &loc_ , sizeof(SLoc));
+	// update date
+	memcpy(&att.date, &date_, sizeof(SDate));
 }
 
 /**

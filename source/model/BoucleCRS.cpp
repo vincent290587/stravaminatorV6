@@ -89,6 +89,8 @@ void BoucleCRS::run() {
 		SLoc loc;
 		SDate dat;
 		memset(&loc, 0, sizeof(loc));
+		memset(&dat, 0, sizeof(dat));
+
 		locator.getPosition(loc, dat);
 
 		attitude.addNewLocation(loc, dat);
@@ -145,6 +147,13 @@ void BoucleCRS::run() {
 		att.next = m_dist_next_seg;
 
 		LOG_INFO("Next segment: %u\r\n", att.next);
+	} else {
+		// update date
+		SDate dat;
+		memset(&dat, 0, sizeof(dat));
+		locator.getDate(dat);
+
+		attitude.addNewDate(dat);
 	}
 
 	pwManager.switchToRun24();

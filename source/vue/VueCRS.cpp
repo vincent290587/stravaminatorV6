@@ -28,10 +28,9 @@ eVueCRSScreenModes VueCRS::tasksCRS() {
 	if (locator.getLastUpdateAge() > LOCATOR_MAX_DATA_AGE_MS) {
 		m_crs_screen_mode = eVueCRSScreenInit;
 	}
-	// TODO remove comment
-//	else if (m_crs_screen_mode == eVueCRSScreenInit) {
-//		m_crs_screen_mode = eVueCRSScreenDataFull;
-//	}
+	else if (m_crs_screen_mode == eVueCRSScreenInit) {
+		m_crs_screen_mode = eVueCRSScreenDataFull;
+	}
 
 	if (m_crs_screen_mode != eVueCRSScreenInit) {
 		switch (m_segs.nb_segs) {
@@ -183,7 +182,7 @@ void VueCRS::displayGPS(void) {
 
 	locator.displayGPS2();
 
-	this->cadranH(6, VUE_CRS_NB_LINES, "Time", _timemkstr(att.date.secj), NULL);
+	this->cadranH(6, VUE_CRS_NB_LINES, "Time", _timemkstr(att.date, ':'), NULL);
 
 	this->cadran(7, VUE_CRS_NB_LINES, 1, "STC", _imkstr((int)stc.getCurrent()), "mA");
 	this->cadran(7, VUE_CRS_NB_LINES, 2, "SOC", _imkstr(percentageBatt(stc.getVoltage(), stc.getCurrent())), "%");
@@ -388,7 +387,6 @@ void VueCRS::afficheListePoints(uint8_t ligne, Segment *p_seg) {
 		return;
 	}
 
-	setTextColor(CLR_NRM);
 	if (maDpey > fin_cadran - 30) {
 		setCursor(maDpex > _width - 70 ? _width - 70 : maDpex, maDpey - 20);
 	} else {
@@ -458,7 +456,6 @@ void VueCRS::partner(uint8_t ligne, Segment *p_seg) {
 	fillTriangle(centre - 7, hl + 7, centre, hl - 7, centre + 7, hl + 7, LS027_PIXEL_BLACK);
 	setCursor(centre - 15, hl + 12);
 	setTextSize(VUE_CRS_NB_LINES > 7 ? 1 : 2);
-	setTextColor(CLR_NRM); // 'inverted' text
 	print(_imkstr((int)(indice * 100.)));
 
 	// marques

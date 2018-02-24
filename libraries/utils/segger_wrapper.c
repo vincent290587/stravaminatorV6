@@ -85,6 +85,15 @@ void segger_init(void) {
 	  pInfo[nb_tasks].TaskID = DISPLAY_TASK4;
 	  pInfo[nb_tasks++].sName  = "DISPLAY_TASK4";
 
+	  pInfo[nb_tasks].TaskID = USB_VCOM_TASK;
+	  pInfo[nb_tasks++].sName  = "USB_VCOM_TASK";
+
+	  pInfo[nb_tasks].TaskID = EMPTY1;
+	  pInfo[nb_tasks++].sName  = "EMPTY1";
+
+	  pInfo[nb_tasks].TaskID = EMPTY2;
+	  pInfo[nb_tasks++].sName  = "EMPTY2";
+
 	  SEGGER_SYSVIEW_Conf();
 
 	  SEGGER_SYSVIEW_Start();

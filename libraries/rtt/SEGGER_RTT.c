@@ -94,7 +94,7 @@ Additional information:
 **********************************************************************
 */
 
-#if (USE_RTT != 0)
+#if (USE_RTT != 0) || (USE_SVIEW != 0)
 
 #ifndef   BUFFER_SIZE_UP
   #define BUFFER_SIZE_UP                                  1024  // Size of the buffer for terminal output of target, up to host

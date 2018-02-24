@@ -18,6 +18,7 @@
 
 /////////    PARAMETERS
 
+// force RTT
 #ifdef USE_RTT
 #undef USE_RTT
 #endif
@@ -27,6 +28,7 @@
 #endif
 
 #define USE_SVIEW         0
+#define USE_GRAPH         0
 
 #define RTT_LOG_CHANNEL   0
 #define RTT_GRAPH_CHANNEL 1
@@ -40,7 +42,6 @@
 #define LOG_INFO(...)                  SEGGER_RTT_printf(RTT_LOG_CHANNEL, __VA_ARGS__)
 #define LOG_DEBUG(...)                 EMPTY_MACRO
 #define LOG_ERROR(...)                 LOG_INFO(__VA_ARGS__)
-#define LOG_GRAPH(...)                 LOG_INFO(__VA_ARGS__)
 #define LOG_FLUSH(X)                   SEGGER_RTT_WriteBlock(RTT_LOG_CHANNEL," ",0)
 #define LOG_SET_TERM(X)                SEGGER_RTT_SetTerminal(X)
 #elif USE_SVIEW
@@ -48,7 +49,6 @@
 #define LOG_INFO(...)                  EMPTY_MACRO
 #define LOG_DEBUG(...)                 EMPTY_MACRO
 #define LOG_ERROR(...)                 SEGGER_SYSVIEW_ErrorfHost(__VA_ARGS__)
-#define LOG_GRAPH(...)                 EMPTY_MACRO
 #define LOG_FLUSH(...)                 EMPTY_MACRO
 #define LOG_SET_TERM(X)                EMPTY_MACRO
 #else
@@ -58,7 +58,6 @@
 #define LOG_GRAPH(...)                 EMPTY_MACRO
 #define LOG_FLUSH(...)                 EMPTY_MACRO
 #define LOG_SET_TERM(X)                EMPTY_MACRO
-#define LOG_GRAPH(...)                 EMPTY_MACRO
 #endif
 
 #if USE_SVIEW
@@ -79,6 +78,11 @@
 #define W_SYSVIEW_OnTaskCreate(X)      EMPTY_MACRO
 #endif
 
+#if USE_GRAPH
+#define LOG_GRAPH(...)                 LOG_INFO(__VA_ARGS__)
+#else
+#define LOG_GRAPH(...)                 EMPTY_MACRO
+#endif
 
 #define SYSVIEW_MAX_NOF_TASKS          30
 

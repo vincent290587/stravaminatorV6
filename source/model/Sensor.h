@@ -50,7 +50,7 @@ public:
 		return m_last_updated;
 	}
 
-	T& getData() {
+	T getData() {
 		m_new_data = false;
 		return data;
 	}

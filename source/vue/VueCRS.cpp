@@ -17,8 +17,6 @@
 
 VueCRS::VueCRS() : Adafruit_GFX(0, 0) {
 	m_crs_screen_mode = eVueCRSScreenInit;
-
-	memset(&m_segs, 0, sizeof(m_segs));
 }
 
 eVueCRSScreenModes VueCRS::tasksCRS() {
@@ -92,7 +90,7 @@ eVueCRSScreenModes VueCRS::tasksCRS() {
 		this->cadran(4, VUE_CRS_NB_LINES, 1, "PR", _imkstr(att.pr), 0);
 		this->cadran(4, VUE_CRS_NB_LINES, 2, "VA", _fmkstr(att.vit_asc * 3.600, 1U), "km/h");
 
-		this->afficheListePoints(5, m_segs.s_segs[0].p_seg);
+		this->afficheSegment(5, m_segs.s_segs[0].p_seg);
 
 		assert(m_segs.s_segs[0].p_seg);
 
@@ -127,8 +125,8 @@ eVueCRSScreenModes VueCRS::tasksCRS() {
 			this->cadran(4, VUE_CRS_NB_LINES, 1, "Dist", _fmkstr(att.dist / 1000., 1U), "km");
 			this->cadran(4, VUE_CRS_NB_LINES, 2, "STC", _imkstr((int)stc.getCurrent()), "mA");
 
-			this->afficheListePoints(VUE_CRS_NB_LINES - 2, m_segs.s_segs[0].p_seg);
-			this->afficheListePoints(VUE_CRS_NB_LINES - 2, m_segs.s_segs[1].p_seg);
+			this->afficheSegment(VUE_CRS_NB_LINES - 2, m_segs.s_segs[0].p_seg);
+			this->afficheSegment(VUE_CRS_NB_LINES - 2, m_segs.s_segs[1].p_seg);
 
 			this->cadranH(VUE_CRS_NB_LINES, VUE_CRS_NB_LINES, "Next", _imkstr(att.next), "m");
 
@@ -138,9 +136,9 @@ eVueCRSScreenModes VueCRS::tasksCRS() {
 			this->cadran(2, VUE_CRS_NB_LINES, 1, "Speed", _fmkstr(att.loc.speed, 1U), "km/h");
 			this->cadran(2, VUE_CRS_NB_LINES, 2, "Pwr", _imkstr(att.pwr), "W");
 
-			this->afficheListePoints(VUE_CRS_NB_LINES - 4, m_segs.s_segs[0].p_seg);
+			this->afficheSegment(VUE_CRS_NB_LINES - 4, m_segs.s_segs[0].p_seg);
 
-			this->afficheListePoints(VUE_CRS_NB_LINES - 2, m_segs.s_segs[1].p_seg);
+			this->afficheSegment(VUE_CRS_NB_LINES - 2, m_segs.s_segs[1].p_seg);
 			this->partner(VUE_CRS_NB_LINES, m_segs.s_segs[1].p_seg);
 
 		} else if (SEG_OFF == m_segs.s_segs[1].p_seg->getStatus()) {
@@ -149,18 +147,18 @@ eVueCRSScreenModes VueCRS::tasksCRS() {
 			this->cadran(2, VUE_CRS_NB_LINES, 1, "Speed", _fmkstr(att.loc.speed, 1U), "km/h");
 			this->cadran(2, VUE_CRS_NB_LINES, 2, "Pwr", _imkstr(att.pwr), "W");
 
-			this->afficheListePoints(VUE_CRS_NB_LINES - 4, m_segs.s_segs[0].p_seg);
+			this->afficheSegment(VUE_CRS_NB_LINES - 4, m_segs.s_segs[0].p_seg);
 			this->partner(VUE_CRS_NB_LINES - 2, m_segs.s_segs[0].p_seg);
 
-			this->afficheListePoints(VUE_CRS_NB_LINES - 1, m_segs.s_segs[1].p_seg);
+			this->afficheSegment(VUE_CRS_NB_LINES - 1, m_segs.s_segs[1].p_seg);
 
 		} else {
 
 			// no segment is OFF
-			this->afficheListePoints(VUE_CRS_NB_LINES - 5, m_segs.s_segs[0].p_seg);
+			this->afficheSegment(VUE_CRS_NB_LINES - 5, m_segs.s_segs[0].p_seg);
 			this->partner(VUE_CRS_NB_LINES - 3, m_segs.s_segs[0].p_seg);
 
-			this->afficheListePoints(VUE_CRS_NB_LINES - 2, m_segs.s_segs[1].p_seg);
+			this->afficheSegment(VUE_CRS_NB_LINES - 2, m_segs.s_segs[1].p_seg);
 			this->partner(VUE_CRS_NB_LINES, m_segs.s_segs[1].p_seg);
 		}
 
@@ -189,37 +187,7 @@ void VueCRS::displayGPS(void) {
 
 }
 
-void VueCRS::addSegment(Segment *p_seg) {
-
-	if (m_segs.nb_segs < NB_SEG_ON_DISPLAY) {
-		m_segs.s_segs[m_segs.nb_segs].p_seg   = p_seg;
-		m_segs.s_segs[m_segs.nb_segs].is_prio = 0;
-		m_segs.nb_segs++;
-	}
-
-}
-
-
-void VueCRS::addSegmentPrio(Segment *p_seg) {
-
-	if (m_segs.nb_segs < NB_SEG_ON_DISPLAY) {
-		m_segs.s_segs[m_segs.nb_segs].p_seg   = p_seg;
-		m_segs.s_segs[m_segs.nb_segs].is_prio = 1;
-		m_segs.nb_segs++;
-	} else {
-
-		for (uint8_t i=0; i < NB_SEG_ON_DISPLAY; i++) {
-			if (!m_segs.s_segs[i].is_prio) {
-				m_segs.s_segs[i].p_seg   = p_seg;
-				m_segs.s_segs[i].is_prio = 1;
-				return;
-			}
-		}
-
-	}
-}
-
-void VueCRS::afficheListePoints(uint8_t ligne, Segment *p_seg) {
+void VueCRS::afficheSegment(uint8_t ligne, Segment *p_seg) {
 
 	float minLat = 100.;
 	float minLon = 400.;

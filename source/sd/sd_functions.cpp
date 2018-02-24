@@ -161,6 +161,7 @@ int load_segment(Segment& seg) {
 				res++;
 		}
 
+		if (check_memory_exception()) return -1;
 	}
 
 	error = f_close (&g_fileObject);
@@ -181,7 +182,7 @@ int load_segment(Segment& seg) {
 /**
  *
  * @param mon_parcours
- * @return
+ * @return -1 if failure, the number of points otherwise
  */
 int load_parcours(Parcours& mon_parcours) {
 
@@ -206,15 +207,20 @@ int load_parcours(Parcours& mon_parcours) {
 		// on se met au bon endroit
 		if (strstr(g_bufferRead, "<")) {
 			// meta data
-		} else if (strstr(g_bufferRead, ";")) {
+		} else if (strstr(g_bufferRead, " ")) {
 			// on est pret a charger le point
 			if (!chargerPointPar(g_bufferRead, mon_parcours))
 				res++;
 		}
 
+		if (check_memory_exception()) return -1;
+
+		// continue to perform the critical system tasks
+		perform_system_tasks();
+
 	} // fin du fichier
 
-	error = f_close (&g_fileObject);
+	error = f_close(&g_fileObject);
 	if (error)
 	{
 		LOG_INFO("Close file failed.\r\n");

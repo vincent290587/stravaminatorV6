@@ -60,6 +60,8 @@ void PowerManager::setLockRunMode(bool lockRunMode) {
 
 	m_lock_run_mode = lockRunMode;
 
+	LOG_INFO("Mode lock status: %u\r\n", lockRunMode);
+
 	if (m_lock_run_mode) {
 		this->switchToRun24();
 	}

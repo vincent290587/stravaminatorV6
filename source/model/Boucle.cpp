@@ -48,8 +48,10 @@ bool Boucle::isTime(void) {
 	break;
 
 	case eBoucleGlobalModesPRC:
-		// TODO
-		break;
+	{
+		return boucle_crs.isTime();
+	}
+	break;
 
 	default:
 		break;
@@ -78,8 +80,10 @@ void Boucle::run(void) {
 	}
 	break;
 	case eBoucleGlobalModesPRC:
-		// TODO
-		break;
+	{
+		boucle_crs.run();
+	}
+	break;
 
 	default:
 		break;
@@ -107,8 +111,10 @@ void Boucle::changeMode(eBoucleGlobalModes new_mode) {
 	}
 	break;
 	case eBoucleGlobalModesPRC:
-		// TODO
-		break;
+	{
+		boucle_crs.invalidate();
+	}
+	break;
 
 	default:
 		break;
@@ -127,8 +133,10 @@ void Boucle::changeMode(eBoucleGlobalModes new_mode) {
 	}
 	break;
 	case eBoucleGlobalModesPRC:
-		// TODO
-		break;
+	{
+		boucle_crs.invalidate();
+	}
+	break;
 
 	case eBoucleGlobalModesInit:
 	default:

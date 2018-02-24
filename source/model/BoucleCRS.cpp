@@ -47,11 +47,11 @@ bool BoucleCRS::isTime() {
  */
 void BoucleCRS::init() {
 
+	init_liste_segments();
+
 	// turn GPS ON
 	gps_mgmt.awake();
  	gps_mgmt.startEpoUpdate();
-
-	init_liste_segments();
 
 	memset(&att, 0, sizeof(SAtt));
 
@@ -70,7 +70,7 @@ void BoucleCRS::run() {
 	m_dist_next_seg = 50000;
 	float tmp_dist;
 
-	pwManager.switchToRun120();
+	pwManager.switchToRun24();
 
 	if (m_needs_init) this->init();
 
@@ -78,6 +78,8 @@ void BoucleCRS::run() {
 
 	dma_spi0_mngr_tasks_start();
 	dma_spi0_mngr_finish();
+
+	pwManager.switchToRun120();
 
 	if (locator.isUpdated()) {
 

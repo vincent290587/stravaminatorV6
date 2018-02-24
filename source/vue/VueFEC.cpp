@@ -41,6 +41,8 @@ eVueFECScreenModes VueFEC::tasksFEC() {
 
 		LOG_INFO("VueFEC waiting for sensors\r\n");
 
+		if (!m_el_time) vue.addNotif("FEC", "Connecting...", 5, eNotificationTypeComplete);
+
 		m_el_time++;
 
 		if (fec_info.data.el_time) {

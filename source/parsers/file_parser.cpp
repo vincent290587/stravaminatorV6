@@ -80,7 +80,7 @@ int chargerPointPar(char *buffer, Parcours& mon_parcours) {
 	static int isError = 0;
 	float lon, lat, ele;
 	float data[4];
-	const char *deli = ";";
+	const char *deli = " ";
 	uint8_t pos = 0;
 	char *pch;
 

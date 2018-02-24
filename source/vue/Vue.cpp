@@ -25,8 +25,31 @@ void Vue::init(void) {
 
 void Vue::tasks(e_buttons_event event) {
 
-	// propagate to the inner menu
-	this->propagateEvent(event);
+	// TODO
+	switch (m_global_mode) {
+	case eVueGlobalScreenCRS:
+	{
+		// propagate to the inner menu
+		this->propagateEvent(event);
+		break;
+	}
+	case eVueGlobalScreenFEC:
+	{
+		// propagate to the inner menu
+		this->propagateEvent(event);
+		break;
+	}
+	case eVueGlobalScreenPRC:
+	{
+		if (this->propagateEventsPRC(event)) {
+			// propagate to the inner menu
+			this->propagateEvent(event);
+		}
+		break;
+	}
+	default:
+		break;
+	}
 
 }
 

@@ -7,20 +7,23 @@
 
 #include "Zoom.h"
 #include "utils.h"
+#include "segger_wrapper.h"
 
 Zoom::Zoom() {
 	m_h_size = 80;
 	m_v_size = 30;
 
-	m_zoom_level = 1;
+	m_zoom_level = BASE_ZOOM_LEVEL;
 }
 
 void Zoom::decreaseZoom() {
 	if (m_zoom_level < 100) m_zoom_level += 1;
+	LOG_INFO("Zoom--: %u\r\n", m_zoom_level);
 }
 
 void Zoom::increaseZoom() {
 	if (m_zoom_level > 0) m_zoom_level -= 1;
+	LOG_INFO("Zoom++: %u\r\n", m_zoom_level);
 }
 
 void Zoom::resetZoom() {

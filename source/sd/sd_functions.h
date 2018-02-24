@@ -16,10 +16,13 @@
 //#endif /* _cplusplus */
 
 class Segment;
+class Parcours;
 
 int init_liste_segments(void);
 
 int load_segment(Segment& seg);
+
+int load_parcours(Parcours& mon_parcours);
 
 float segment_allocator(Segment& mon_seg, float lat1, float long1);
 

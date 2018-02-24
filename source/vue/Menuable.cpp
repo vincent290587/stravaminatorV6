@@ -165,16 +165,19 @@ void Menuable::propagateEvent(e_buttons_event event) {
 
 void Menuable::tasksMenu(void) {
 
-	this->setTextSize(3);
-	this->setCursor(20, 20);
+	this->setCursor(0, 20);
 
 	if (m_is_menu_selected) {
 		for (uint16_t i=0; i < MENU_MAX_ITEMS_NB; i++) {
+
+			this->setTextSize(3);
+			this->println();
+			this->print(" ");
 			this->print(m_menus.menu_page[m_menus.cur_page].item[i].name);
+
+			this->setTextSize(2);
 			if (i==m_ind_selec) {
-				this->println(" <<--");
-			} else {
-				this->println();
+				this->print(" <<--");
 			}
 		}
 	}

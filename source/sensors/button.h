@@ -12,8 +12,8 @@ typedef enum {
 	k_Buttons_no_event     = 0U,
 	k_Buttons_interrupt    = 1U,
 	k_Buttons_press_left   = 2U,
-	k_Buttons_press_right  = 3U,
-	k_Buttons_press_center = 4U,
+	k_Buttons_press_center = 3U,
+	k_Buttons_press_right  = 4U,
 } e_buttons_event;
 
 

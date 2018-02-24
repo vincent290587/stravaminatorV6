@@ -47,6 +47,8 @@ STC3100::STC3100(int32_t sensorID) {
 	_deviceID = 0;
 	_r_sens = 0;
 	_stc3100Mode = STC3100_MODE_ULTRAHIGHRES;
+
+	m_soft_reset = false;
 }
 
 /***************************************************************************
@@ -70,7 +72,7 @@ bool STC3100::init(uint32_t r_sens, stc3100_res_t res) {
 	_r_sens = r_sens;
 
     // reset
-	this->writeCommand(REG_CONTROL, STC_RESET);
+	this->reset();
 	delay_ms(1);
 
 	// read device ID
@@ -90,6 +92,14 @@ bool STC3100::init(uint32_t r_sens, stc3100_res_t res) {
 }
 
 
+void STC3100::reset(void) {
+
+	// reset
+	this->writeCommand(REG_CONTROL, STC_RESET);
+
+}
+
+
 void STC3100::shutdown(void) {
 
 	// reset
@@ -98,8 +108,8 @@ void STC3100::shutdown(void) {
 
 	/* Set the mode indicator */
 	_stc3100Mode  = 0;
-	_stc3100Mode |= MODE_RUN;
-	_stc3100Mode |= STC3100_MODE_HIGHRES;
+	//_stc3100Mode |= MODE_RUN;
+	//_stc3100Mode |= STC3100_MODE_HIGHRES;
 
 	// set mode
 	this->writeCommand(REG_MODE, _stc3100Mode);
@@ -120,6 +130,13 @@ bool STC3100::refresh()
 	this->computeCurrent ();
 	this->computeTemp    ();
 	this->computeCounter ();
+
+	if (!m_soft_reset &&
+			millis() > 5000) {
+
+		this->reset();
+		m_soft_reset = true;
+	}
 
 	return true;
 }
@@ -158,7 +175,7 @@ void STC3100::computeCharge()
 	uint8_t tl=_stc_data.ChargeLow, th=_stc_data.ChargeHigh;
 	float val;
 
-	LOG_INFO("Charge L=0x%x H=0x%x\r\n", tl, th);
+	LOG_DEBUG("Charge L=0x%x H=0x%x\r\n", tl, th);
 
 	val = compute2Complement(th, tl);
 	//
@@ -174,7 +191,7 @@ void STC3100::computeCurrent()
 	uint8_t tl=_stc_data.CurrentLow, th=_stc_data.CurrentHigh;
 	float val;
 
-	LOG_INFO("Current L=0x%x H=0x%x\r\n", tl, th);
+	LOG_DEBUG("Current L=0x%x H=0x%x\r\n", tl, th);
 
 	val = compute2Complement(th, tl);
 	// LSB = 11.77uV

@@ -8,6 +8,8 @@
 #ifndef SOURCE_MODEL_H_
 #define SOURCE_MODEL_H_
 
+#if defined(__cplusplus)
+
 #include "Sensor.h"
 #include "ListePoints.h"
 #include "mk64f_parser.h"
@@ -30,7 +32,7 @@
 #include "parameters.h"
 
 
-extern SAtt att;
+extern SAtt          att;
 
 extern Attitude      attitude;
 
@@ -74,8 +76,12 @@ extern Sensor<sFecInfo>     fec_info;
 
 extern sSpisRxInfoPage0     nrf52_page0;
 
+extern "C" void model_dispatch_sensors_update(void);
 
+extern "C" void perform_system_tasks(void);
 
-void model_dispatch_sensors_update(void);
+extern "C" bool check_memory_exception(void);
+
+#endif
 
 #endif /* SOURCE_MODEL_H_ */

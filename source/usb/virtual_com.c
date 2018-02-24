@@ -57,6 +57,7 @@
 /*******************************************************************************
 * Definitions
 ******************************************************************************/
+extern void perform_system_tasks(void);
 
 /*******************************************************************************
 * Variables
@@ -381,7 +382,9 @@ usb_status_t USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size) {
     		while (!m_is_packet_sent) {
 
     			sleep();
-    			CompositeTask();
+
+    			// tasks
+    			perform_system_tasks();
 
     			if (millis() - millis_ > USB_TIMEOUT_MS) {
     				LOG_ERROR("USB VCOM send timeout\r\n");

@@ -44,7 +44,7 @@ void dma_spi0_mngr_stop() {
 	if (m_state == E_XFER_MNGR_RUN) {
 		// post hook
 		if (m_tasks[m_cur_task].p_post_func)
-			(*m_tasks[m_cur_task].p_post_func)(m_tasks[m_cur_task].user_data);
+			(m_tasks[m_cur_task].p_post_func)(m_tasks[m_cur_task].user_data);
 	}
 
 	m_state = E_XFER_MNGR_IDLE;
@@ -62,7 +62,7 @@ void dma_spi0_mngr_task_add(sXferTask *task) {
 
 		LOG_INFO("Xfer task added\r\n");
 	} else {
-		LOG_INFO("Xfer task buffer full\r\n");
+		LOG_ERROR("Xfer task buffer full\r\n");
 	}
 
 }
@@ -83,7 +83,7 @@ void dma_spi0_mngr_tasks_start() {
 
 		// start pre-hook of first task
 		if (m_tasks[m_cur_task].p_pre_func)
-			(*m_tasks[m_cur_task].p_pre_func)(m_tasks[m_cur_task].user_data);
+			(m_tasks[m_cur_task].p_pre_func)(m_tasks[m_cur_task].user_data);
 	}
 
 	// init transfers
@@ -100,13 +100,12 @@ bool dma_spi0_mngr_is_running() {
 
 void dma_spi0_mngr_run() {
 
-	// make sure we fill the DMA buffers every time with a while
 	if (m_state == E_XFER_MNGR_RUN && isXferDone && !isXferStarted) {
 
 		isXferDone = false;
 
 		assert(m_tasks[m_cur_task].p_xfer_func);
-		int res = (*m_tasks[m_cur_task].p_xfer_func)(m_tasks[m_cur_task].user_data);
+		(m_tasks[m_cur_task].p_xfer_func)(m_tasks[m_cur_task].user_data);
 
 		last_task_start = millis();
 
@@ -118,11 +117,11 @@ void dma_spi0_mngr_run() {
 
 		isXferStarted = false;
 
-		LOG_INFO("Xfer task finished in %u ms\r\n", millis() - last_task_start);
+		LOG_DEBUG("Xfer task finished in %u ms\r\n", millis() - last_task_start);
 
 		// the task is finished
 		if (m_tasks[m_cur_task].p_post_func)
-			(*m_tasks[m_cur_task].p_post_func)(m_tasks[m_cur_task].user_data);
+			(m_tasks[m_cur_task].p_post_func)(m_tasks[m_cur_task].user_data);
 
 		// check if all tasks finished
 		if (m_cur_task+1 < m_tasks_nb) {
@@ -130,7 +129,7 @@ void dma_spi0_mngr_run() {
 			// start of next task
 			m_cur_task++;
 			if (m_tasks[m_cur_task].p_pre_func)
-				(*m_tasks[m_cur_task].p_pre_func)(m_tasks[m_cur_task].user_data);
+				(m_tasks[m_cur_task].p_pre_func)(m_tasks[m_cur_task].user_data);
 
 		} else {
 			m_state = E_XFER_MNGR_IDLE;

@@ -19,6 +19,9 @@ Point2D::Point2D(float lat, float lon) {
 	_lon = lon;
 }
 
+Point2D::~Point2D() {
+}
+
 Point2D & Point2D::operator=(const Point2D *point) {
 	if (point != 0) {
 		_lat = point->_lat;
@@ -40,6 +43,8 @@ Point::Point():Point2D() {
 	_lon = 0;
 	_alt = 0;
 	_rtime = 0;
+
+	objectCount++;
 }
 
 Point::Point(float lat, float lon, float alt, float rtime) {
@@ -47,8 +52,22 @@ Point::Point(float lat, float lon, float alt, float rtime) {
 	_lon = lon;
 	_alt = alt;
 	_rtime = rtime;
+
+	objectCount++;
 }
 
+Point::Point(const Point& pt) {
+	_lat = pt._lat;
+	_lon = pt._lon;
+	_alt = pt._alt;
+	_rtime = pt._rtime;
+
+	objectCount++;
+}
+
+Point::~Point() {
+	objectCount--;
+}
 
 int Point::isValid() {
 	if (_lat == 0. || _lon == 0. || fabs(_lat) > 89. || fabs(_lon) > 189.) {
@@ -82,3 +101,4 @@ Point & Point::operator=(const Point &point) {
 void Point::toString() {
 	//printf("Point -> %f %f %f %f\n", _lat, _lon, _alt, _rtime);
 }
+

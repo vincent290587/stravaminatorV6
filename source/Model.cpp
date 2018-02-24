@@ -8,6 +8,12 @@
 #include "Model.h"
 #include "segger_wrapper.h"
 
+#include "composite.h"
+#include "spi_scheduler.h"
+#include "i2c_scheduler.h"
+#include "uart0.h"
+
+
 SAtt att;
 
 Attitude      attitude;
@@ -48,6 +54,9 @@ Sensor<sFecInfo>     fec_info;
 
 sSpisRxInfoPage0     nrf52_page0;
 
+// init counter
+int Point::objectCount = 0;
+
 /**
  *
  */
@@ -68,4 +77,44 @@ void model_dispatch_sensors_update(void) {
 			nrf52_page0.back_info.state = 0;
 		}
 	}
+}
+
+/**
+ *
+ */
+void perform_system_tasks(void) {
+
+#ifndef DEBUG_CONFIG
+	i2c_scheduling_tasks();
+#endif
+
+	// USB
+	if (pwManager.isUsbConnected()) CompositeTask();
+
+	gps_mgmt.tasks();
+
+	locator.tasks();
+
+	uaparser.tasks();
+
+	dma_spi0_mngr_run();
+
+	uart0_tasks();
+
+}
+
+/**
+ *
+ * @return true if memory is full, false otherwise
+ */
+bool check_memory_exception(void) {
+
+	if (Point::getObjectCount() > 1500) {
+
+		LOG_ERROR("Memory exhausted");
+
+		return true;
+	}
+
+	return false;
 }

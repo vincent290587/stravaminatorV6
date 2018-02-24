@@ -80,7 +80,7 @@ e_buttons_event buttons_tasks(void) {
 	if (g_ButtonPress_instant &&
 			(millis() - g_ButtonPress_instant > 2)) {
 
-		res = g_ButtonPress;
+		if (millis() > 4000) res = g_ButtonPress;
 
 		g_ButtonPress         = 0;
 		g_ButtonPress_instant = 0;

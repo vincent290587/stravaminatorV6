@@ -24,6 +24,7 @@
 #include "uart0.h"
 #include "uart2.h"
 
+
 /*!
  * @brief Application entry point.
  */
@@ -124,28 +125,14 @@ int main(void) {
 
 			W_SYSVIEW_OnIdle();
 		}
-		// tasks
-
 #else
-
-		i2c_scheduling_tasks();
 
 		boucle.tasks();
 
 #endif
 
-		// USB
-		if (pwManager.isUsbConnected()) CompositeTask();
-
-		gps_mgmt.tasks();
-
-		locator.tasks();
-
-		uaparser.tasks();
-
-		dma_spi0_mngr_run();
-
-		uart0_tasks();
+		// tasks
+		perform_system_tasks();
 
 	}
 

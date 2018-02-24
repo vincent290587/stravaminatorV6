@@ -74,6 +74,7 @@ public:
 			stc3100_res_t res = STC3100_MODE_HIGHRES);
 
 	void shutdown(void);
+	void reset(void);
 
 	bool refresh();
 
@@ -93,6 +94,8 @@ private:
 	uint8_t _deviceID, _stc3100Mode;
 	int32_t _r_sens;
 	tSTC31000Data _stc_data;
+
+	bool m_soft_reset;
 
 	/**Value of the battery voltage in V*/
 	float _voltage;

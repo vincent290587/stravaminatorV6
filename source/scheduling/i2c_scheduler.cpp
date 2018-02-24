@@ -12,14 +12,14 @@
 #include "fxos.h"
 #include "Model.h"
 
-fxos_handle_t fxos_handle;
+static fxos_handle_t fxos_handle;
 
 static uint32_t m_last_polled_time = 0;
 
 
 static void _i2c_scheduling_sensors_init(void) {
 
-	FXOS_Init(&fxos_handle);
+	//FXOS_Init(&fxos_handle);
 
 	stc.init(STC3100_CUR_SENS_RES_MO, STC3100_MODE_STANDARD);
 
@@ -27,12 +27,14 @@ static void _i2c_scheduling_sensors_init(void) {
 
 	ms5637.init();
 
+	m_last_polled_time = 1;
 }
 
 void i2c_scheduling_init(void) {
 
 	m_last_polled_time = 0;
 
+	_i2c_scheduling_sensors_init();
 }
 
 void i2c_scheduling_tasks(void) {
@@ -46,24 +48,23 @@ void i2c_scheduling_tasks(void) {
 
 	if (m_last_polled_time == 0) {
 		_i2c_scheduling_sensors_init();
-		m_last_polled_time = 1;
 	}
 
 	if (millis() - m_last_polled_time >= SENSORS_READING_DELAY_MS) {
 
-		m_last_polled_time = millis();
+		LOG_DEBUG("Reading sensors t=%u ms\r\n", millis());
 
-		//LOG_INFO("Reading sensors t=%u ms\r\n", millis());
-		fxos_tasks(&fxos_handle);
+		//fxos_tasks(&fxos_handle);
 
 		stc.refresh();
 
-		veml.poll();
+		//veml.poll();
 
 		ms5637.getPressure(OSR_8192);
 
-		model_dispatch_sensors_update();
+		m_last_polled_time = millis();
 
+		model_dispatch_sensors_update();
 	}
 
 }

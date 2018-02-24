@@ -40,7 +40,7 @@ void PowerManager::init() {
  * @return true if USB is connected
  */
 bool PowerManager::isUsbConnected() {
-	// TODO
+
 #ifdef DEBUG_CONFIG
 	return true;
 #else

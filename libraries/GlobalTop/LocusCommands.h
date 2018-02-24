@@ -31,7 +31,7 @@
 #define PMTK_SET_BIN_BAUD_9600  "$PMTK253,1,9600*08\r\n"
 
 #define PMTK_SET_BAUD_57600 "$PMTK251,57600*2C\r\n"
-#define PMTK_SET_BAUD_9600 "$PMTK251,9600*17\r\n"
+#define PMTK_SET_BAUD_9600  "$PMTK251,9600*17\r\n"
 
 // turn on only the second sentence (GPRMC)
 #define PMTK_SET_NMEA_OUTPUT_RMCONLY "$PMTK314,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0*29\r\n"

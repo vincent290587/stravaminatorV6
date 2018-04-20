@@ -84,11 +84,11 @@ static void _post_transfer(void* p_context) {
 
 	sSpisTxInfoPage0 nrf52_data;
 
-	LOG_INFO("SPIS recv buffer:\r\n");
-	for (uint8_t i = 0; i < TRANSFER_SIZE; i++) {
-		LOG_INFO("%02X ", masterRxData[i]);
-	}
-	LOG_INFO("\r\n");
+//	LOG_INFO("SPIS recv buffer:\r\n");
+//	for (uint8_t i = 0; i < TRANSFER_SIZE; i++) {
+//		LOG_INFO("%02X ", masterRxData[i]);
+//	}
+//	LOG_INFO("\r\n");
 
 	nrf52_data.flags = masterRxData[TX_BUFF_FLAGS_POS];
 

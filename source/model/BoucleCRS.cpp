@@ -30,6 +30,7 @@ BoucleCRS::BoucleCRS() : BoucleInterface() {
 bool BoucleCRS::isTime() {
 
 	if (locator.isUpdated()) {
+		LOG_INFO("Locator updated\r\n");
 		return true;
 	}
 
@@ -47,8 +48,6 @@ bool BoucleCRS::isTime() {
  */
 void BoucleCRS::init() {
 
-	init_liste_segments();
-
 	// turn GPS ON
 	gps_mgmt.awake();
  	gps_mgmt.startEpoUpdate();
@@ -59,7 +58,7 @@ void BoucleCRS::init() {
 
 	m_last_refresh = 0;
 
-	m_dist_next_seg = 5000;
+	m_dist_next_seg = 9999;
 }
 
 /**
@@ -67,7 +66,7 @@ void BoucleCRS::init() {
  */
 void BoucleCRS::run() {
 
-	m_dist_next_seg = 50000;
+	m_dist_next_seg = 9999;
 	float tmp_dist;
 
 	pwManager.switchToRun24();
@@ -104,7 +103,7 @@ void BoucleCRS::run() {
 
 				tmp_dist = segment_allocator(seg, att.loc.lat, att.loc.lon);
 
-				// calculate distance to closes segment
+				// calculate distance to closest segment
 				if (tmp_dist < m_dist_next_seg) m_dist_next_seg = tmp_dist;
 
 				if (seg.getStatus() != SEG_OFF) {
@@ -162,7 +161,7 @@ void BoucleCRS::run() {
 
 	W_SYSVIEW_OnTaskStartExec(LCD_TASK);
 	vue.refresh();
-	m_last_refresh = 0;
+	m_last_refresh.setUpdateTime();
 	W_SYSVIEW_OnTaskStopExec(LCD_TASK);
 
 	dma_spi0_mngr_tasks_start();

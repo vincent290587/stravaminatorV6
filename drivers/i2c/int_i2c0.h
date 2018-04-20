@@ -10,8 +10,6 @@
 
 #include "fsl_i2c.h"
 
-#define I2C0_DMA_CHANNEL 7U
-
 typedef struct {
 	uint8_t  address;
 	uint32_t reg;

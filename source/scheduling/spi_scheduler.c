@@ -60,7 +60,7 @@ void dma_spi0_mngr_task_add(sXferTask *task) {
 		memcpy(m_tasks+m_tasks_nb, task, sizeof(sXferTask));
 		m_tasks_nb++;
 
-		LOG_INFO("Xfer task added\r\n");
+		//LOG_INFO("Xfer task added\r\n");
 	} else {
 		LOG_ERROR("Xfer task buffer full\r\n");
 	}
@@ -109,7 +109,7 @@ void dma_spi0_mngr_run() {
 
 		last_task_start = millis();
 
-		LOG_INFO("Xfer task started %u\r\n", res);
+		//LOG_INFO("Xfer task started %u\r\n", res);
 
 		isXferStarted = true;
 
@@ -138,7 +138,7 @@ void dma_spi0_mngr_run() {
 			// TODO careful here
 			m_tasks_nb = 0;
 
-			LOG_INFO("Xfer all tasks finished\r\n");
+			//LOG_INFO("Xfer all tasks finished\r\n");
 		}
 
 	}

@@ -87,9 +87,9 @@ eLocationSource Locator::getUpdateSource() {
 		return eLocationSourceGPS;
 	}
 
-	// NRF has newer data than GPS
-	if (nrf_loc.isUpdated() ||
-			nrf_loc.data.utc_time > gps_loc.data.utc_time + LNS_OVER_GPS_DTIME_S) {
+	// NRF has newer data (> LNS_OVER_GPS_DTIME_S) than GPS
+	if (nrf_loc.isUpdated() &&
+			millis() - gps_loc.getLastUpdateTime() > LNS_OVER_GPS_DTIME_S * 1000) {
 		return eLocationSourceNRF;
 	} else if (nrf_loc.isUpdated()) {
 		LOG_INFO("LNS data refused: GPS data too recent\r\n");

@@ -5,9 +5,9 @@ stored on a SD card along with GPS positioning to have real-time performance sta
 
 ## Building
 
-The project uses NXP Kinetis SDK V2.2 in Kinetis studio V3.2.
+The project uses NXP Kinetis SDK V2.3 in Kinetis studio V3.2.
 The clocks and pins configuration were generated with MCUXPRESSO
-config tools V3
+config tools V4
 
 ## Features
 

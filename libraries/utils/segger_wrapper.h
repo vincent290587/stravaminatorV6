@@ -19,9 +19,9 @@
 /////////    PARAMETERS
 
 // force RTT
-#ifdef USE_RTT
-#undef USE_RTT
-#endif
+//#ifdef USE_RTT
+//#undef USE_RTT
+//#endif
 
 #ifndef USE_RTT
 #define USE_RTT           1
@@ -30,10 +30,10 @@
 #define USE_SVIEW         0
 #define USE_GRAPH         0
 
+/////////    DEFINES
+
 #define RTT_LOG_CHANNEL   0
 #define RTT_GRAPH_CHANNEL 1
-
-/////////    DEFINES
 
 #define EMPTY_MACRO                    do {} while (0)
 
@@ -52,7 +52,7 @@
 #define LOG_FLUSH(...)                 EMPTY_MACRO
 #define LOG_SET_TERM(X)                EMPTY_MACRO
 #else
-#define LOG_INFO(...)                  EMPTY_MACRO
+#define LOG_INFO(...)                  usb_printf(__VA_ARGS__)
 #define LOG_DEBUG(...)                 EMPTY_MACRO
 #define LOG_ERROR(...)                 usb_printf(__VA_ARGS__)
 #define LOG_GRAPH(...)                 EMPTY_MACRO

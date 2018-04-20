@@ -365,32 +365,34 @@ usb_status_t USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size) {
 
 			W_SYSVIEW_OnTaskStartExec(USB_VCOM_TASK);
 
-			memcpy(s_currSendBuf, buffer, size);
+//			memcpy(s_currSendBuf, buffer, size);
 
-			error = USB_DeviceCdcAcmSend(g_deviceComposite->cdcVcom.cdcAcmHandle, USB_CDC_VCOM_DIC_BULK_IN_ENDPOINT,
+        	m_is_packet_sent = false;
+
+			error = USB_DeviceCdcAcmSend(g_deviceComposite->cdcVcom.cdcAcmHandle,
+					USB_CDC_VCOM_DIC_BULK_IN_ENDPOINT,
 					s_currSendBuf, size);
+
 			if (error != kStatus_USB_Success)
 			{
     			LOG_ERROR("USB VCOM send failure\r\n");
     			return error;
 			}
 
-        	m_is_packet_sent = false;
-
     		// block
-    		uint32_t millis_ = millis();
-    		while (!m_is_packet_sent) {
-
-    			sleep();
-
-    			// tasks
-    			perform_system_tasks();
-
-    			if (millis() - millis_ > USB_TIMEOUT_MS) {
-    				LOG_ERROR("USB VCOM send timeout\r\n");
-    				break;
-    			}
-    		}
+//    		uint32_t millis_ = millis();
+//    		while (!m_is_packet_sent) {
+//
+//    			sleep();
+//
+//    			// tasks
+//    			perform_system_tasks();
+//
+//    			if (millis() - millis_ > USB_TIMEOUT_MS) {
+//    				LOG_ERROR("USB VCOM send timeout\r\n");
+//    				break;
+//    			}
+//    		}
 
     		W_SYSVIEW_OnTaskStopExec(USB_VCOM_TASK);
 
@@ -437,4 +439,21 @@ usb_status_t USB_DeviceCdcVcomInit(usb_device_composite_struct_t *deviceComposit
 {
     g_deviceComposite = deviceComposite;
     return kStatus_USB_Success;
+}
+
+/**
+ *
+ * @return
+ */
+bool USB_DeviceCdcVcomIsBusy(void) {
+	return !m_is_packet_sent;
+}
+
+/**
+ *
+ * @param char_
+ * @param pos
+ */
+void USB_DeviceCdcVcomFillBuffer(char char_, uint16_t pos) {
+	s_currSendBuf[pos] = char_;
 }

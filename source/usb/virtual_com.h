@@ -37,7 +37,7 @@
 #include "usb.h"
 #include "usb_device_class.h"
 #include "usb_device_descriptor.h"
-
+#include "usb_device_config.h"
 
 /*******************************************************************************
 * Definitions
@@ -161,6 +161,14 @@ usb_status_t USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size);
  * Low level USB tasks (KHCI..)
  */
 void CompositeTask(void);
+
+/**
+ *
+ * @return
+ */
+bool USB_DeviceCdcVcomIsBusy(void);
+
+void USB_DeviceCdcVcomFillBuffer(char char_, uint16_t pos);
 
 
 #if defined(__cplusplus)

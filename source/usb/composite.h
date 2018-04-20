@@ -38,7 +38,7 @@
 
 #include "virtual_com.h"
 #include "disk_sdcard.h"
-
+#include "usb_device_config.h"
 #include "usb.h"
 
 

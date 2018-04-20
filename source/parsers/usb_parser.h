@@ -15,9 +15,9 @@ extern "C" {
 
 void usb_parser_decode(char c);
 
-void usb_send_chars(const char *buffer);
-
 void usb_printf(const char *format, ...);
+
+void usb_tasks(void);
 
 #if defined(__cplusplus)
 }

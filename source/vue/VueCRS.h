@@ -11,6 +11,7 @@
 #include "parameters.h"
 #include <display/SegmentManager.h>
 #include <Adafruit_GFX.h>
+#include <vue/VueGPS.h>
 
 
 typedef enum {
@@ -21,7 +22,7 @@ typedef enum {
 } eVueCRSScreenModes;
 
 
-class VueCRS: virtual public Adafruit_GFX, virtual public SegmentManager {
+class VueCRS: virtual public Adafruit_GFX, virtual public VueGPS, virtual public SegmentManager {
 public:
 	VueCRS();
 
@@ -31,7 +32,6 @@ public:
 	virtual void cadran(uint8_t p_lig, uint8_t nb_lig, uint8_t p_col, const char *champ, String  affi, const char *p_unite)=0;
 
 protected:
-	void displayGPS(void);
 	void partner(uint8_t ligne, Segment *p_seg);
 
 	eVueCRSScreenModes m_crs_screen_mode;

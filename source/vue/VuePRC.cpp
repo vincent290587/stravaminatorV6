@@ -23,7 +23,7 @@ VuePRC::VuePRC() : Adafruit_GFX(0, 0) {
 
 	m_distance_prc = 0.;
 
-	m_parcours_sel = 3 * mes_parcours.size();
+	m_parcours_sel = 10 * mes_parcours.size();
 
 	m_s_parcours = nullptr;
 
@@ -60,8 +60,8 @@ eVuePRCScreenModes VuePRC::tasksPRC() {
 	}
 	case eVuePRCScreenGps:
 	{
-		// TODO display GPS page
-//			this->displayGPS();
+		// display GPS page
+		this->displayGPS();
 
 		break;
 	}
@@ -215,14 +215,14 @@ void VuePRC::parcoursSelector(void) {
  * @param ligne
  * @param p_liste
  */
-void VuePRC::afficheParcours(uint8_t ligne, ListePoints *p_liste) {
+void VuePRC::afficheParcours(uint8_t ligne, ListePoints2D *p_liste) {
 
 	float minLat = 100.;
 	float minLon = 400.;
 	float maxLat = -100.;
 	float maxLon = -400.;
 	uint16_t points_nb = 0;
-	Point pCourant, pSuivant;
+	Point2D pCourant, pSuivant;
 
 	W_SYSVIEW_OnTaskStartExec(DISPLAY_TASK3);
 

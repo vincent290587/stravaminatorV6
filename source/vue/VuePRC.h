@@ -14,6 +14,7 @@
 #include <routes/Parcours.h>
 #include <sensors/button.h>
 #include <vue/VueCRS.h>
+#include <vue/VueGPS.h>
 
 typedef enum {
 	eVuePRCScreenInit,
@@ -21,7 +22,7 @@ typedef enum {
 	eVuePRCScreenDataFull,
 } eVuePRCScreenModes;
 
-class VuePRC: virtual public Adafruit_GFX, protected Zoom, virtual public SegmentManager {
+class VuePRC: virtual public Adafruit_GFX, virtual public VueGPS, protected Zoom, virtual public SegmentManager {
 public:
 	VuePRC();
 
@@ -38,7 +39,7 @@ protected:
 
 private:
 	void afficheSegment(uint8_t ligne, Segment *p_seg);
-	void afficheParcours(uint8_t ligne, ListePoints *p_liste);
+	void afficheParcours(uint8_t ligne, ListePoints2D *p_liste);
 
 	void parcoursSelector(void);
 

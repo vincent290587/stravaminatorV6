@@ -172,21 +172,6 @@ eVueCRSScreenModes VueCRS::tasksCRS() {
 	return m_crs_screen_mode;
 }
 
-void VueCRS::displayGPS(void) {
-
-//	this->setCursor(20,20);
-//	this->setTextSize(3);
-//	this->print(F("GPS search"));
-
-	locator.displayGPS2();
-
-	this->cadranH(6, VUE_CRS_NB_LINES, "Time", _timemkstr(att.date, ':'), NULL);
-
-	this->cadran(7, VUE_CRS_NB_LINES, 1, "STC", _imkstr((int)stc.getCurrent()), "mA");
-	this->cadran(7, VUE_CRS_NB_LINES, 2, "SOC", _imkstr(percentageBatt(stc.getVoltage(), stc.getCurrent())), "%");
-
-}
-
 void VueCRS::afficheSegment(uint8_t ligne, Segment *p_seg) {
 
 	float minLat = 100.;

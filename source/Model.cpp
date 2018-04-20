@@ -89,7 +89,10 @@ void perform_system_tasks(void) {
 #endif
 
 	// USB
-	if (pwManager.isUsbConnected()) CompositeTask();
+	if (pwManager.isUsbConnected()) {
+		CompositeTask();
+		usb_tasks();
+	}
 
 	gps_mgmt.tasks();
 

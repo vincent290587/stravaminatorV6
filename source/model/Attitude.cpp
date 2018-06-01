@@ -47,9 +47,11 @@ void Attitude::addNewLocation(SLoc& loc_, SDate &date_) {
 			att.dist > m_last_save_dist + 15) {
 
 		m_last_save_dist = att.dist;
+
 		// TODO save position on SD card
 
 	} else if (att.dist > m_last_save_dist + 15) {
+		// first position
 		att.dist = 0;
 		m_is_init = true;
 	}

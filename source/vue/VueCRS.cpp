@@ -333,7 +333,24 @@ void VueCRS::afficheSegment(uint8_t ligne, Segment *p_seg) {
 	// ma position
 	maDpex = regFenLim(_lon, minLon, maxLon, 0, _width);
 	maDpey = regFenLim(_lat, minLat, maxLat, fin_cadran, debut_cadran);
-	fillCircle(maDpex, maDpey, 4, LS027_PIXEL_BLACK);
+	if (att.loc.course > 0) {
+		int16_t x0f, x0 = maDpex;
+		int16_t y0f, y0 = maDpey - 15;
+
+		int16_t x1f, x1 = maDpex + 5;
+		int16_t y1f, y1 = maDpey + 5;
+
+		int16_t x2f, x2 = maDpex - 5;
+		int16_t y2f, y2 = maDpey + 5;
+
+		rotate_point(att.loc.course, maDpex, maDpey, x0, y0, x0f, y0f);
+		rotate_point(att.loc.course, maDpex, maDpey, x1, y1, x1f, y1f);
+		rotate_point(att.loc.course, maDpex, maDpey, x2, y2, x2f, y2f);
+
+		drawTriangle(x0f, y0f, x1f, y1f, x2f, y2f, LS027_PIXEL_BLACK);
+	} else {
+		fillCircle(maDpex, maDpey, 4, LS027_PIXEL_BLACK);
+	}
 
 	// return before printing text
 	if (p_seg->getStatus() == SEG_OFF) {

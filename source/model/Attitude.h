@@ -16,6 +16,7 @@ typedef struct {
 	float lon;
 	float alt;
 	float speed;
+	float course;
 } SLoc;
 
 typedef struct {

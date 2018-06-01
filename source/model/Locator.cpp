@@ -89,7 +89,7 @@ eLocationSource Locator::getUpdateSource() {
 
 	// NRF has newer data (> LNS_OVER_GPS_DTIME_S) than GPS
 	if (nrf_loc.isUpdated() &&
-			millis() - gps_loc.getLastUpdateTime() > LNS_OVER_GPS_DTIME_S * 1000) {
+			millis() - gps_loc.getLastUpdateTime() > S_TO_MS(LNS_OVER_GPS_DTIME_S)) {
 		return eLocationSourceNRF;
 	} else if (nrf_loc.isUpdated()) {
 		LOG_INFO("LNS data refused: GPS data too recent\r\n");
@@ -146,6 +146,7 @@ eLocationSource Locator::getPosition(SLoc& loc_, SDate& date_) {
 		loc_.lat = sim_loc.data.lat;
 		loc_.lon = sim_loc.data.lon;
 		loc_.speed = 20.;
+		loc_.course = -1;
 		date_.secj = sim_loc.data.utc_time;
 		date_.date = 291217;
 		date_.timestamp = millis();
@@ -157,6 +158,7 @@ eLocationSource Locator::getPosition(SLoc& loc_, SDate& date_) {
 		loc_.lat = nrf_loc.data.lat;
 		loc_.lon = nrf_loc.data.lon;
 		loc_.speed = nrf_loc.data.speed;
+		loc_.course = -1;
 		date_.secj = nrf_loc.data.utc_time;
 		date_.date = nrf_loc.data.date;
 		date_.timestamp = nrf_loc.data.utc_timestamp;
@@ -174,6 +176,7 @@ eLocationSource Locator::getPosition(SLoc& loc_, SDate& date_) {
 		loc_.lat = gps_loc.data.lat;
 		loc_.lon = gps_loc.data.lon;
 		loc_.speed = gps_loc.data.speed;
+		loc_.course = gps_loc.data.course;
 		date_.secj = gps_loc.data.utc_time;
 		date_.date = gps_loc.data.date;
 		date_.timestamp = gps_loc.data.utc_timestamp;
@@ -267,6 +270,8 @@ void Locator::tasks() {
 			gps_loc.data.alt    = gps.altitude.meters();
 			gps_loc.data.lat    = gps.location.lat();
 			gps_loc.data.lon    = gps.location.lng();
+
+			gps_loc.data.course = gps.course.deg();
 
 			LOG_INFO("GPS location set\r\n");
 

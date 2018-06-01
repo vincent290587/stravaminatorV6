@@ -11,8 +11,8 @@
 
 #include <stdint.h>
 
-#define BASE_ZOOM_LEVEL    5
-#define BASE_ZOOM_METERS   60.
+#define BASE_ZOOM_LEVEL    10
+#define BASE_ZOOM_METERS   250.
 
 class Zoom {
 public:
@@ -29,11 +29,16 @@ public:
 		return m_zoom_level;
 	}
 
+	float getLastZoom() const {
+		return m_last_zoom;
+	}
+
 private:
 	uint16_t m_h_size;
 	uint16_t m_v_size;
 
 	uint8_t m_zoom_level;
+	float m_last_zoom;
 };
 
 

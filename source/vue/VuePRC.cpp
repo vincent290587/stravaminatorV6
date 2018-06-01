@@ -36,7 +36,8 @@ eVuePRCScreenModes VuePRC::tasksPRC() {
 
 	LOG_DEBUG("Last update age: %lu\r\n", locator.getLastUpdateAge());
 
-	LOG_INFO("Points allocated: %u\r\n",Point::getObjectCount());
+	LOG_INFO("Points2D allocated: %d\r\n",Point2D::getObjectCount()-Point::getObjectCount());
+	LOG_INFO("Points   allocated: %d\r\n",Point::getObjectCount());
 
 	// switch back and forth to GPS information page
 	if (eVuePRCScreenInit != m_prc_screen_mode &&
@@ -85,7 +86,7 @@ eVuePRCScreenModes VuePRC::tasksPRC() {
 			this->afficheParcours(5, m_s_parcours->getListePoints());
 
 			// display the segments
-			for (int j=0; j < m_segs.nb_segs; j++) {
+			for (int j=0; j < m_segs.nb_segs && j < 1; j++) {
 				this->afficheSegment(5, m_segs.s_segs[j].p_seg);
 			}
 
@@ -243,6 +244,8 @@ void VuePRC::afficheParcours(uint8_t ligne, ListePoints2D *p_liste) {
 	float dZoom_h;
 	float dZoom_v;
 
+	LOG_INFO("PRC size %d\r\n", p_liste->size());
+
 	m_distance_prc = p_liste->dist(att.loc.lat, att.loc.lon);
 
 	this->computeZoom(att.loc.lat, m_distance_prc, dZoom_h, dZoom_v);
@@ -262,6 +265,7 @@ void VuePRC::afficheParcours(uint8_t ligne, ListePoints2D *p_liste) {
 
 	// on affiche
 	points_nb = 0;
+	uint16_t printed_nb = 0;
 	for (auto& pPt : *p_liste->getLPTS()) {
 
 		pSuivant = pPt;
@@ -279,15 +283,41 @@ void VuePRC::afficheParcours(uint8_t ligne, ListePoints2D *p_liste) {
 					regFenLim(pCourant._lat, minLat, maxLat, fin_cadran, debut_cadran),
 					regFenLim(pSuivant._lon, minLon, maxLon, 0, _width),
 					regFenLim(pSuivant._lat, minLat, maxLat, fin_cadran, debut_cadran), LS027_PIXEL_BLACK);
+
+			printed_nb++;
 		}
 
-		pCourant = pSuivant;
+		pCourant = pPt;
 		points_nb++;
 	}
-	LOG_DEBUG("VuePRC %u points printed\r\n", points_nb);
+
+	LOG_INFO("VuePRC %u / %u points printed\r\n", printed_nb, points_nb);
 
 	// ma position
-	fillCircle(_width/2, (debut_cadran+fin_cadran)/2, 4, LS027_PIXEL_BLACK);
+	if (att.loc.course > 0) {
+		int16_t x0f, x0 = _width/2;
+		int16_t y0f, y0 = (debut_cadran+fin_cadran)/2 - 15;
+
+		int16_t x1f, x1 = _width/2 + 5;
+		int16_t y1f, y1 = (debut_cadran+fin_cadran)/2 + 5;
+
+		int16_t x2f, x2 = _width/2 - 5;
+		int16_t y2f, y2 = (debut_cadran+fin_cadran)/2 + 5;
+
+		rotate_point(att.loc.course, _width/2, (debut_cadran+fin_cadran)/2, x0, y0, x0f, y0f);
+		rotate_point(att.loc.course, _width/2, (debut_cadran+fin_cadran)/2, x1, y1, x1f, y1f);
+		rotate_point(att.loc.course, _width/2, (debut_cadran+fin_cadran)/2, x2, y2, x2f, y2f);
+
+		drawTriangle(x0f, y0f, x1f, y1f, x2f, y2f, LS027_PIXEL_BLACK);
+	} else {
+		fillCircle(_width/2, (debut_cadran+fin_cadran)/2, 4, LS027_PIXEL_BLACK);
+	}
+
+	// print the zoom level in m
+	setTextSize(1);
+	setCursor(_width - 40, debut_cadran + 10);
+	print((int)this->getLastZoom());
+	print("m");
 
 	W_SYSVIEW_OnTaskStopExec(DISPLAY_TASK4);
 }

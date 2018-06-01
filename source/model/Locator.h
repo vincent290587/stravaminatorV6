@@ -36,6 +36,7 @@ typedef struct {
 	float lon;
 	float alt;
 	float speed;
+	float course;
 	uint32_t utc_time;
 	uint32_t utc_timestamp;
 	uint32_t date;

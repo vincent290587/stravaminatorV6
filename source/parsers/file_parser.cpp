@@ -8,6 +8,7 @@
 #include <string.h>
 #include "file_parser.h"
 #include "utils.h"
+#include "segger_wrapper.h"
 
 
 /**
@@ -84,8 +85,8 @@ int chargerPointPar(char *buffer, Parcours& mon_parcours) {
 	uint8_t pos = 0;
 	char *pch;
 
-	lat = 0; lon = 0;
-	isError = 0;
+	lat = 0.; lon = 0.;
+	isError = 1;
 
 	if (!buffer) return 1;
 
@@ -115,6 +116,8 @@ int chargerPointPar(char *buffer, Parcours& mon_parcours) {
 	}
 	else {
 		// echec
+		LOG_ERROR("Point loading failed\r\n");
+
 		return isError;
 	}
 }

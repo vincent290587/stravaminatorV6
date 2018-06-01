@@ -53,6 +53,8 @@ int main(void) {
 
 	i2c_scheduling_init();
 
+	boucle.init();
+
 	for(;;) { /* Infinite loop to avoid leaving the main function */
 
 #ifdef DEBUG_CONFIG

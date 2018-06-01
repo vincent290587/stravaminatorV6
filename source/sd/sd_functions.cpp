@@ -27,7 +27,7 @@
  ******************************************************************************/
 
 /* buffer size (in byte) for read/write operations */
-#define BUFFER_SIZE (100U)
+#define BUFFER_SIZE (128U)
 
 /*******************************************************************************
  * Variables
@@ -189,6 +189,9 @@ int load_parcours(Parcours& mon_parcours) {
 	int res = 0;
 	FRESULT error;
 
+	// clear list
+	mon_parcours.desallouerPoints();
+
 	String fat_name = String("/") + mon_parcours.getName();
 
 	W_SYSVIEW_OnTaskStartExec(SD_ACCESS_TASK);
@@ -225,6 +228,8 @@ int load_parcours(Parcours& mon_parcours) {
 	{
 		LOG_INFO("Close file failed.\r\n");
 		return -1;
+	} else {
+		LOG_INFO("%u points added to PRC\r\n", res);
 	}
 
 	return res;

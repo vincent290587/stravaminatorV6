@@ -8,6 +8,8 @@
 #ifndef SOURCE_PARAMETERS_H_
 #define SOURCE_PARAMETERS_H_
 
+#define S_TO_MS(X)                     ((X)*1000)
+
 #define GPS_USE_COLD_START             0
 
 #define HISTO_POINT_SIZE               8
@@ -39,5 +41,7 @@
 #define BOUCLE_DEFAULT_MODE            eBoucleGlobalModesFEC
 
 #define USB_TIMEOUT_MS                 20
+
+#define TOT_HEAP_MEM_AVAILABLE         180000
 
 #endif /* SOURCE_PARAMETERS_H_ */

@@ -54,7 +54,8 @@ Sensor<sFecInfo>     fec_info;
 
 sSpisRxInfoPage0     nrf52_page0;
 
-// init counter
+// init counters
+int Point2D::objectCount2D = 0;
 int Point::objectCount = 0;
 
 /**
@@ -112,7 +113,11 @@ void perform_system_tasks(void) {
  */
 bool check_memory_exception(void) {
 
-	if (Point::getObjectCount() > 1500) {
+	int tot_point_mem = 0;
+	tot_point_mem += Point::getObjectCount() * sizeof(Point);
+	tot_point_mem += (Point2D::getObjectCount()-Point::getObjectCount()) * sizeof(Point2D);
+
+	if (tot_point_mem > TOT_HEAP_MEM_AVAILABLE) {
 
 		LOG_ERROR("Memory exhausted");
 

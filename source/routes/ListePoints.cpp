@@ -409,3 +409,280 @@ float ListePoints::getElevTot() {
 	return m_lpoints.back()._alt - m_lpoints.front()._alt;
 }
 
+ListePoints2D::ListePoints2D() {
+}
+
+void ListePoints2D::ajouteFin(float lat, float lon) {
+	m_lpoints.push_back(Point2D(lat, lon));
+}
+
+int ListePoints2D::size() {
+	return m_lpoints.size();
+}
+
+void ListePoints2D::removeAll() {
+	m_lpoints.clear();
+}
+
+Point2D* ListePoints2D::getFirstPoint() {
+
+	if (!m_lpoints.size()) return NULL;
+
+	return &m_lpoints.front();
+}
+
+Point2D* ListePoints2D::getLastPoint() {
+	return &m_lpoints.back();
+}
+
+Point2D* ListePoints2D::getPointAt(int i) {
+	std::list<Point2D>::iterator _iter;
+	int j;
+
+	if (i >= this->size() || (i < 0 && 1 - i < 0)) {
+		return 0;
+	}
+
+	if (i < 0) {
+		// -1 est le dernier point
+		_iter = m_lpoints.end();
+		_iter--;
+		for (j=-1; j > i; j--) {
+			_iter--;
+		}
+	} else {
+		_iter = m_lpoints.begin();
+		for (j=1; j <= i; j++) {
+			_iter++;
+		}
+	}
+
+	return _iter.operator->();
+}
+
+Vecteur ListePoints2D::computePosRelative(Point point) {
+
+	Point P1, P2;
+	float tmp_dist, distP1_, distP2_;
+	int init = 0;
+	Vecteur res, PP1, P1P2;
+
+	if (m_lpoints.size() < 5) {
+		return res;
+	}
+
+	// on cherche les deux plus proches points
+	for (auto& tmpPT : m_lpoints) {
+
+		tmp_dist = tmpPT.dist(&point);
+
+		if (init == 0) {
+			P1 = tmpPT;
+			distP1_ = P1.dist(&point);
+			init++;
+		} else if (init == 1) {
+			P2 = tmpPT;
+			distP2_ = P2.dist(&point);
+			init++;
+		} else {
+
+			if (tmp_dist < distP1_) {
+				if (distP1_ < distP2_) {
+					P2 = P1;
+					distP2_ = P2.dist(&point);
+				}
+				P1 = tmpPT;
+				distP1_ = P1.dist(&point);
+
+			} else if (tmp_dist < distP2_) {
+				P2 = tmpPT;
+				distP2_ = P2.dist(&point);
+			}
+		}
+
+	}
+
+	// construction des vecteurs
+	PP1 = Vecteur(point, P1);
+	P1P2 = Vecteur(P2, P1);
+
+	tmp_dist = P1.dist(&P2);
+
+	distP1_ = P1.dist(&point);
+
+	// interpolation
+	if (tmp_dist > 0.000001) {
+		res._y = (PP1._x * P1P2._x + PP1._y * P1P2._y) / tmp_dist;
+		res._x = sqrt(distP1_ * distP1_ - res._y * res._y);
+	} else {
+		res._x = P1._lon;
+		res._y = P1._lat;
+	}
+
+	return res;
+}
+
+void ListePoints2D::updateDelta() {
+
+	int indice = 0;
+	Point tmpPT1;
+	float tmp_dist = 0.;
+	float min_lon = 100;
+	float max_lon = -100;
+	float min_lat = 200;
+	float max_lat = -200;
+
+	if (m_lpoints.size() < 2) return;
+
+	for (auto& tmpPT2 : m_lpoints) {
+
+		if (indice != 0) {
+
+			// distance
+			tmp_dist += tmpPT1.dist(tmpPT2);
+
+			// minimaux
+			if (tmpPT2._lon < min_lon) min_lon = tmpPT2._lon;
+			if (tmpPT2._lat < min_lat) min_lat = tmpPT2._lat;
+
+			// maximaux
+			if (max_lon < tmpPT2._lon) max_lon = tmpPT2._lon;
+			if (max_lat < tmpPT2._lat) max_lat = tmpPT2._lat;
+
+		} else {
+			min_lat = tmpPT2._lat;
+			max_lat = tmpPT2._lat;
+			min_lon = tmpPT2._lon;
+			max_lon = tmpPT2._lon;
+		}
+
+		tmpPT1 = tmpPT2;
+		indice++;
+	}
+
+	m_delta_l._x = max_lon - min_lon;
+	m_delta_l._y = max_lat - min_lat;
+	m_delta_l._z = 0;
+	m_delta_l._t = 0;
+
+	m_center_l._lat = 0.5*(max_lat + min_lat);
+	m_center_l._lon = 0.5*(max_lon + min_lon);
+
+	m_dist = tmp_dist;
+
+}
+
+void ListePoints2D::updateRelativePosition(Point& point) {
+
+	Point P1, P2;
+	float tmp_dist, distP1_, distP2_;
+	int init = 0;
+	Vecteur PP1, P1P2;
+
+	if (m_lpoints.size() < 5) {
+		return;
+	}
+
+	// on cherche les deux plus proches points
+	for (auto& tmpPT : m_lpoints) {
+
+		tmp_dist = tmpPT.dist(&point);
+
+		if (init == 0) {
+			P1 = tmpPT;
+			distP1_ = P1.dist(&point);
+			init++;
+		} else if (init == 1) {
+			P2 = tmpPT;
+			distP2_ = P2.dist(&point);
+			init++;
+		} else {
+
+			if (tmp_dist < distP1_) {
+				if (distP1_ < distP2_) {
+					P2 = P1;
+					distP2_ = P2.dist(&point);
+				}
+				P1 = tmpPT;
+				distP1_ = P1.dist(&point);
+
+			} else if (tmp_dist < distP2_) {
+				P2 = tmpPT;
+				distP2_ = P2.dist(&point);
+			}
+		}
+	}
+
+	m_P1 = P1;
+	m_P2 = P2;
+
+	// construction des vecteurs
+	PP1 = Vecteur(point, P1);
+	P1P2 = Vecteur(P2, P1);
+
+	tmp_dist = P1.dist(&P2);
+	distP1_   = P1.dist(&point);
+
+	// interpolation
+	if (tmp_dist > 0.000001) {
+		m_pos_r._y = (PP1._x * P1P2._x + PP1._y * P1P2._y) / tmp_dist;
+		m_pos_r._x = sqrt(distP1_ * distP1_ - m_pos_r._y * m_pos_r._y);
+		m_pos_r._z = P1._alt + (P2._alt - P1._alt) * m_pos_r._y / tmp_dist;
+		m_pos_r._t = P1._rtime + (P2._rtime - P1._rtime) * m_pos_r._y / tmp_dist;
+	} else {
+		m_pos_r._x = P1._lon;
+		m_pos_r._y = P1._lat;
+		m_pos_r._z = P1._alt;
+		m_pos_r._t = P1._rtime;
+	}
+
+}
+
+Vecteur& ListePoints2D::getDeltaListe() {
+	return m_delta_l;
+}
+
+Vecteur ListePoints2D::getPosRelative() {
+	return m_pos_r;
+}
+
+Point2D& ListePoints2D::getCenterListe() {
+    return m_center_l;
+}
+
+float ListePoints2D::dist(Point2D* p_) {
+
+	assert(p_);
+
+	if (!p_) return 100000.;
+
+	return this->dist(p_->_lat, p_->_lon);
+}
+
+float ListePoints2D::dist(Point* p_) {
+
+	assert(p_);
+
+	if (!p_) return 100000.;
+
+	return this->dist(p_->_lat, p_->_lon);
+}
+
+float ListePoints2D::dist(float lat_, float lon_) {
+
+	float maDist = 100000.;
+
+	// on cherche la distance min
+	for (auto& point : m_lpoints) {
+		float tmp_dist = point.dist(lat_, lon_);
+		if (maDist > tmp_dist) {
+			maDist = tmp_dist;
+		}
+	}
+
+	return maDist;
+}
+
+float ListePoints2D::distP1(float lat_, float lon_) {
+	return m_P1.dist(lat_, lon_);
+}

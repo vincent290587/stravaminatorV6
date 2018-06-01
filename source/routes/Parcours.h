@@ -35,7 +35,7 @@ public:
 	}
 
 	void ajouterPointFin(float lat, float lon, float alt=0);
-	void ajouterPointDebutIso(float lat, float lon);
+	//void ajouterPointDebutIso(float lat, float lon);
 
 	void toString();
 
@@ -44,18 +44,18 @@ public:
 	void updatePosAuParcours(Point p);
 	void updateDelta();
 
-	ListePoints *getListePoints() {
+	ListePoints2D *getListePoints() {
 		return &_lpts;
 	}
 
-	Point *getFirstPoint();
+	Point2D *getFirstPoint();
 	float computeDistance(Point *p) {
 		return _lpts.dist(p);
 	}
 
 private:
 	String _nomFichier; // contient la pos du 1er point et le nom
-	ListePoints _lpts;
+	ListePoints2D _lpts;
 };
 
 /**

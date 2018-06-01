@@ -64,7 +64,7 @@ Parcours::Parcours(const char *nom_seg) {
  *
  * @return
  */
-Point *Parcours::getFirstPoint() {
+Point2D *Parcours::getFirstPoint() {
 	return _lpts.getFirstPoint();
 }
 
@@ -126,7 +126,7 @@ void Parcours::desallouerPoints() {
  */
 void Parcours::ajouterPointFin(float lat, float lon, float alt) {
 
-	_lpts.ajouteFin(lat, lon, alt, 0.);
+	_lpts.ajouteFin(lat, lon);
 
 	return;
 }
@@ -136,12 +136,12 @@ void Parcours::ajouterPointFin(float lat, float lon, float alt) {
  * @param lat
  * @param lon
  */
-void Parcours::ajouterPointDebutIso(float lat, float lon) {
-
-	_lpts.ajouteDebut(lat, lon, 0., 0.);
-	_lpts.removeLast();
-
-}
+//void Parcours::ajouterPointDebutIso(float lat, float lon) {
+//
+//	_lpts.ajouteDebut(lat, lon);
+//	_lpts.removeLast();
+//
+//}
 
 /**
  *
@@ -149,7 +149,6 @@ void Parcours::ajouterPointDebutIso(float lat, float lon) {
 void Parcours::toString() {
 
 	//printf("Parcours:\nName: %s\nSize: %d\n", _nomFichier.c_str(), _lpts.longueur());
-	_lpts.toString();
 
 }
 

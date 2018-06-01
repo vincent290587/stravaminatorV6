@@ -365,8 +365,6 @@ usb_status_t USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size) {
 
 			W_SYSVIEW_OnTaskStartExec(USB_VCOM_TASK);
 
-//			memcpy(s_currSendBuf, buffer, size);
-
         	m_is_packet_sent = false;
 
 			error = USB_DeviceCdcAcmSend(g_deviceComposite->cdcVcom.cdcAcmHandle,
@@ -378,21 +376,6 @@ usb_status_t USB_DeviceCdcVcomSend(uint8_t *buffer, size_t size) {
     			LOG_ERROR("USB VCOM send failure\r\n");
     			return error;
 			}
-
-    		// block
-//    		uint32_t millis_ = millis();
-//    		while (!m_is_packet_sent) {
-//
-//    			sleep();
-//
-//    			// tasks
-//    			perform_system_tasks();
-//
-//    			if (millis() - millis_ > USB_TIMEOUT_MS) {
-//    				LOG_ERROR("USB VCOM send timeout\r\n");
-//    				break;
-//    			}
-//    		}
 
     		W_SYSVIEW_OnTaskStopExec(USB_VCOM_TASK);
 

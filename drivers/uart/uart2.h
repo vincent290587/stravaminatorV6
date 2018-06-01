@@ -11,8 +11,8 @@
 #include "fsl_uart.h"
 #include "fsl_uart_edma.h"
 
-#define UART2_TX_DMA_CHANNEL 2U
-#define UART2_RX_DMA_CHANNEL 3U
+#define UART2_TX_DMA_CHANNEL 5U
+#define UART2_RX_DMA_CHANNEL 6U
 
 #if defined(__cplusplus)
 extern "C" {

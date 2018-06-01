@@ -49,6 +49,7 @@ static void i2c_error_handling(void) {
 
 	is = I2C0->S;
 	ic = I2C0->C1;
+	ic++; // avoid warning
 
 	if(is & 0x10) { // ARBL
 	    I2C0->C1 &= 0xCF; // Switch to RX SLAVE before cleaning ARBL (errata e6749)
@@ -140,10 +141,17 @@ static status_t _i2c0_transfer(i2c_transfer_settings* i2c_settings) {
 
 	uint32_t time_start = millis();
 	while (!isI2cTransferCompleted) {
-		// TODO power optimize
+
+		// power optimize
+		sleep();
 
 		if (millis() - time_start > 200) {
 			LOG_ERROR("I2C_MasterTransfer timeout\r\n ");
+
+			ret_code = I2C_MasterTransferAbort(I2C0, &g_m_handle);
+
+			i2c_error_handling();
+
 			isI2cTransferCompleted = true;
 		}
 

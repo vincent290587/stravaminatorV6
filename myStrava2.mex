@@ -66,6 +66,11 @@
                         <data>true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="Peripheral" resourceId="UART3" description="Peripheral UART3 is not initialized" problem_level="1" source="Pins: BOARD_InitPins">
+                     <feature name="initialized" evaluation="">
+                        <data>true</data>
+                     </feature>
+                  </dependency>
                   <dependency resourceType="Peripheral" resourceId="SDHC" description="Peripheral SDHC is not initialized" problem_level="1" source="Pins: BOARD_InitPins">
                      <feature name="initialized" evaluation="">
                         <data>true</data>
@@ -249,6 +254,8 @@
                         <pin_feature name="pull_enable" value="enable"/>
                      </pin_features>
                   </pin>
+                  <pin peripheral="UART3" signal="RX" pin_num="58" pin_signal="ADC1_SE14/PTB10/SPI1_PCS0/UART3_RX/FB_AD19/FTM0_FLT1"/>
+                  <pin peripheral="UART3" signal="TX" pin_num="59" pin_signal="ADC1_SE15/PTB11/SPI1_SCK/UART3_TX/FB_AD18/FTM0_FLT2"/>
                </pins>
             </function>
          </functions_list>
@@ -529,6 +536,16 @@
                         <data type="Boolean">true</data>
                      </feature>
                   </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="UART3.uart_tx" description="UART3.TX needs to be routed" problem_level="1" source="Peripherals: BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
+                  <dependency resourceType="PeripheralUnifiedSignal" resourceId="UART3.uart_rx" description="UART3.RX needs to be routed" problem_level="1" source="Peripherals: BOARD_InitPeripherals">
+                     <feature name="routed" evaluation="equal">
+                        <data type="Boolean">true</data>
+                     </feature>
+                  </dependency>
                </dependencies>
                <instances>
                   <instance name="DSPI_1" type="dspi" type_id="dspi_305e5b03c593d065f61ded8061d15797" mode="DSPI_Transfer" peripheral="SPI0" enabled="true">
@@ -649,6 +666,43 @@
                            <setting name="enable_custom_name" value="false"/>
                         </struct>
                         <array name="gpio_config"/>
+                     </config_set>
+                  </instance>
+                  <instance name="uart3_int" type="uart" type_id="uart_cd31a12aa8c79051fda42cc851a27c37" mode="interrupts" peripheral="UART3" enabled="true">
+                     <config_set name="uartConfig_t" quick_selection="QuickSelection1">
+                        <struct name="uartConfig">
+                           <setting name="baudRate_Bps" value="115200"/>
+                           <setting name="parityMode" value="kUART_ParityDisabled"/>
+                           <setting name="stopBitCount" value="kUART_OneStopBit"/>
+                           <setting name="txFifoWatermark" value="0"/>
+                           <setting name="rxFifoWatermark" value="0"/>
+                           <setting name="enableTx" value="true"/>
+                           <setting name="enableRx" value="true"/>
+                        </struct>
+                     </config_set>
+                     <config_set name="interruptsCfg" quick_selection="QuickSelection1">
+                        <set name="interrupts">
+                           <selected>
+                              <id>kUART_TxDataRegEmptyInterruptEnable</id>
+                              <id>kUART_TransmissionCompleteInterruptEnable</id>
+                              <id>kUART_RxDataRegFullInterruptEnable</id>
+                              <id>kUART_RxOverrunInterruptEnable</id>
+                           </selected>
+                        </set>
+                        <struct name="interrupt_vectors">
+                           <setting name="enable_rx_tx_irq" value="true"/>
+                           <struct name="interrupt_rx_tx">
+                              <setting name="IRQn" value="UART3_RX_TX_IRQn"/>
+                              <setting name="enable_priority" value="false"/>
+                              <setting name="enable_custom_name" value="false"/>
+                           </struct>
+                           <setting name="enable_err_irq" value="false"/>
+                           <struct name="interrupt_err">
+                              <setting name="IRQn" value="UART3_ERR_IRQn"/>
+                              <setting name="enable_priority" value="false"/>
+                              <setting name="enable_custom_name" value="false"/>
+                           </struct>
+                        </struct>
                      </config_set>
                   </instance>
                </instances>
